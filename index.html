@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindHub - Portal de Estudos Avançado</title>
+    <title>MindHub - Nuvem Avançada</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Script Oficial do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         #mindmap-canvas {
             background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
@@ -26,33 +28,22 @@
     <nav class="bg-indigo-600 text-white shadow-md p-4 sticky top-0 z-50">
         <div class="container mx-auto flex justify-between items-center">
             <h1 onclick="goHome()" class="text-xl font-bold tracking-wide cursor-pointer flex items-center gap-2">
-                <i class="fa-solid fa-brain"></i> MindHub
+                <i class="fa-solid fa-brain"></i> MindHub <span class="text-xs bg-indigo-500 px-2 py-0.5 rounded-sm font-normal text-indigo-100">Nuvem</span>
             </h1>
-            <button onclick="toggleAdminView()" class="bg-indigo-700 hover:bg-indigo-800 px-4 py-2 rounded-lg text-sm font-semibold transition">
-                <i class="fa-solid fa-gear mr-1"></i> Configurações Geral
-            </button>
+            <div class="flex items-center gap-3">
+                <span id="sync-status" class="text-xs text-indigo-200"><i class="fa-solid fa-cloud-arrow-up"></i> Conectando...</span>
+                <button onclick="toggleAdminView()" class="bg-indigo-700 hover:bg-indigo-800 px-4 py-2 rounded-lg text-sm font-semibold transition">
+                    <i class="fa-solid fa-gear mr-1"></i> Configurações Geral
+                </button>
+            </div>
         </div>
     </nav>
 
     <div class="container mx-auto p-4 md:p-6 max-w-6xl">
         
-        <!-- SEÇÃO: ADMINISTRAÇÃO GERAL + SISTEMA DE BACKUP -->
-        <section id="admin-section" class="hidden bg-white p-6 rounded-xl shadow-sm mb-6 border border-gray-200 space-y-6">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 gap-4">
-                <h2 class="text-lg font-bold text-indigo-900"><i class="fa-solid fa-sliders mr-2"></i>Painel de Controle Estrutural</h2>
-                
-                <!-- BOTÕES DE PORTABILIDADE (BACKUP) -->
-                <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-                    <button onclick="exportData()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-download"></i> Exportar Backup (.json)
-                    </button>
-                    <label class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
-                        <i class="fa-solid fa-upload"></i> Importar Backup
-                        <input type="file" id="import-file" onchange="importData(this)" class="hidden" accept=".json">
-                    </label>
-                </div>
-            </div>
-
+        <!-- SEÇÃO: ADMINISTRAÇÃO GERAL -->
+        <section id="admin-section" class="hidden bg-white p-6 rounded-xl shadow-sm mb-6 border border-gray-200">
+            <h2 class="text-lg font-bold mb-4 text-indigo-900"><i class="fa-solid fa-sliders mr-2"></i>Painel de Controle Estrutural</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Temas Principais -->
                 <div class="border-r pr-0 md:pr-4 border-gray-100">
@@ -109,7 +100,6 @@
 
         <!-- TELA 3: O PORTAL INTERNO DA MATÉRIA -->
         <section id="view-portal" class="hidden">
-            <!-- Cabeçalho do Portal -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <button id="btn-back-portal" onclick="" class="text-indigo-600 hover:text-indigo-800 font-medium inline-flex items-center gap-2 text-sm">
                     <i class="fa-solid fa-arrow-left"></i> Voltar
@@ -121,7 +111,7 @@
             
             <h2 id="portal-title" class="text-3xl font-black text-gray-900 mb-6">Nome do Portal</h2>
 
-            <!-- Sistema de Abas (Tabs) -->
+            <!-- Sistema de Abas -->
             <div class="flex border-b border-gray-200 mb-6 overflow-x-auto gap-2">
                 <button onclick="switchTab('notes')" id="tab-btn-notes" class="py-2 px-4 font-bold text-sm border-b-2 border-indigo-600 text-indigo-600 whitespace-nowrap"><i class="fa-solid fa-book-open mr-2"></i>Anotações & Posts</button>
                 <button onclick="switchTab('mindmap')" id="tab-btn-mindmap" class="py-2 px-4 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-indigo-600 whitespace-nowrap"><i class="fa-solid fa-diagram-project mr-2"></i>Mapa Mental Dinâmico</button>
@@ -161,7 +151,6 @@
                         </select>
                         <button onclick="addMindmapNode()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition"><i class="fa-solid fa-plus mr-1"></i> Criar</button>
                     </div>
-                    <p class="text-xs text-gray-400 italic"><i class="fa-solid fa-arrows-alt mr-1"></i> Clique e arraste para ramificar suas ideias na tela.</p>
                 </div>
                 <div id="mindmap-canvas" class="w-full h-[550px] bg-white border border-gray-200 rounded-2xl relative overflow-hidden shadow-inner"></div>
             </div>
@@ -190,85 +179,89 @@
         </section>
     </div>
 
-    <!-- SCRIPT LOGIC -->
+    <!-- LOGIC SCRIPT -->
     <script>
-        // Inicialização padrão caso não exista nada no LocalStorage
-        let data = JSON.parse(localStorage.getItem('mindhub_v5_data')) || {
+        // Chaves injetadas e prontas do Supabase
+        const SUPABASE_URL = "https://ioosqezhiuvmqxpuhncx.supabase.co"; 
+        const SUPABASE_ANON_KEY = "sb_publishable_80T1oUALjj3KHw3Xgir8Xg_DNMHlJJj";
+        
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const USUARIO_ID = "meu_cerebro_digital"; // Identificador exclusivo dos seus dados na nuvem
+
+        // Estrutura base de inicialização
+        let data = {
             temas: [
                 { id: 1, nome: "🎓 Faculdade de Letras / TI", eAcademico: true },
                 { id: 2, nome: "💼 Trabalho", eAcademico: false }
             ],
-            semestres: [
-                { id: 101, nome: "1º Semestre" }
-            ],
-            materias: [
-                { id: 201, semestreId: 101, nome: "Morfossintaxe da Língua Portuguesa" }
-            ],
-            notes: [
-                { id: 1, temaId: 1, semestreId: 101, materiaId: 201, texto: "Foco em revisar a estrutura interna dos morfemas e flexões nominais." }
-            ],
-            linhaTempo: [
-                { id: 1, temaId: 1, semestreId: 101, materiaId: 201, texto: "Entrega do fichamento estrutural", check: false }
-            ],
-            mapasMentais: [
-                { id: 501, temaId: 1, semestreId: 101, materiaId: 201, texto: "Morfossintaxe", tipo: "central", x: 200, y: 180 }
-            ],
-            revisoes: [
-                { id: 601, temaId: 1, semestreId: 101, materiaId: 201, titulo: "Morfemas Derivacionais", corpo: "São morfemas que alteram o sentido principal da palavra.", status: "aprendendo" }
-            ]
+            semestres: [{ id: 101, nome: "1º Semestre" }],
+            materias: [{ id: 201, semestreId: 101, nome: "Minha Primeira Matéria" }],
+            notes: [], linhaTempo: [], mapasMentais: [], revisoes: []
         };
 
         let currentThemeId = null, currentSemesterId = null, currentMateriaId = null;
         let activeTab = 'notes';
 
+        // Carrega dados da Nuvem
+        async function loadDataFromCloud() {
+            setStatus("Iniciando conexão...", "amber");
+            try {
+                let { data: rows, error } = await _supabase
+                    .from('dados_usuarios')
+                    .select('payload')
+                    .eq('id', USUARIO_ID);
+
+                if (error) throw error;
+
+                if (rows && rows.length > 0) {
+                    data = rows[0].payload;
+                    setStatus("Nuvem Sincronizada", "emerald");
+                } else {
+                    await pushDataToCloud();
+                    setStatus("Primeiro Acesso Criado", "indigo");
+                }
+            } catch (err) {
+                console.error(err);
+                setStatus("Modo Offline (Erro Nuvem)", "red");
+            }
+            
+            render();
+            setupSemesterSelect();
+            renderAdminLists();
+        }
+
+        // Faz o upload das alterações
+        async function pushDataToCloud() {
+            setStatus("Salvando na Nuvem...", "amber");
+            try {
+                const { error } = await _supabase
+                    .from('dados_usuarios')
+                    .upsert({ id: USUARIO_ID, payload: data, updated_at: new Date() });
+
+                if (error) throw error;
+                setStatus("Salvo com sucesso", "emerald");
+            } catch (err) {
+                console.error(err);
+                setStatus("Erro ao salvar dados!", "red");
+            }
+        }
+
+        function setStatus(text, color) {
+            const el = document.getElementById('sync-status');
+            if(!el) return;
+            el.className = `text-xs font-semibold px-2.5 py-1 rounded-md bg-${color}-50 text-${color}-700 border border-${color}-200`;
+            el.innerHTML = `<i class="fa-solid fa-cloud"></i> ${text}`;
+        }
+
         function saveData() {
-            localStorage.setItem('mindhub_v5_data', JSON.stringify(data));
+            pushDataToCloud();
             render();
             renderAdminLists();
             if (currentMateriaId || (currentThemeId && !currentSemesterId)) renderPortalView();
             if (currentThemeId && currentSemesterId === null) renderFacultyView();
         }
 
-        // --- SISTEMA DE EXPORTAÇÃO E IMPORTAÇÃO (PORTALIDADE TOTAL) ---
-        function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `mindhub_backup_${new Date().toISOString().slice(0,10)}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        }
-
-        function importData(inputElement) {
-            const file = inputElement.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const importedJson = JSON.parse(e.target.result);
-                    
-                    // Validação simples para ver se o arquivo é legítimo do sistema
-                    if (importedJson.temas && importedJson.notes && importedJson.revisoes) {
-                        if (confirm("Isso irá substituir os dados atuais deste navegador pelos dados do backup. Continuar?")) {
-                            data = importedJson;
-                            saveData();
-                            setupSemesterSelect();
-                            goHome();
-                            alert("Backup importado com sucesso total!");
-                        }
-                    } else {
-                        alert("Arquivo inválido. Escolha um arquivo gerado pelo MindHub.");
-                    }
-                } catch (err) {
-                    alert("Erro ao ler o arquivo JSON. Certifique-se de que ele não está corrompido.");
-                }
-            };
-            reader.readAsText(file);
-            inputElement.value = ''; // Limpa o input
-        }
-
+        // --- SISTEMA DE FLUXO DE TELAS ---
         function toggleAdminView() { document.getElementById('admin-section').classList.toggle('hidden'); }
 
         function goHome() {
@@ -306,11 +299,9 @@
             document.getElementById('view-faculty').classList.add('hidden');
             document.getElementById('view-portal').classList.remove('hidden');
             document.getElementById('btn-back-portal').setAttribute('onclick', `enterTheme(${currentThemeId})`);
-            
             const semNome = data.semestres.find(s => s.id === semId)?.nome;
             const matNome = data.materias.find(m => m.id === matId)?.nome;
             document.getElementById('portal-breadcrumbs').innerText = `${semNome} ➔ ${matNome}`;
-            
             switchTab('notes');
             renderPortalView();
         }
@@ -324,12 +315,11 @@
             });
             document.getElementById(`tab-content-${tab}`).classList.remove('hidden');
             document.getElementById(`tab-btn-${tab}`).className = "py-2 px-4 font-bold text-sm border-b-2 border-indigo-600 text-indigo-600 whitespace-nowrap";
-            
             if(tab === 'mindmap') renderMindmap();
             if(tab === 'reviews') renderReviews();
         }
 
-        // --- ABA 1: NOTAS E METAS ---
+        // --- MANIPULAÇÃO DE DADOS INTERNOS ---
         function addNote() {
             const txt = document.getElementById('note-content').value.trim();
             if (!txt) return;
@@ -337,6 +327,12 @@
             document.getElementById('note-content').value = ''; saveData();
         }
         function deleteNote(id) { data.notes = data.notes.filter(n => n.id !== id); saveData(); }
+
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter' && e.ctrlKey && document.activeElement.id === 'note-content') {
+                addNote();
+            }
+        });
 
         function addRoadmapStep() {
             const txt = document.getElementById('roadmap-step').value.trim();
@@ -347,209 +343,110 @@
         function toggleStep(id) { const s = data.linhaTempo.find(x => x.id === id); if(s) s.check = !s.check; saveData(); }
         function deleteStep(id) { data.linhaTempo = data.linhaTempo.filter(l => l.id !== id); saveData(); }
 
-        // --- ABA 2: MAPA MENTAL ---
         function addMindmapNode() {
             const txt = document.getElementById('mindmap-input').value.trim();
             const type = document.getElementById('mindmap-node-type').value;
             if (!txt) return;
-
-            data.mapasMentais.push({
-                id: Date.now(),
-                temaId: currentThemeId,
-                semestreId: currentSemesterId,
-                materiaId: currentMateriaId,
-                texto: txt,
-                tipo: type,
-                x: 180,
-                y: 180
-            });
-            document.getElementById('mindmap-input').value = '';
-            saveData();
+            data.mapasMentais.push({ id: Date.now(), temaId: currentThemeId, semestreId: currentSemesterId, materiaId: currentMateriaId, texto: txt, tipo: type, x: 180, y: 180 });
+            document.getElementById('mindmap-input').value = ''; saveData();
         }
-
-        function deleteMindmapNode(id) {
-            data.mapasMentais = data.mapasMentais.filter(n => n.id !== id);
-            saveData();
-        }
+        function deleteMindmapNode(id) { data.mapasMentais = data.mapasMentais.filter(n => n.id !== id); saveData(); }
 
         function renderMindmap() {
             const canvas = document.getElementById('mindmap-canvas');
             canvas.innerHTML = '';
-
-            let nosFiltrados = data.mapasMentais.filter(n => 
-                n.temaId === currentThemeId && n.semestreId === currentSemesterId && n.materiaId === currentMateriaId
-            );
-
+            let nosFiltrados = data.mapasMentais.filter(n => n.temaId === currentThemeId && n.semestreId === currentSemesterId && n.materiaId === currentMateriaId);
             nosFiltrados.forEach(node => {
                 const nodeDiv = document.createElement('div');
                 let styleClasses = "mindmap-node font-bold text-xs p-3.5 rounded-xl shadow-xs flex items-center gap-2 border-2 ";
-                if (node.tipo === 'central') {
-                    styleClasses += "bg-indigo-600 text-white border-indigo-700 text-sm shadow-md ring-4 ring-indigo-100";
-                } else if (node.tipo === 'subtopico') {
-                    styleClasses += "bg-sky-50 text-sky-900 border-sky-400";
-                } else if (node.tipo === 'insight') {
-                    styleClasses += "bg-amber-50 text-amber-900 border-amber-400 border-dashed rounded-full px-4";
-                }
-
-                nodeDiv.className = styleClasses;
-                nodeDiv.style.left = `${node.x}px`;
-                nodeDiv.style.top = `${node.y}px`;
-                
+                if (node.tipo === 'central') styleClasses += "bg-indigo-600 text-white border-indigo-700 text-sm shadow-md ring-4 ring-indigo-100";
+                else if (node.tipo === 'subtopico') styleClasses += "bg-sky-50 text-sky-900 border-sky-400";
+                else if (node.tipo === 'insight') styleClasses += "bg-amber-50 text-amber-900 border-amber-400 border-dashed rounded-full px-4";
+                nodeDiv.className = styleClasses; nodeDiv.style.left = `${node.x}px`; nodeDiv.style.top = `${node.y}px`;
                 let icon = node.tipo === 'central' ? '⭐ ' : node.tipo === 'insight' ? '💡 ' : '📘 ';
-                nodeDiv.innerHTML = `
-                    <span>${icon}${node.texto}</span>
-                    <button onclick="deleteMindmapNode(${node.id})" class="opacity-60 hover:opacity-100 text-[11px] ml-1"><i class="fa-solid fa-xmark"></i></button>
-                `;
-
+                nodeDiv.innerHTML = `<span>${icon}${node.texto}</span><button onclick="deleteMindmapNode(${node.id})" class="opacity-60 hover:opacity-100 text-[11px] ml-1"><i class="fa-solid fa-xmark"></i></button>`;
                 nodeDiv.addEventListener('mousedown', (e) => {
                     if(e.target.closest('button')) return;
                     let shiftX = e.clientX - nodeDiv.getBoundingClientRect().left;
                     let shiftY = e.clientY - nodeDiv.getBoundingClientRect().top;
-
                     function moveAt(clientX, clientY) {
                         let rectCanvas = canvas.getBoundingClientRect();
                         let newX = clientX - rectCanvas.left - shiftX;
                         let newY = clientY - rectCanvas.top - shiftY;
                         newX = Math.max(0, Math.min(newX, rectCanvas.width - nodeDiv.offsetWidth));
                         newY = Math.max(0, Math.min(newY, rectCanvas.height - nodeDiv.offsetHeight));
-                        nodeDiv.style.left = `${newX}px`;
-                        nodeDiv.style.top = `${newY}px`;
+                        nodeDiv.style.left = `${newX}px`; nodeDiv.style.top = `${newY}px`;
                         node.x = newX; node.y = newY;
                     }
-
                     function onMouseMove(event) { moveAt(event.clientX, event.clientY); }
                     document.addEventListener('mousemove', onMouseMove);
                     document.addEventListener('mouseup', () => {
                         document.removeEventListener('mousemove', onMouseMove);
-                        localStorage.setItem('mindhub_v5_data', JSON.stringify(data));
+                        pushDataToCloud();
                     }, { once: true });
                 });
                 canvas.appendChild(nodeDiv);
             });
         }
 
-        // --- ABA 3: REVISÃO ATIVA ---
         function addReviewTopic() {
             const title = document.getElementById('review-topic-input').value.trim();
             const body = document.getElementById('review-body-input').value.trim();
             const status = document.getElementById('review-initial-status').value;
             if (!title) return;
-
             data.revisoes.push({ id: Date.now(), temaId: currentThemeId, semestreId: currentSemesterId, materiaId: currentMateriaId, titulo: title, corpo: body, status: status });
-            document.getElementById('review-topic-input').value = '';
-            document.getElementById('review-body-input').value = '';
-            saveData();
+            document.getElementById('review-topic-input').value = ''; document.getElementById('review-body-input').value = ''; saveData();
         }
-
-        function changeReviewStatus(id, newStatus) {
-            const rev = data.revisoes.find(r => r.id === id);
-            if(rev) { rev.status = newStatus; saveData(); }
-        }
-
-        function deleteReviewTopic(id) {
-            if(!confirm("Deletar permanentemente este tópico de revisão?")) return;
-            data.revisoes = data.revisoes.filter(r => r.id !== id);
-            saveData();
-        }
+        function changeReviewStatus(id, newStatus) { const rev = data.revisoes.find(r => r.id === id); if(rev) { rev.status = newStatus; saveData(); } }
+        function deleteReviewTopic(id) { if(confirm("Deletar este conteúdo de revisão?")) { data.revisoes = data.revisoes.filter(r => r.id !== id); saveData(); } }
 
         function renderReviews() {
-            const container = document.getElementById('reviews-extended-list');
-            container.innerHTML = '';
+            const container = document.getElementById('reviews-extended-list'); container.innerHTML = '';
             let revsFiltradas = data.revisoes.filter(r => r.temaId === currentThemeId && r.semestreId === currentSemesterId && r.materiaId === currentMateriaId);
-
-            if(revsFiltradas.length === 0) {
-                container.innerHTML = `<p class="text-sm text-gray-400 italic py-4">Nenhum bloco de conteúdo adicionado para revisão.</p>`;
-                return;
-            }
-
+            if(revsFiltradas.length === 0) { container.innerHTML = `<p class="text-sm text-gray-400 italic py-4">Nenhum bloco de conteúdo adicionado para revisão.</p>`; return; }
             revsFiltradas.forEach(rev => {
                 let borderCol = 'border-l-red-500'; let selectStyle = 'bg-red-50 text-red-700 font-semibold';
                 if (rev.status === 'aprendendo') { borderCol = 'border-l-amber-500'; selectStyle = 'bg-amber-50 text-amber-700 font-semibold'; }
                 if (rev.status === 'estudado') { borderCol = 'border-l-blue-500'; selectStyle = 'bg-blue-50 text-blue-700 font-semibold'; }
                 if (rev.status === 'revisado') { borderCol = 'border-l-emerald-500'; selectStyle = 'bg-emerald-50 text-emerald-700 font-semibold'; }
-
-                container.innerHTML += `
-                    <div class="bg-white rounded-xl border border-gray-200 border-l-4 ${borderCol} p-4 shadow-2xs space-y-3">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                            <h4 class="font-extrabold text-sm text-gray-900">${rev.titulo}</h4>
-                            <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
-                                <select onchange="changeReviewStatus(${rev.id}, this.value)" class="p-1.5 rounded-lg text-xs border border-gray-200 outline-none ${selectStyle}">
-                                    <option value="nao-aprendi" ${rev.status === 'nao-aprendi' ? 'selected' : ''}>❌ Não aprendi ainda</option>
-                                    <option value="aprendendo" ${rev.status === 'aprendendo' ? 'selected' : ''}>⏳ Aprendendo</option>
-                                    <option value="estudado" ${rev.status === 'estudado' ? 'selected' : ''}>📘 Estudado</option>
-                                    <option value="revisado" ${rev.status === 'revisado' ? 'selected' : ''}>✅ Revisado</option>
-                                </select>
-                                <button onclick="deleteReviewTopic(${rev.id})" class="text-gray-300 hover:text-red-500 transition text-sm p-1"><i class="fa-solid fa-trash-can"></i></button>
-                            </div>
+                container.innerHTML += `<div class="bg-white rounded-xl border border-gray-200 border-l-4 ${borderCol} p-4 shadow-2xs space-y-3">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <h4 class="font-extrabold text-sm text-gray-900">${rev.titulo}</h4>
+                        <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                            <select onchange="changeReviewStatus(${rev.id}, this.value)" class="p-1.5 rounded-lg text-xs border border-gray-200 outline-none ${selectStyle}">
+                                <option value="nao-aprendi" ${rev.status==='nao-aprendi'?'selected':''}>❌ Não aprendi ainda</option>
+                                <option value="aprendendo" ${rev.status==='aprendendo'?'selected':''}>⏳ Aprendendo</option>
+                                <option value="estudado" ${rev.status==='estudado'?'selected':''}>📘 Estudado</option>
+                                <option value="revisado" ${rev.status==='revisado'?'selected':''}>✅ Revisado</option>
+                            </select>
+                            <button onclick="deleteReviewTopic(${rev.id})" class="text-gray-300 hover:text-red-500 transition text-sm p-1"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
-                        ${rev.corpo ? `<p class="text-gray-600 text-xs bg-gray-50 p-3 rounded-lg leading-relaxed whitespace-pre-wrap border border-gray-100">${rev.corpo}</p>` : '<p class="text-xs text-gray-300 italic">Nenhum detalhe ou resumo adicionado.</p>'}
-                    </div>`;
+                    </div>
+                    ${rev.corpo ? `<p class="text-gray-600 text-xs bg-gray-50 p-3 rounded-lg leading-relaxed whitespace-pre-wrap border border-gray-100">${rev.corpo}</p>` : '<p class="text-xs text-gray-300 italic">Nenhum detalhe adicionado.</p>'}
+                </div>`;
             });
         }
 
-        // --- SISTEMAS ADMINISTRATIVOS E RENDERS BASE ---
-        function createTheme() {
-            const input = document.getElementById('new-theme-name');
-            if (!input.value.trim()) return;
-            data.temas.push({ id: Date.now(), nome: input.value.trim(), eAcademico: false });
-            input.value = ''; saveData();
-        }
-        function editTheme(id) {
-            const t = data.temas.find(x => x.id === id); const n = prompt("Editar Tema:", t.nome);
-            if (n?.trim()) { t.nome = n.trim(); saveData(); }
-        }
-        function deleteTheme(id) {
-            if(!confirm("Confirmar exclusão?")) return;
-            data.temas = data.temas.filter(x => x.id !== id);
-            if(currentThemeId === id) goHome(); saveData();
-        }
-        function addSemester() {
-            const input = document.getElementById('new-semester-name');
-            if (!input.value.trim()) return;
-            data.semestres.push({ id: Date.now(), nome: input.value.trim() });
-            input.value = ''; saveData(); setupSemesterSelect();
-        }
-        function editSemester(id) {
-            const s = data.semestres.find(x => x.id === id); const n = prompt("Editar Semestre:", s.nome);
-            if (n?.trim()) { s.nome = n.trim(); saveData(); setupSemesterSelect(); }
-        }
-        function deleteSemester(id) {
-            if(!confirm("Remover semestre?")) return;
-            data.semestres = data.semestres.filter(x => x.id !== id);
-            saveData(); setupSemesterSelect();
-        }
-        function addSubject() {
-            const select = document.getElementById('select-semester');
-            const input = document.getElementById('new-subject-name');
-            if (!input.value.trim() || !select.value) return;
-            data.materias.push({ id: Date.now(), semestreId: parseInt(select.value), nome: input.value.trim() });
-            input.value = ''; saveData();
-        }
-        function editSubject(id) {
-            const m = data.materias.find(x => x.id === id); const n = prompt("Editar Matéria:", m.nome);
-            if (n?.trim()) { m.nome = n.trim(); saveData(); }
-        }
-        function deleteSubject(id) {
-            if(!confirm("Deletar matéria?")) return;
-            data.materias = data.materias.filter(x => x.id !== id);
-            if(currentMateriaId === id) enterTheme(currentThemeId); saveData();
-        }
-        function setupSemesterSelect() {
-            const select = document.getElementById('select-semester');
-            if(select) select.innerHTML = data.semestres.map(s => `<option value="${s.id}">${s.nome}</option>`).join('');
-        }
+        // --- SISTEMAS ADMINISTRATIVOS E RENDERS DE SUPORTE ---
+        function createTheme() { const input = document.getElementById('new-theme-name'); if (!input.value.trim()) return; data.temas.push({ id: Date.now(), nome: input.value.trim(), eAcademico: false }); input.value = ''; saveData(); }
+        function editTheme(id) { const t = data.temas.find(x => x.id === id); const n = prompt("Editar Tema:", t.nome); if (n?.trim()) { t.nome = n.trim(); saveData(); } }
+        function deleteTheme(id) { if(confirm("Deletar tema?")) { data.temas = data.temas.filter(x => x.id !== id); if(currentThemeId === id) goHome(); saveData(); } }
+        function addSemester() { const input = document.getElementById('new-semester-name'); if (!input.value.trim()) return; data.semestres.push({ id: Date.now(), nome: input.value.trim() }); input.value = ''; saveData(); setupSemesterSelect(); }
+        function editSemester(id) { const s = data.semestres.find(x => x.id === id); const n = prompt("Editar Semestre:", s.nome); if (n?.trim()) { s.nome = n.trim(); saveData(); setupSemesterSelect(); } }
+        function deleteSemester(id) { if(confirm("Remover semestre?")) { data.semestres = data.semestres.filter(x => x.id !== id); saveData(); setupSemesterSelect(); } }
+        function addSubject() { const select = document.getElementById('select-semester'); const input = document.getElementById('new-subject-name'); if (!input.value.trim() || !select.value) return; data.materias.push({ id: Date.now(), semestreId: parseInt(select.value), nome: input.value.trim() }); input.value = ''; saveData(); }
+        function editSubject(id) { const m = data.materias.find(x => x.id === id); const n = prompt("Editar Matéria:", m.nome); if (n?.trim()) { m.nome = n.trim(); saveData(); } }
+        function deleteSubject(id) { if(confirm("Deletar matéria?")) { data.materias = data.materias.filter(x => x.id !== id); if(currentMateriaId === id) enterTheme(currentThemeId); saveData(); } }
+        function setupSemesterSelect() { const select = document.getElementById('select-semester'); if(select) select.innerHTML = data.semestres.map(s => `<option value="${s.id}">${s.nome}</option>`).join(''); }
 
         function render() {
             const grid = document.getElementById('themes-grid');
             grid.innerHTML = data.temas.map(tema => `
                 <div onclick="enterTheme(${tema.id})" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 cursor-pointer transition flex flex-col justify-between group">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <h3 class="text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition">${tema.nome}</h3>
-                            ${tema.eAcademico ? '<span class="bg-indigo-50 text-indigo-700 text-xs px-2.5 py-1 rounded-full font-semibold">Matriz Acadêmica</span>' : '<span class="bg-amber-50 text-amber-700 text-xs px-2.5 py-1 rounded-full font-semibold">Geral</span>'}
-                        </div>
-                        <p class="text-sm text-gray-400">Clique para expandir seu ambiente.</p>
-                    </div>
+                    <div><div class="flex items-center justify-between mb-2">
+                        <h3 class="text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition">${tema.nome}</h3>
+                        ${tema.eAcademico ? '<span class="bg-indigo-50 text-indigo-700 text-xs px-2.5 py-1 rounded-full font-semibold">Grade</span>' : '<span class="bg-amber-50 text-amber-700 text-xs px-2.5 py-1 rounded-full font-semibold">Geral</span>'}
+                    </div><p class="text-sm text-gray-400">Clique para expandir.</p></div>
                     <span class="text-indigo-500 text-sm font-semibold mt-4 inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform"> Entrar <i class="fa-solid fa-chevron-right text-xs"></i></span>
                 </div>`).join('');
         }
@@ -566,8 +463,7 @@
                         <span class="truncate pr-2">📘 ${m.nome}</span>
                         <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-0.5 rounded-md font-bold group-hover/btn:bg-indigo-600 group-hover/btn:text-white transition">${count} notas</span>
                     </button>`;
-                }).join('') || '<p class="text-xs text-gray-400 italic">Nenhuma matéria adicionada.</p>';
-
+                }).join('') || '<p class="text-xs text-gray-400 italic">Sem disciplinas.</p>';
                 return `<div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs">
                     <h3 class="font-extrabold text-base text-indigo-900 mb-4 flex items-center gap-2 border-b pb-2"><i class="fa-regular fa-calendar-check text-indigo-500"></i> ${sem.nome}</h3>
                     <div class="space-y-2.5">${disciplinasHtml}</div>
@@ -576,36 +472,20 @@
         }
 
         function renderPortalView() {
-            if (currentMateriaId) {
-                const mat = data.materias.find(m => m.id === currentMateriaId);
-                document.getElementById('portal-title').innerText = `Portal de ${mat.nome}`;
-            } else {
-                const tema = data.temas.find(t => t.id === currentThemeId);
-                document.getElementById('portal-title').innerText = tema.nome;
-            }
-
-            let notasFiltradas = data.notes.filter(n => n.temaId === currentThemeId && n.semestreId === currentSemesterId && n.materiaId === currentMateriaId);
-            let linhaFiltrada = data.linhaTempo.filter(l => l.temaId === currentThemeId && l.semestreId === currentSemesterId && l.materiaId === currentMateriaId);
-
-            document.getElementById('notes-container').innerHTML = notasFiltradas.map(n => `
+            if (currentMateriaId) { const mat = data.materias.find(m => m.id === currentMateriaId); document.getElementById('portal-title').innerText = `Portal de ${mat.nome}`; }
+            else { const tema = data.temas.find(t => t.id === currentThemeId); document.getElementById('portal-title').innerText = tema.nome; }
+            let nFiltradas = data.notes.filter(n => n.temaId === currentThemeId && n.semestreId === currentSemesterId && n.materiaId === currentMateriaId);
+            let lFiltrada = data.linhaTempo.filter(l => l.temaId === currentThemeId && l.semestreId === currentSemesterId && l.materiaId === currentMateriaId);
+            document.getElementById('notes-container').innerHTML = nFiltradas.map(n => `
                 <div class="bg-amber-50 p-4 rounded-xl border border-amber-100 flex flex-col justify-between shadow-2xs">
                     <p class="text-gray-800 whitespace-pre-wrap text-xs leading-relaxed">${n.texto}</p>
-                    <div class="flex justify-end mt-3 border-t border-amber-200/40 pt-2">
-                        <button onclick="deleteNote(${n.id})" class="text-gray-400 hover:text-red-500 text-xs transition"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                </div>`).join('') || `<p class="text-xs text-gray-400 italic col-span-2 py-2">Sem anotações de texto cadastradas.</p>`;
-
-            document.getElementById('roadmap-container').innerHTML = linhaFiltrada.map(step => `
+                    <div class="flex justify-end mt-3 border-t border-amber-200/40 pt-2"><button onclick="deleteNote(${n.id})" class="text-gray-400 hover:text-red-500 text-xs transition"><i class="fa-solid fa-trash"></i></button></div>
+                </div>`).join('') || `<p class="text-xs text-gray-400 italic col-span-2 py-2">Sem anotações.</p>`;
+            document.getElementById('roadmap-container').innerHTML = lFiltrada.map(step => `
                 <div class="mb-2 ml-6 flex items-start justify-between group/step text-xs">
-                    <div class="flex items-start gap-2">
-                        <span onclick="toggleStep(${step.id})" class="absolute -left-[11px] flex items-center justify-center w-5 h-5 rounded-full cursor-pointer bg-white border-2 border-indigo-300">
-                            ${step.check ? '<i class="fa-solid fa-check text-[10px] text-indigo-600"></i>' : ''}
-                        </span>
-                        <span class="${step.check ? 'line-through text-gray-400' : 'text-gray-700 font-medium'}">${step.texto}</span>
-                    </div>
+                    <div class="flex items-start gap-2"><span onclick="toggleStep(${step.id})" class="absolute -left-[11px] flex items-center justify-center w-5 h-5 rounded-full cursor-pointer bg-white border-2 border-indigo-300">${step.check ? '<i class="fa-solid fa-check text-[10px] text-indigo-600"></i>' : ''}</span><span class="${step.check ? 'line-through text-gray-400' : 'text-gray-700 font-medium'}">${step.texto}</span></div>
                     <button onclick="deleteStep(${step.id})" class="text-gray-300 hover:text-red-500 text-[11px] opacity-0 group-hover/step:opacity-100"><i class="fa-solid fa-xmark"></i></button>
-                </div>`).join('') || `<p class="text-gray-400 italic ml-4">Nenhuma meta configurada.</p>`;
-
+                </div>`).join('') || `<p class="text-gray-400 italic ml-4">Nenhuma meta.</p>`;
             if(activeTab === 'mindmap') renderMindmap();
             if(activeTab === 'reviews') renderReviews();
         }
@@ -617,7 +497,8 @@
             mList.innerHTML = data.materias.map(m => `<li class="flex justify-between items-center py-1 bg-gray-50 px-2 rounded text-xs mb-1"><span class="truncate max-w-[120px]">${m.nome}</span><div class="flex gap-2"><button onclick="editSubject(${m.id})" class="text-blue-500"><i class="fa-solid fa-pen"></i></button><button onclick="deleteSubject(${m.id})" class="text-red-500"><i class="fa-solid fa-trash"></i></button></div></li>`).join('');
         }
 
-        render(); setupSemesterSelect(); renderAdminLists();
+        // Inicialização
+        loadDataFromCloud();
     </script>
 </body>
 </html>
