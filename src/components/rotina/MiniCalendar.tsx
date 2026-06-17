@@ -1,10 +1,12 @@
 "use client";
 
 /**
- * MiniCalendar — calendário mensal compacto, com o dia de hoje destacado.
+ * MiniCalendar — calendário mensal controlado: destaca o dia selecionado e o
+ * dia de hoje, e avisa o pai quando um dia é escolhido.
  */
 
 import { useState } from "react";
+import { toISODate } from "@/lib/api";
 
 const WEEKDAYS = ["D", "S", "T", "Q", "Q", "S", "S"];
 const MONTHS = [
@@ -22,10 +24,16 @@ const MONTHS = [
   "Dezembro",
 ];
 
-export default function MiniCalendar() {
+interface MiniCalendarProps {
+  selected: string; // YYYY-MM-DD
+  onSelect: (iso: string) => void;
+}
+
+export default function MiniCalendar({ selected, onSelect }: MiniCalendarProps) {
   const today = new Date();
+  const selDate = new Date(selected + "T00:00:00");
   const [view, setView] = useState(
-    new Date(today.getFullYear(), today.getMonth(), 1),
+    new Date(selDate.getFullYear(), selDate.getMonth(), 1),
   );
 
   const year = view.getFullYear();
@@ -37,10 +45,10 @@ export default function MiniCalendar() {
   for (let i = 0; i < firstWeekday; i++) cells.push(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
-  const isToday = (d: number) =>
-    d === today.getDate() &&
-    month === today.getMonth() &&
-    year === today.getFullYear();
+  const sameDay = (d: number, ref: Date) =>
+    d === ref.getDate() &&
+    month === ref.getMonth() &&
+    year === ref.getFullYear();
 
   return (
     <div className="rounded-2xl border border-stone-200 bg-paper p-4 shadow-sm">
@@ -70,20 +78,26 @@ export default function MiniCalendar() {
             {w}
           </div>
         ))}
-        {cells.map((d, i) => (
-          <div
-            key={i}
-            className={
-              d === null
-                ? ""
-                : isToday(d)
-                  ? "mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-ink font-medium text-paper"
-                  : "mx-auto flex h-8 w-8 items-center justify-center rounded-full text-sm text-ink transition hover:bg-stone-100"
-            }
-          >
-            {d ?? ""}
-          </div>
-        ))}
+        {cells.map((d, i) => {
+          if (d === null) return <div key={i} />;
+          const isSel = sameDay(d, selDate);
+          const isToday = sameDay(d, today);
+          return (
+            <button
+              key={i}
+              onClick={() => onSelect(toISODate(new Date(year, month, d)))}
+              className={`mx-auto flex h-8 w-8 items-center justify-center rounded-full text-sm transition ${
+                isSel
+                  ? "bg-ink font-medium text-paper"
+                  : isToday
+                    ? "text-ink ring-2 ring-ink/40 hover:bg-stone-100"
+                    : "text-ink hover:bg-stone-100"
+              }`}
+            >
+              {d}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

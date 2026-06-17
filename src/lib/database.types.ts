@@ -14,7 +14,8 @@
  *   npx supabase gen types typescript --project-id <ID> > src/lib/database.types.ts
  */
 
-export type FloatingElementType = "sticker" | "post-it" | "sketch";
+export type FloatingElementType = "sticker" | "post-it" | "sketch" | "note";
+export type HabitLogStatus = "done" | "skipped";
 export type TransactionType = "income" | "expense" | "savings";
 export type TransactionStatus = "paid" | "pending";
 
@@ -109,6 +110,8 @@ export interface Database {
           scale: number;
           rotation: number;
           z_index: number;
+          width: number | null;
+          height: number | null;
         };
         Insert: {
           id?: string;
@@ -120,6 +123,8 @@ export interface Database {
           scale?: number;
           rotation?: number;
           z_index?: number;
+          width?: number | null;
+          height?: number | null;
         };
         Update: {
           id?: string;
@@ -131,6 +136,8 @@ export interface Database {
           scale?: number;
           rotation?: number;
           z_index?: number;
+          width?: number | null;
+          height?: number | null;
         };
         Relationships: [
           {
@@ -180,18 +187,21 @@ export interface Database {
           name: string;
           color_hex: string;
           created_at: string;
+          days_of_week: number[] | null;
         };
         Insert: {
           id?: string;
           name: string;
           color_hex?: string;
           created_at?: string;
+          days_of_week?: number[] | null;
         };
         Update: {
           id?: string;
           name?: string;
           color_hex?: string;
           created_at?: string;
+          days_of_week?: number[] | null;
         };
         Relationships: [];
       };
@@ -200,16 +210,19 @@ export interface Database {
           id: string;
           habit_id: string;
           log_date: string;
+          status: HabitLogStatus;
         };
         Insert: {
           id?: string;
           habit_id: string;
           log_date?: string;
+          status?: HabitLogStatus;
         };
         Update: {
           id?: string;
           habit_id?: string;
           log_date?: string;
+          status?: HabitLogStatus;
         };
         Relationships: [
           {
@@ -270,6 +283,7 @@ export interface Database {
           start_time: string;
           travel_minutes: number;
           created_at: string;
+          days_of_week: number[] | null;
         };
         Insert: {
           id?: string;
@@ -278,6 +292,7 @@ export interface Database {
           start_time: string;
           travel_minutes?: number;
           created_at?: string;
+          days_of_week?: number[] | null;
         };
         Update: {
           id?: string;
@@ -286,6 +301,7 @@ export interface Database {
           start_time?: string;
           travel_minutes?: number;
           created_at?: string;
+          days_of_week?: number[] | null;
         };
         Relationships: [];
       };

@@ -1,13 +1,22 @@
 /**
  * CRUD — hábitos e seus registros diários.
  *
- * A presença de uma linha em `habit_logs` (habit_id, log_date) significa que
- * o hábito foi cumprido naquele dia. O "streak" é a quantidade de dias
- * consecutivos cumpridos terminando hoje.
+ * Recorrência: `days_of_week` é um array de 0..6 (0=domingo). NULL/vazio = todos
+ * os dias. Um hábito aparece num dia se for agendado para o dia-da-semana dele.
+ *
+ * Registro do dia (`habit_logs`, único por habit_id+log_date):
+ *  - status 'done'    → cumprido naquele dia
+ *  - status 'skipped' → removido/pulado naquele dia (não conta, some da lista)
+ *  - sem linha        → pendente
  */
 
 import { supabase } from "@/lib/supabaseClient";
-import type { Database, Habit, HabitLog } from "@/lib/database.types";
+import type {
+  Database,
+  Habit,
+  HabitLog,
+  HabitLogStatus,
+} from "@/lib/database.types";
 import { unwrap, unwrapList } from "./helpers";
 
 type HabitInsert = Database["public"]["Tables"]["habits"]["Insert"];
@@ -18,6 +27,15 @@ export function toISODate(d: Date): string {
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
+}
+
+/** Um item recorrente está agendado para a data? (null/vazio = todo dia) */
+export function isScheduledOn(
+  days: number[] | null | undefined,
+  date: Date,
+): boolean {
+  if (!days || days.length === 0) return true;
+  return days.includes(date.getDay());
 }
 
 export async function listHabits(): Promise<Habit[]> {
@@ -57,42 +75,49 @@ export async function listHabitLogs(
   );
 }
 
-/** Marca/desmarca um hábito num dia (toggle). Retorna o novo estado. */
-export async function toggleHabit(
+/** Define o status de um hábito num dia (upsert). */
+export async function setHabitStatus(
   habitId: string,
   date: string,
-): Promise<boolean> {
-  const existing = await unwrapList<HabitLog>(
-    "toggleHabit.check",
+  status: HabitLogStatus,
+): Promise<HabitLog> {
+  return unwrap(
+    "setHabitStatus",
     await supabase
       .from("habit_logs")
-      .select("*")
-      .eq("habit_id", habitId)
-      .eq("log_date", date),
+      .upsert(
+        { habit_id: habitId, log_date: date, status },
+        { onConflict: "habit_id,log_date" },
+      )
+      .select()
+      .single(),
   );
+}
 
-  if (existing.length > 0) {
-    const { error } = await supabase
-      .from("habit_logs")
-      .delete()
-      .eq("habit_id", habitId)
-      .eq("log_date", date);
-    if (error) throw error;
-    return false;
-  }
-
+/** Remove o registro do dia (volta a "pendente"). */
+export async function clearHabitLog(
+  habitId: string,
+  date: string,
+): Promise<void> {
   const { error } = await supabase
     .from("habit_logs")
-    .insert({ habit_id: habitId, log_date: date });
-  if (error) throw error;
-  return true;
+    .delete()
+    .eq("habit_id", habitId)
+    .eq("log_date", date);
+  if (error) {
+    console.error("Supabase error em clearHabitLog:", error);
+    throw error;
+  }
 }
 
 /**
  * Calcula a sequência (streak) de dias consecutivos cumpridos terminando hoje.
- * `doneDates` é o conjunto de datas (YYYY-MM-DD) em que o hábito foi cumprido.
+ * `doneDates` é o conjunto de datas (YYYY-MM-DD) com status 'done'.
  */
-export function computeStreak(doneDates: Set<string>, today = new Date()): number {
+export function computeStreak(
+  doneDates: Set<string>,
+  today = new Date(),
+): number {
   let streak = 0;
   const cursor = new Date(today);
   // Se hoje ainda não foi marcado, a sequência pode continuar até ontem.

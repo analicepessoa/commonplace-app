@@ -13,11 +13,15 @@ import {
   createRoutine,
   deleteRoutine,
   computeLeaveTime,
+  isScheduledOn,
 } from "@/lib/api";
 import type { Routine } from "@/lib/database.types";
 import CustomButton from "@/components/ui/CustomButton";
 
-export default function RoutineModal() {
+const WEEK = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+export default function RoutineModal({ date }: { date: string }) {
+  const selected = new Date(date + "T00:00:00");
   const [routines, setRoutines] = useState<Routine[]>([]);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,6 +31,7 @@ export default function RoutineModal() {
   const [location, setLocation] = useState("");
   const [startTime, setStartTime] = useState("09:00");
   const [travel, setTravel] = useState(30);
+  const [days, setDays] = useState<number[]>([]);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -34,6 +39,10 @@ export default function RoutineModal() {
       .then(setRoutines)
       .catch((e) => setError(e.message ?? String(e)));
   }, []);
+
+  const todaysRoutines = routines.filter((r) =>
+    isScheduledOn(r.days_of_week, selected),
+  );
 
   const previewLeave = computeLeaveTime(startTime, travel);
 
@@ -46,6 +55,7 @@ export default function RoutineModal() {
         location: location.trim() || null,
         start_time: startTime,
         travel_minutes: travel,
+        days_of_week: days.length > 0 ? days : null,
       });
       setRoutines((prev) =>
         [...prev, created].sort((a, b) =>
@@ -56,6 +66,7 @@ export default function RoutineModal() {
       setLocation("");
       setStartTime("09:00");
       setTravel(30);
+      setDays([]);
       setOpen(false);
     } catch (e) {
       alert("Erro ao salvar rotina: " + (e as Error).message);
@@ -89,14 +100,15 @@ export default function RoutineModal() {
         </p>
       )}
 
-      {routines.length === 0 && !error && (
+      {todaysRoutines.length === 0 && !error && (
         <p className="text-ink-soft">
-          Sem rotinas. Crie uma (ex.: Trabalho) e veja o horário de saída.
+          Sem rotinas para este dia. Crie uma (ex.: Trabalho) e veja o horário
+          de saída.
         </p>
       )}
 
       <ul className="space-y-2">
-        {routines.map((r) => (
+        {todaysRoutines.map((r) => (
           <li
             key={r.id}
             className="flex items-center justify-between rounded-xl border border-stone-200 bg-white px-4 py-3"
@@ -186,6 +198,35 @@ export default function RoutineModal() {
                     <span className="text-sm text-ink-soft">min</span>
                   </div>
                 </label>
+              </div>
+
+              <div>
+                <span className="text-sm text-ink-soft">
+                  Repete em (vazio = todo dia):
+                </span>
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {WEEK.map((label, idx) => {
+                    const on = days.includes(idx);
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() =>
+                          setDays((prev) =>
+                            on ? prev.filter((d) => d !== idx) : [...prev, idx],
+                          )
+                        }
+                        className={`rounded-full px-3 py-1 text-sm transition ${
+                          on
+                            ? "bg-ink text-paper"
+                            : "border border-stone-300 text-ink-soft hover:bg-stone-100"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               <div className="rounded-xl bg-amber-100 px-4 py-3 text-center">

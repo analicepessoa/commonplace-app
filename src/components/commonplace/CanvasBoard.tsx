@@ -3,10 +3,13 @@
 /**
  * CanvasBoard — área de trabalho absoluta (X, Y) de uma página do Commonplace.
  *
- * Renderiza o texto fixo da nota e, por cima, os elementos flutuantes
- * (post-its e stickers) arrastáveis. Cada movimento (onDragEnd) persiste
- * pos_x/pos_y em `floating_elements`; clicar num item o traz para o topo
- * (z-index recalculado).
+ * Renderiza o texto fixo da nota e, por cima, os elementos flutuantes:
+ *  - sticker  : emoji decorativo
+ *  - post-it  : recado curto (texto fixo, pequeno)
+ *  - note     : bloco de nota grande, editável inline e redimensionável
+ *
+ * Movimento (onDragEnd) persiste pos_x/pos_y; clicar traz o item ao topo;
+ * redimensionar a nota persiste width/height.
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -28,6 +31,7 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
   const [elements, setElements] = useState<FloatingElement[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   useEffect(() => {
     listFloatingElements(entry.id)
@@ -36,49 +40,53 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
       .finally(() => setLoading(false));
   }, [entry.id]);
 
+  function maxZ() {
+    return elements.reduce((m, el) => Math.max(m, el.z_index), 0);
+  }
+
   async function addPostIt() {
-    const text = window.prompt("Texto do post-it:", "");
+    const text = window.prompt("Texto do post-it (curto):", "");
     if (text === null) return;
-    try {
-      const created = await createFloatingElement({
-        entry_id: entry.id,
-        type: "post-it",
-        content_data: text,
-        pos_x: 40 + Math.random() * 80,
-        pos_y: 40 + Math.random() * 80,
-        z_index: maxZ() + 1,
-      });
-      setElements((prev) => [...prev, created]);
-    } catch (e) {
-      alert("Erro ao criar post-it: " + (e as Error).message);
-    }
+    await create({ type: "post-it", content_data: text });
+  }
+
+  async function addNote() {
+    const created = await create({
+      type: "note",
+      content_data: "",
+      width: 260,
+      height: 180,
+    });
+    if (created) setEditingId(created.id);
   }
 
   async function addSticker(emoji: string) {
+    await create({ type: "sticker", content_data: emoji });
+  }
+
+  async function create(
+    partial: Partial<FloatingElement> & { type: FloatingElement["type"] },
+  ): Promise<FloatingElement | null> {
     try {
       const created = await createFloatingElement({
         entry_id: entry.id,
-        type: "sticker",
-        content_data: emoji,
-        pos_x: 40 + Math.random() * 120,
-        pos_y: 40 + Math.random() * 120,
+        pos_x: 40 + Math.random() * 90,
+        pos_y: 40 + Math.random() * 90,
         z_index: maxZ() + 1,
+        ...partial,
       });
       setElements((prev) => [...prev, created]);
+      return created;
     } catch (e) {
-      alert("Erro ao criar sticker: " + (e as Error).message);
+      alert("Erro ao criar elemento: " + (e as Error).message);
+      return null;
     }
-  }
-
-  function maxZ() {
-    return elements.reduce((m, el) => Math.max(m, el.z_index), 0);
   }
 
   async function handleDragEnd(
     el: FloatingElement,
     pos: { pos_x: number; pos_y: number },
   ) {
-    // Atualiza estado otimista e persiste.
     setElements((prev) =>
       prev.map((e) => (e.id === el.id ? { ...e, ...pos } : e)),
     );
@@ -89,9 +97,23 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
     }
   }
 
+  async function handleResize(
+    el: FloatingElement,
+    size: { width: number; height: number },
+  ) {
+    setElements((prev) =>
+      prev.map((e) => (e.id === el.id ? { ...e, ...size } : e)),
+    );
+    try {
+      await updateFloatingElement(el.id, size);
+    } catch (e) {
+      console.error("Falha ao salvar tamanho:", e);
+    }
+  }
+
   async function handleFocus(el: FloatingElement) {
+    if (el.z_index === maxZ()) return; // já no topo
     const newZ = maxZ() + 1;
-    if (el.z_index === newZ - 1 && el.z_index === maxZ()) return; // já no topo
     setElements((prev) =>
       prev.map((e) => (e.id === el.id ? { ...e, z_index: newZ } : e)),
     );
@@ -102,17 +124,23 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
     }
   }
 
-  async function handleEditPostIt(el: FloatingElement) {
-    const text = window.prompt("Editar post-it:", el.content_data ?? "");
-    if (text === null) return;
+  async function saveContent(el: FloatingElement, text: string) {
+    setEditingId(null);
+    if (text === el.content_data) return;
     setElements((prev) =>
       prev.map((e) => (e.id === el.id ? { ...e, content_data: text } : e)),
     );
     try {
       await updateFloatingElement(el.id, { content_data: text });
     } catch (e) {
-      console.error("Falha ao editar post-it:", e);
+      console.error("Falha ao salvar texto:", e);
     }
+  }
+
+  async function handleEditPostIt(el: FloatingElement) {
+    const text = window.prompt("Editar post-it:", el.content_data ?? "");
+    if (text === null) return;
+    await saveContent(el, text);
   }
 
   async function handleDelete(el: FloatingElement) {
@@ -129,6 +157,12 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
     <div>
       {/* Barra de ferramentas */}
       <div className="mb-3 flex flex-wrap items-center gap-2">
+        <button
+          onClick={addNote}
+          className="rounded-lg bg-sky-200 px-3 py-1.5 text-sm font-medium text-sky-900 shadow-sm transition hover:bg-sky-300"
+        >
+          + Nota
+        </button>
         <button
           onClick={addPostIt}
           className="rounded-lg bg-amber-200 px-3 py-1.5 text-sm font-medium text-amber-900 shadow-sm transition hover:bg-amber-300"
@@ -188,6 +222,12 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
             constraintsRef={canvasRef}
             onFocus={() => handleFocus(el)}
             onDragEnd={(pos) => handleDragEnd(el, pos)}
+            disableDrag={el.type === "note" && editingId === el.id}
+            width={el.type === "note" ? (el.width ?? 260) : undefined}
+            height={el.type === "note" ? (el.height ?? 180) : undefined}
+            onResizeEnd={
+              el.type === "note" ? (size) => handleResize(el, size) : undefined
+            }
           >
             {el.type === "sticker" ? (
               <div
@@ -197,6 +237,14 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
               >
                 {el.content_data}
               </div>
+            ) : el.type === "note" ? (
+              <NoteBlock
+                el={el}
+                editing={editingId === el.id}
+                onStartEdit={() => setEditingId(el.id)}
+                onSave={(text) => saveContent(el, text)}
+                onDelete={() => handleDelete(el)}
+              />
             ) : (
               <div
                 onDoubleClick={() => handleEditPostIt(el)}
@@ -225,9 +273,63 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
         ))}
       </div>
       <p className="mt-2 text-xs text-stone-400">
-        Arraste post-its e stickers livremente. A posição é salva
-        automaticamente; clicar traz o item para frente.
+        Notas: duplo-clique para escrever, arraste o canto para
+        redimensionar. Post-its e stickers: arraste para mover. Tudo salva
+        automaticamente.
       </p>
+    </div>
+  );
+}
+
+/** Bloco de nota grande: texto fixo até dar duplo-clique (textarea inline). */
+function NoteBlock({
+  el,
+  editing,
+  onStartEdit,
+  onSave,
+  onDelete,
+}: {
+  el: FloatingElement;
+  editing: boolean;
+  onStartEdit: () => void;
+  onSave: (text: string) => void;
+  onDelete: () => void;
+}) {
+  const [draft, setDraft] = useState(el.content_data ?? "");
+
+  return (
+    <div className="relative flex h-full w-full flex-col rounded-lg border border-stone-200 bg-white/95 p-3 shadow-md">
+      <button
+        onClick={(ev) => {
+          ev.stopPropagation();
+          onDelete();
+        }}
+        className="absolute right-1 top-1 z-10 text-stone-300 transition hover:text-red-500"
+        title="Remover nota"
+      >
+        ×
+      </button>
+      {editing ? (
+        <textarea
+          autoFocus
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={() => onSave(draft)}
+          onPointerDown={(e) => e.stopPropagation()}
+          placeholder="Escreva livremente…"
+          className="font-hand h-full w-full resize-none bg-transparent text-lg leading-snug text-ink outline-none"
+        />
+      ) : (
+        <div
+          onDoubleClick={onStartEdit}
+          className="font-hand h-full w-full overflow-auto whitespace-pre-wrap text-lg leading-snug text-ink"
+          title="Duplo-clique para editar"
+        >
+          {el.content_data || (
+            <span className="text-stone-400">duplo-clique para escrever…</span>
+          )}
+        </div>
+      )}
     </div>
   );
 }

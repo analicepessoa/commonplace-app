@@ -14,19 +14,21 @@ import {
 } from "@/lib/api";
 import type { Meal, WaterIntake } from "@/lib/database.types";
 
-export default function WaterTracker() {
+export default function WaterTracker({ date }: { date: string }) {
   const [water, setWater] = useState<WaterIntake | null>(null);
   const [meals, setMeals] = useState<Meal[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([getOrCreateWater(), getOrCreateMeals()])
+    setWater(null);
+    setMeals([]);
+    Promise.all([getOrCreateWater(date), getOrCreateMeals(date)])
       .then(([w, m]) => {
         setWater(w);
         setMeals(m);
       })
       .catch((e) => setError(e.message ?? String(e)));
-  }, []);
+  }, [date]);
 
   async function changeGlasses(next: number) {
     if (!water) return;
