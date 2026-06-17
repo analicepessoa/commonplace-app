@@ -52,6 +52,18 @@ export async function createHabit(payload: HabitInsert): Promise<Habit> {
   );
 }
 
+type HabitUpdate = Database["public"]["Tables"]["habits"]["Update"];
+
+export async function updateHabit(
+  id: string,
+  payload: HabitUpdate,
+): Promise<Habit> {
+  return unwrap(
+    "updateHabit",
+    await supabase.from("habits").update(payload).eq("id", id).select().single(),
+  );
+}
+
 export async function deleteHabit(id: string): Promise<void> {
   const { error } = await supabase.from("habits").delete().eq("id", id);
   if (error) {

@@ -11,12 +11,16 @@ import {
   setWaterGlasses,
   getOrCreateMeals,
   toggleMeal,
+  addMeal,
+  renameMeal,
+  deleteMeal,
 } from "@/lib/api";
 import type { Meal, WaterIntake } from "@/lib/database.types";
 
 export default function WaterTracker({ date }: { date: string }) {
   const [water, setWater] = useState<WaterIntake | null>(null);
   const [meals, setMeals] = useState<Meal[]>([]);
+  const [newMeal, setNewMeal] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -48,6 +52,42 @@ export default function WaterTracker({ date }: { date: string }) {
       await toggleMeal(meal.id, done);
     } catch (e) {
       console.error("toggleMeal falhou:", e);
+    }
+  }
+
+  async function handleAddMeal() {
+    const name = newMeal.trim();
+    if (!name) return;
+    setNewMeal("");
+    try {
+      const created = await addMeal(date, name);
+      setMeals((prev) => [...prev, created]);
+    } catch (e) {
+      alert("Erro ao adicionar refeição: " + (e as Error).message);
+    }
+  }
+
+  async function handleRenameMeal(meal: Meal) {
+    const name = window.prompt("Editar refeição:", meal.name);
+    if (name === null) return;
+    const trimmed = name.trim();
+    if (!trimmed || trimmed === meal.name) return;
+    setMeals((prev) =>
+      prev.map((m) => (m.id === meal.id ? { ...m, name: trimmed } : m)),
+    );
+    try {
+      await renameMeal(meal.id, trimmed);
+    } catch (e) {
+      console.error("renameMeal falhou:", e);
+    }
+  }
+
+  async function handleDeleteMeal(meal: Meal) {
+    setMeals((prev) => prev.filter((m) => m.id !== meal.id));
+    try {
+      await deleteMeal(meal.id);
+    } catch (e) {
+      console.error("deleteMeal falhou:", e);
     }
   }
 
@@ -104,13 +144,16 @@ export default function WaterTracker({ date }: { date: string }) {
         <h3 className="mb-2 font-hand text-2xl text-ink">Refeições</h3>
         <ul className="space-y-1.5">
           {meals.map((meal) => (
-            <li key={meal.id}>
+            <li
+              key={meal.id}
+              className="group flex items-center gap-2 rounded-lg px-2 py-1.5 transition hover:bg-stone-50"
+            >
               <button
                 onClick={() => handleToggleMeal(meal)}
-                className="flex w-full items-center gap-3 rounded-lg px-2 py-1.5 text-left transition hover:bg-stone-50"
+                className="flex flex-1 items-center gap-3 text-left"
               >
                 <span
-                  className={`flex h-6 w-6 items-center justify-center rounded-md border-2 ${
+                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${
                     meal.done
                       ? "border-emerald-500 bg-emerald-500 text-white"
                       : "border-stone-300 text-transparent"
@@ -126,9 +169,41 @@ export default function WaterTracker({ date }: { date: string }) {
                   {meal.name}
                 </span>
               </button>
+              <button
+                onClick={() => handleRenameMeal(meal)}
+                className="text-stone-300 opacity-0 transition hover:text-ink-soft group-hover:opacity-100"
+                title="Editar refeição"
+              >
+                ✎
+              </button>
+              <button
+                onClick={() => handleDeleteMeal(meal)}
+                className="text-stone-300 opacity-0 transition hover:text-red-500 group-hover:opacity-100"
+                title="Remover refeição"
+              >
+                ×
+              </button>
             </li>
           ))}
         </ul>
+
+        <div className="mt-3 flex gap-2">
+          <input
+            value={newMeal}
+            onChange={(e) => setNewMeal(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleAddMeal();
+            }}
+            placeholder="Adicionar refeição…"
+            className="flex-1 rounded-lg border border-stone-300 bg-white px-3 py-1.5 text-sm outline-none focus:border-stone-400"
+          />
+          <button
+            onClick={handleAddMeal}
+            className="rounded-lg bg-emerald-200 px-3 py-1.5 text-sm font-medium text-emerald-900 transition hover:bg-emerald-300"
+          >
+            +
+          </button>
+        </div>
       </div>
     </section>
   );

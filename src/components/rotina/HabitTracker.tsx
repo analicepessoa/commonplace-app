@@ -12,6 +12,7 @@ import {
   setHabitStatus,
   clearHabitLog,
   createHabit,
+  updateHabit,
   deleteHabit,
   computeStreak,
   isScheduledOn,
@@ -36,8 +37,9 @@ export default function HabitTracker({ date }: { date: string }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Form de novo hábito
+  // Form de novo/editar hábito
   const [adding, setAdding] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [newName, setNewName] = useState("");
   const [newDays, setNewDays] = useState<number[]>([]);
 
@@ -142,19 +144,42 @@ export default function HabitTracker({ date }: { date: string }) {
     }
   }
 
-  async function handleAdd() {
-    if (!newName.trim()) return;
+  function openCreate() {
+    setEditingId(null);
+    setNewName("");
+    setNewDays([]);
+    setAdding(true);
+  }
+
+  function openEdit(habit: Habit) {
+    setEditingId(habit.id);
+    setNewName(habit.name);
+    setNewDays(habit.days_of_week ?? []);
+    setAdding(true);
+  }
+
+  function closeForm() {
+    setAdding(false);
+    setEditingId(null);
+    setNewName("");
+    setNewDays([]);
+  }
+
+  async function handleSave() {
+    const name = newName.trim();
+    if (!name) return;
+    const days = newDays.length > 0 ? newDays : null;
     try {
-      const created = await createHabit({
-        name: newName.trim(),
-        days_of_week: newDays.length > 0 ? newDays : null,
-      });
-      setHabits((prev) => [...prev, created]);
-      setNewName("");
-      setNewDays([]);
-      setAdding(false);
+      if (editingId) {
+        const updated = await updateHabit(editingId, { name, days_of_week: days });
+        setHabits((prev) => prev.map((h) => (h.id === editingId ? updated : h)));
+      } else {
+        const created = await createHabit({ name, days_of_week: days });
+        setHabits((prev) => [...prev, created]);
+      }
+      closeForm();
     } catch (e) {
-      alert("Erro ao criar hábito: " + (e as Error).message);
+      alert("Erro ao salvar hábito: " + (e as Error).message);
     }
   }
 
@@ -172,13 +197,16 @@ export default function HabitTracker({ date }: { date: string }) {
     <section className="rounded-2xl border border-stone-200 bg-paper p-5 shadow-sm">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="font-hand text-3xl text-ink">Hábitos</h2>
-        <CustomButton size="sm" onClick={() => setAdding((v) => !v)}>
+        <CustomButton size="sm" onClick={() => (adding ? closeForm() : openCreate())}>
           {adding ? "Fechar" : "+ Hábito"}
         </CustomButton>
       </div>
 
       {adding && (
         <div className="mb-4 rounded-xl border border-stone-200 bg-white p-3">
+          <p className="mb-2 text-sm font-medium text-ink-soft">
+            {editingId ? "Editar hábito" : "Novo hábito"}
+          </p>
           <input
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
@@ -211,7 +239,7 @@ export default function HabitTracker({ date }: { date: string }) {
             })}
           </div>
           <div className="mt-3 flex justify-end">
-            <CustomButton size="sm" onClick={handleAdd}>
+            <CustomButton size="sm" onClick={handleSave}>
               Salvar
             </CustomButton>
           </div>
@@ -299,13 +327,22 @@ export default function HabitTracker({ date }: { date: string }) {
                 >
                   pular
                 </button>
-                <button
-                  onClick={() => handleDelete(habit)}
-                  className="text-stone-300 transition hover:text-red-500"
-                  title="Excluir hábito"
-                >
-                  ×
-                </button>
+                <div className="flex gap-1.5">
+                  <button
+                    onClick={() => openEdit(habit)}
+                    className="text-stone-300 transition hover:text-ink-soft"
+                    title="Editar hábito"
+                  >
+                    ✎
+                  </button>
+                  <button
+                    onClick={() => handleDelete(habit)}
+                    className="text-stone-300 transition hover:text-red-500"
+                    title="Excluir hábito"
+                  >
+                    ×
+                  </button>
+                </div>
               </div>
             </li>
           );

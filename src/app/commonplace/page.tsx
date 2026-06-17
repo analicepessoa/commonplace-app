@@ -1,11 +1,10 @@
 "use client";
 
 /**
- * Índice do Commonplace — re-skin estilo planner digital (Prompt 2 + Fase C).
+ * Índice do Commonplace — estilo planner (Prompt 2 + Fase C, sem meses).
  *
  * Fichário com:
  *  - Abas pastel no topo = Categorias Master (cores).
- *  - Abas de mês na lateral (JAN…DEZ) = filtram as notas por mês de criação.
  *  - Página pastel com caixas arredondadas = subcategorias e suas notas.
  *  - Busca rápida cruzando categorias.
  */
@@ -19,11 +18,6 @@ import {
   type CategoryWithSubcategories,
 } from "@/lib/api";
 import type { CommonplaceEntry } from "@/lib/database.types";
-
-const MONTHS = [
-  "JAN", "FEV", "MAR", "ABR", "MAI", "JUN",
-  "JUL", "AGO", "SET", "OUT", "NOV", "DEZ",
-];
 
 /** Mistura uma cor hex com branco para um tom pastel (amount 0..1). */
 function pastel(hex: string, amount = 0.78): string {
@@ -42,7 +36,6 @@ export default function CommonplaceIndexPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [activeCat, setActiveCat] = useState<string | null>(null);
-  const [activeMonth, setActiveMonth] = useState<number | null>(null);
 
   const [query, setQuery] = useState("");
   const [noteResults, setNoteResults] = useState<CommonplaceEntry[]>([]);
@@ -78,12 +71,7 @@ export default function CommonplaceIndexPage() {
   );
 
   function entriesForSub(subId: string): CommonplaceEntry[] {
-    return entries.filter(
-      (e) =>
-        e.subcategory_id === subId &&
-        (activeMonth === null ||
-          new Date(e.created_at).getMonth() === activeMonth),
-    );
+    return entries.filter((e) => e.subcategory_id === subId);
   }
 
   return (
@@ -149,7 +137,7 @@ export default function CommonplaceIndexPage() {
       )}
 
       {!loading && !error && index.length > 0 && (
-        <div className="relative">
+        <div>
           {/* Abas de categoria (topo) */}
           <div className="flex flex-wrap gap-1.5 pl-2">
             {index.map((cat) => {
@@ -172,127 +160,85 @@ export default function CommonplaceIndexPage() {
             })}
           </div>
 
-          {/* Página + abas de mês na lateral */}
-          <div className="flex">
-            <div
-              className="min-h-[60vh] flex-1 rounded-2xl rounded-tl-none border border-stone-200 p-6 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.25)]"
-              style={{
-                backgroundColor: category
-                  ? pastel(category.color_hex, 0.88)
-                  : "var(--paper)",
-              }}
-            >
-              {category && (
-                <>
-                  <h2 className="mb-1 font-hand text-4xl font-bold text-ink">
-                    {category.name.replace(/\s*\(.*\)\s*$/, "")}
-                  </h2>
-                  <div
-                    className="mb-5 h-1.5 w-28 rounded-full"
-                    style={{ backgroundColor: category.color_hex }}
-                  />
+          {/* Página da categoria ativa */}
+          <div
+            className="min-h-[60vh] rounded-2xl rounded-tl-none border border-stone-200 p-6 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.25)]"
+            style={{
+              backgroundColor: category
+                ? pastel(category.color_hex, 0.88)
+                : "var(--paper)",
+            }}
+          >
+            {category && (
+              <>
+                <h2 className="mb-1 font-hand text-4xl font-bold text-ink">
+                  {category.name.replace(/\s*\(.*\)\s*$/, "")}
+                </h2>
+                <div
+                  className="mb-5 h-1.5 w-28 rounded-full"
+                  style={{ backgroundColor: category.color_hex }}
+                />
 
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    {category.subcategories.map((sub) => {
-                      const subEntries = entriesForSub(sub.id);
-                      return (
-                        <div
-                          key={sub.id}
-                          className="rounded-2xl bg-white/70 p-4 shadow-sm ring-1 ring-black/5"
-                        >
-                          <div className="mb-2 flex items-center justify-between">
-                            <Link
-                              href={`/commonplace/sub/${sub.id}`}
-                              className="font-hand text-2xl text-ink hover:underline"
-                            >
-                              {sub.name}
-                            </Link>
-                            <span
-                              className="rounded-full px-2 py-0.5 text-xs font-medium"
-                              style={{
-                                backgroundColor: pastel(category.color_hex, 0.6),
-                                color: "#3a3530",
-                              }}
-                            >
-                              {subEntries.length}
-                            </span>
-                          </div>
-                          {subEntries.length === 0 ? (
-                            <p className="text-sm text-stone-400">
-                              {activeMonth === null
-                                ? "Sem notas ainda."
-                                : "Nada neste mês."}
-                            </p>
-                          ) : (
-                            <ul className="space-y-1">
-                              {subEntries.slice(0, 4).map((e) => (
-                                <li key={e.id}>
-                                  <Link
-                                    href={`/commonplace/${e.id}`}
-                                    className="block truncate rounded px-1 py-0.5 text-sm text-ink-soft transition hover:bg-black/5 hover:text-ink"
-                                  >
-                                    • {e.title}
-                                  </Link>
-                                </li>
-                              ))}
-                              {subEntries.length > 4 && (
-                                <li>
-                                  <Link
-                                    href={`/commonplace/sub/${sub.id}`}
-                                    className="text-xs text-ink-soft hover:underline"
-                                  >
-                                    +{subEntries.length - 4} mais…
-                                  </Link>
-                                </li>
-                              )}
-                            </ul>
-                          )}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {category.subcategories.map((sub) => {
+                    const subEntries = entriesForSub(sub.id);
+                    return (
+                      <div
+                        key={sub.id}
+                        className="rounded-2xl bg-white/70 p-4 shadow-sm ring-1 ring-black/5"
+                      >
+                        <div className="mb-2 flex items-center justify-between">
+                          <Link
+                            href={`/commonplace/sub/${sub.id}`}
+                            className="font-hand text-2xl text-ink hover:underline"
+                          >
+                            {sub.name}
+                          </Link>
+                          <span
+                            className="rounded-full px-2 py-0.5 text-xs font-medium"
+                            style={{
+                              backgroundColor: pastel(category.color_hex, 0.6),
+                              color: "#3a3530",
+                            }}
+                          >
+                            {subEntries.length}
+                          </span>
                         </div>
-                      );
-                    })}
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Abas de mês (lateral direita) */}
-            <div className="ml-1 flex flex-col gap-1 pt-2">
-              {MONTHS.map((m, idx) => {
-                const on = activeMonth === idx;
-                return (
-                  <button
-                    key={m}
-                    onClick={() => setActiveMonth(on ? null : idx)}
-                    className="rounded-r-xl py-2 pl-2 pr-3 text-xs font-bold tracking-wide transition"
-                    style={{
-                      backgroundColor: pastel(
-                        ["#3b82f6", "#a855f7", "#22c55e", "#eab308", "#f97316", "#ec4899"][
-                          idx % 6
-                        ],
-                        on ? 0.4 : 0.7,
-                      ),
-                      color: on ? "#3a3530" : "#6b6258",
-                    }}
-                    title={on ? "Mostrar todos os meses" : `Filtrar por ${m}`}
-                  >
-                    {m}
-                  </button>
-                );
-              })}
-            </div>
+                        {subEntries.length === 0 ? (
+                          <p className="text-sm text-stone-400">
+                            Sem notas ainda.
+                          </p>
+                        ) : (
+                          <ul className="space-y-1">
+                            {subEntries.slice(0, 4).map((e) => (
+                              <li key={e.id}>
+                                <Link
+                                  href={`/commonplace/${e.id}`}
+                                  className="block truncate rounded px-1 py-0.5 text-sm text-ink-soft transition hover:bg-black/5 hover:text-ink"
+                                >
+                                  • {e.title}
+                                </Link>
+                              </li>
+                            ))}
+                            {subEntries.length > 4 && (
+                              <li>
+                                <Link
+                                  href={`/commonplace/sub/${sub.id}`}
+                                  className="text-xs text-ink-soft hover:underline"
+                                >
+                                  +{subEntries.length - 4} mais…
+                                </Link>
+                              </li>
+                            )}
+                          </ul>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
-
-          {activeMonth !== null && (
-            <p className="mt-3 text-sm text-ink-soft">
-              Filtrando notas de <strong>{MONTHS[activeMonth]}</strong> ·{" "}
-              <button
-                onClick={() => setActiveMonth(null)}
-                className="underline hover:text-ink"
-              >
-                limpar filtro
-              </button>
-            </p>
-          )}
         </div>
       )}
     </main>

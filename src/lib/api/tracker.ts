@@ -77,6 +77,39 @@ export async function toggleMeal(id: string, done: boolean): Promise<Meal> {
   );
 }
 
+/** Adiciona uma refeição avulsa ao dia. */
+export async function addMeal(date: string, name: string): Promise<Meal> {
+  return unwrap(
+    "addMeal",
+    await supabase
+      .from("meals")
+      .insert({ meal_date: date, name })
+      .select()
+      .single(),
+  );
+}
+
+/** Renomeia uma refeição (corrigir sem precisar apagar e recriar). */
+export async function renameMeal(id: string, name: string): Promise<Meal> {
+  return unwrap(
+    "renameMeal",
+    await supabase
+      .from("meals")
+      .update({ name })
+      .eq("id", id)
+      .select()
+      .single(),
+  );
+}
+
+export async function deleteMeal(id: string): Promise<void> {
+  const { error } = await supabase.from("meals").delete().eq("id", id);
+  if (error) {
+    console.error("Supabase error em deleteMeal:", error);
+    throw error;
+  }
+}
+
 function sortMeals(meals: Meal[]): Meal[] {
   const order = new Map(DEFAULT_MEALS.map((n, i) => [n, i]));
   return [...meals].sort(
