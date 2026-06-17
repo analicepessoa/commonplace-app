@@ -17,6 +17,7 @@
 export type FloatingElementType = "sticker" | "post-it" | "sketch" | "note";
 export type HabitLogStatus = "done" | "skipped";
 export type AttachmentKind = "image" | "audio" | "video";
+export type DiaryScope = "monthly" | "weekly" | "daily";
 export type TransactionType = "income" | "expense" | "savings";
 export type TransactionStatus = "paid" | "pending";
 
@@ -339,6 +340,60 @@ export interface Database {
         };
         Relationships: [];
       };
+      diary_notes: {
+        Row: {
+          id: string;
+          scope: DiaryScope;
+          period_key: string;
+          field: string;
+          content: string | null;
+        };
+        Insert: {
+          id?: string;
+          scope: DiaryScope;
+          period_key: string;
+          field: string;
+          content?: string | null;
+        };
+        Update: {
+          id?: string;
+          scope?: DiaryScope;
+          period_key?: string;
+          field?: string;
+          content?: string | null;
+        };
+        Relationships: [];
+      };
+      diary_tasks: {
+        Row: {
+          id: string;
+          scope: DiaryScope;
+          period_key: string;
+          content: string;
+          done: boolean;
+          position: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          scope: DiaryScope;
+          period_key: string;
+          content?: string;
+          done?: boolean;
+          position?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          scope?: DiaryScope;
+          period_key?: string;
+          content?: string;
+          done?: boolean;
+          position?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -361,3 +416,5 @@ export type WaterIntake = Database["public"]["Tables"]["water_intake"]["Row"];
 export type Meal = Database["public"]["Tables"]["meals"]["Row"];
 export type Routine = Database["public"]["Tables"]["routines"]["Row"];
 export type Attachment = Database["public"]["Tables"]["attachments"]["Row"];
+export type DiaryNote = Database["public"]["Tables"]["diary_notes"]["Row"];
+export type DiaryTask = Database["public"]["Tables"]["diary_tasks"]["Row"];
