@@ -18,6 +18,7 @@ export type FloatingElementType = "sticker" | "post-it" | "sketch" | "note";
 export type HabitLogStatus = "done" | "skipped";
 export type AttachmentKind = "image" | "audio" | "video";
 export type DiaryScope = "monthly" | "weekly" | "daily";
+export type MenstrualFlow = "leve" | "medio" | "intenso";
 export type TransactionType = "income" | "expense" | "savings";
 export type TransactionStatus = "paid" | "pending";
 
@@ -394,6 +395,93 @@ export interface Database {
         };
         Relationships: [];
       };
+      health_appointments: {
+        Row: {
+          id: string;
+          specialty: string;
+          appt_date: string | null;
+          appt_time: string | null;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          specialty: string;
+          appt_date?: string | null;
+          appt_time?: string | null;
+          notes?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          specialty?: string;
+          appt_date?: string | null;
+          appt_time?: string | null;
+          notes?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      health_medications: {
+        Row: {
+          id: string;
+          name: string;
+          dosage: string | null;
+          purpose: string | null;
+          schedule: string | null;
+          start_date: string | null;
+          end_date: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          dosage?: string | null;
+          purpose?: string | null;
+          schedule?: string | null;
+          start_date?: string | null;
+          end_date?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          dosage?: string | null;
+          purpose?: string | null;
+          schedule?: string | null;
+          start_date?: string | null;
+          end_date?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      menstrual_cycles: {
+        Row: {
+          id: string;
+          start_date: string;
+          end_date: string | null;
+          flow: MenstrualFlow | null;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          start_date: string;
+          end_date?: string | null;
+          flow?: MenstrualFlow | null;
+          notes?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          start_date?: string;
+          end_date?: string | null;
+          flow?: MenstrualFlow | null;
+          notes?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -418,3 +506,9 @@ export type Routine = Database["public"]["Tables"]["routines"]["Row"];
 export type Attachment = Database["public"]["Tables"]["attachments"]["Row"];
 export type DiaryNote = Database["public"]["Tables"]["diary_notes"]["Row"];
 export type DiaryTask = Database["public"]["Tables"]["diary_tasks"]["Row"];
+export type HealthAppointment =
+  Database["public"]["Tables"]["health_appointments"]["Row"];
+export type HealthMedication =
+  Database["public"]["Tables"]["health_medications"]["Row"];
+export type MenstrualCycle =
+  Database["public"]["Tables"]["menstrual_cycles"]["Row"];
