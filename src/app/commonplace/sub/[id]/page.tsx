@@ -12,8 +12,10 @@ import {
   getSubcategory,
   listEntriesBySubcategory,
   createEntry,
+  updateSubcategory,
 } from "@/lib/api";
 import type { CommonplaceEntry, Subcategory } from "@/lib/database.types";
+import { TEMPLATE_OPTIONS } from "@/lib/templates";
 import CustomButton from "@/components/ui/CustomButton";
 
 export default function SubcategoryPage() {
@@ -37,6 +39,16 @@ export default function SubcategoryPage() {
       .catch((e) => setError(e.message ?? String(e)))
       .finally(() => setLoading(false));
   }, [params.id]);
+
+  async function handleTemplateChange(template: string) {
+    if (!sub) return;
+    setSub({ ...sub, template: template || null });
+    try {
+      await updateSubcategory(sub.id, { template: template || null });
+    } catch (e) {
+      console.error("updateSubcategory falhou:", e);
+    }
+  }
 
   async function handleNewEntry() {
     const title = window.prompt("Título da nova nota:", "");
@@ -70,6 +82,23 @@ export default function SubcategoryPage() {
           + Nova nota
         </CustomButton>
       </div>
+
+      {sub && (
+        <div className="mt-3 flex items-center gap-2">
+          <span className="text-sm text-ink-soft">Template das notas:</span>
+          <select
+            value={sub.template ?? ""}
+            onChange={(e) => handleTemplateChange(e.target.value)}
+            className="rounded-lg border border-stone-300 bg-white px-3 py-1.5 text-sm outline-none focus:border-stone-400"
+          >
+            {TEMPLATE_OPTIONS.map((o) => (
+              <option key={o.id} value={o.id}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {error && (
         <p className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-red-700">

@@ -49,16 +49,19 @@ export interface Database {
           id: string;
           category_id: string | null;
           name: string;
+          template: string | null;
         };
         Insert: {
           id?: string;
           category_id?: string | null;
           name: string;
+          template?: string | null;
         };
         Update: {
           id?: string;
           category_id?: string | null;
           name?: string;
+          template?: string | null;
         };
         Relationships: [
           {
@@ -547,6 +550,34 @@ export interface Database {
           },
         ];
       };
+      entry_fields: {
+        Row: {
+          id: string;
+          entry_id: string;
+          field: string;
+          value: string | null;
+        };
+        Insert: {
+          id?: string;
+          entry_id: string;
+          field: string;
+          value?: string | null;
+        };
+        Update: {
+          id?: string;
+          entry_id?: string;
+          field?: string;
+          value?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "entry_fields_entry_id_fkey";
+            columns: ["entry_id"];
+            referencedRelation: "commonplace_entries";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -577,5 +608,7 @@ export type HealthMedication =
   Database["public"]["Tables"]["health_medications"]["Row"];
 export type MenstrualCycle =
   Database["public"]["Tables"]["menstrual_cycles"]["Row"];
+export type EntryField =
+  Database["public"]["Tables"]["entry_fields"]["Row"];
 export type Pet = Database["public"]["Tables"]["pets"]["Row"];
 export type PetLog = Database["public"]["Tables"]["pet_logs"]["Row"];

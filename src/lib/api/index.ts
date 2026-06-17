@@ -17,3 +17,4 @@ export * from "./attachments";
 export * from "./diary";
 export * from "./health";
 export * from "./pets";
+export * from "./entryFields";
