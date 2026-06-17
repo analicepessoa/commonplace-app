@@ -14,6 +14,7 @@ import {
   createEntry,
 } from "@/lib/api";
 import type { CommonplaceEntry, Subcategory } from "@/lib/database.types";
+import CustomButton from "@/components/ui/CustomButton";
 
 export default function SubcategoryPage() {
   const params = useParams<{ id: string }>();
@@ -62,15 +63,12 @@ export default function SubcategoryPage() {
       </Link>
 
       <div className="mt-4 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-stone-800">
+        <h1 className="font-hand text-4xl font-bold text-ink">
           {sub?.name ?? "Subcategoria"}
         </h1>
-        <button
-          onClick={handleNewEntry}
-          className="rounded-lg bg-stone-800 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-stone-700"
-        >
+        <CustomButton onClick={handleNewEntry} size="sm">
           + Nova nota
-        </button>
+        </CustomButton>
       </div>
 
       {error && (

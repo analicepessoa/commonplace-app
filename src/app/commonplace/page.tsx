@@ -17,6 +17,7 @@ import {
   type CategoryWithSubcategories,
 } from "@/lib/api";
 import type { CommonplaceEntry } from "@/lib/database.types";
+import Highlighter from "@/components/ui/Highlighter";
 
 export default function CommonplaceIndexPage() {
   const [index, setIndex] = useState<CategoryWithSubcategories[]>([]);
@@ -66,11 +67,12 @@ export default function CommonplaceIndexPage() {
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
       <header className="mb-6">
-        <h1 className="text-3xl font-semibold tracking-tight text-stone-800">
+        <h1 className="font-hand text-5xl font-bold tracking-tight text-ink">
           Commonplace
         </h1>
-        <p className="mt-1 text-sm text-stone-500">
-          Seu índice de ideias, organizado por cor.
+        <p className="mt-1 text-base text-ink-soft">
+          Seu índice de ideias, organizado{" "}
+          <Highlighter color="#facc15">por cor</Highlighter>.
         </p>
       </header>
 
@@ -135,7 +137,7 @@ export default function CommonplaceIndexPage() {
                 style={{ backgroundColor: cat.color_hex }}
                 aria-hidden
               />
-              <h2 className="text-lg font-semibold text-stone-800">
+              <h2 className="font-hand text-2xl font-bold text-ink">
                 {cat.name}
               </h2>
             </div>
@@ -151,7 +153,9 @@ export default function CommonplaceIndexPage() {
                       href={`/commonplace/sub/${s.id}`}
                       className="flex items-center justify-between rounded-lg px-2 py-2 transition hover:bg-stone-50"
                     >
-                      <span className="text-stone-700">{s.name}</span>
+                      <span className="font-hand text-xl text-ink">
+                        {s.name}
+                      </span>
                       <span
                         className="ml-3 shrink-0 rounded-full px-2 py-0.5 text-xs font-medium"
                         style={{

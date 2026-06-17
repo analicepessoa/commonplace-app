@@ -1,26 +1,125 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Paleta de caderno analógico (papel quente + tinta) */
+  --paper: #fbf7ee;
+  --paper-shade: #f3ecdd;
+  --ink: #3a3530;
+  --ink-soft: #6b6258;
+  --rule-line: #cfe1f2; /* azul-claro das pautas */
+  --margin-line: #e9b3a3; /* linha de margem rosada */
+  --dot: #d9cfbd;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-paper-shade: var(--paper-shade);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-hand: var(--font-hand);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Fundo geral com leve textura de papel */
+.paper-bg {
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(
+      circle at 25% 15%,
+      rgba(0, 0, 0, 0.015) 0,
+      transparent 60%
+    ),
+    radial-gradient(circle at 80% 70%, rgba(0, 0, 0, 0.02) 0, transparent 55%);
+}
+
+/* ---------- Utilitários de textura de folha ---------- */
+
+/* Folha pautada (linhas horizontais + margem) */
+.paper-lined {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--margin-line) 0 0),
+    repeating-linear-gradient(
+      transparent,
+      transparent 31px,
+      var(--rule-line) 31px,
+      var(--rule-line) 32px
+    );
+  background-size:
+    2px 100%,
+    100% 100%;
+  background-position:
+    44px 0,
+    0 0;
+  background-repeat: no-repeat, repeat;
+}
+
+/* Folha pontilhada (bullet journal) */
+.paper-dotted {
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--dot) 1.4px, transparent 1.5px);
+  background-size: 22px 22px;
+  background-position: 11px 11px;
+}
+
+/* ---------- Fonte manuscrita ---------- */
+.font-hand {
+  font-family: var(--font-hand), "Comic Sans MS", cursive;
+  letter-spacing: 0.3px;
+}
+
+/* ---------- Marca-texto (Highlighter) ---------- */
+/* Pinta a seleção como um marcador real: traço levemente torto,
+   bordas irregulares e opacidade que deixa o texto legível. */
+.highlighter {
+  --hl: 250, 204, 21; /* amarelo padrão (RGB) */
+  background-image: linear-gradient(
+    104deg,
+    rgba(var(--hl), 0) 0.1%,
+    rgba(var(--hl), 0.7) 1.8%,
+    rgba(var(--hl), 0.45) 5%,
+    rgba(var(--hl), 0.55) 95%,
+    rgba(var(--hl), 0.7) 98.2%,
+    rgba(var(--hl), 0) 99.9%
+  );
+  border-radius: 0.6em 0.3em 0.5em 0.4em;
+  padding: 0.05em 0.18em;
+  margin: 0 -0.1em;
+  /* preserva o efeito quando o texto quebra em várias linhas */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  mix-blend-mode: multiply;
+}
+
+/* ---------- Botão estilo carimbo/desenho ---------- */
+.btn-stamp {
+  font-family: var(--font-hand), cursive;
+  border: 2px solid var(--ink);
+  border-radius: 14px 10px 16px 8px / 10px 16px 8px 14px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 2px 2px 0 rgba(58, 53, 48, 0.25);
+  transition:
+    transform 0.06s ease,
+    box-shadow 0.06s ease;
+}
+.btn-stamp:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 rgba(58, 53, 48, 0.3);
+}
+.btn-stamp:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 rgba(58, 53, 48, 0.25);
 }

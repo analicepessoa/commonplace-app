@@ -151,19 +151,15 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
       {/* Canvas */}
       <div
         ref={canvasRef}
-        className="relative h-[70vh] w-full overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-inner"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(transparent, transparent 31px, #e7e5e4 31px, #e7e5e4 32px)",
-        }}
+        className="paper-lined relative h-[70vh] w-full overflow-hidden rounded-2xl border border-stone-200 shadow-[inset_0_2px_12px_rgba(0,0,0,0.06)]"
       >
         {/* Texto fixo da nota */}
-        <div className="pointer-events-none absolute inset-0 p-6">
-          <h2 className="text-2xl font-semibold text-stone-800">
+        <div className="pointer-events-none absolute inset-0 p-6 pl-16">
+          <h2 className="font-hand text-4xl font-bold text-ink">
             {entry.title}
           </h2>
           {entry.body_content && (
-            <p className="mt-3 max-w-prose whitespace-pre-wrap leading-8 text-stone-600">
+            <p className="mt-2 max-w-prose whitespace-pre-wrap text-lg leading-8 text-ink-soft">
               {entry.body_content}
             </p>
           )}
@@ -204,7 +200,7 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
             ) : (
               <div
                 onDoubleClick={() => handleEditPostIt(el)}
-                className="w-40 select-none rounded-sm bg-amber-200 p-3 text-sm text-amber-950 shadow-md"
+                className="font-hand w-40 select-none rounded-sm bg-amber-200 p-3 text-lg leading-tight text-amber-950 shadow-md"
                 style={{ boxShadow: "2px 4px 8px rgba(0,0,0,0.15)" }}
                 title="Arraste para mover · duplo-clique para editar"
               >
