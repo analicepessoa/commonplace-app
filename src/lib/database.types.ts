@@ -174,6 +174,121 @@ export interface Database {
         };
         Relationships: [];
       };
+      habits: {
+        Row: {
+          id: string;
+          name: string;
+          color_hex: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          color_hex?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          color_hex?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      habit_logs: {
+        Row: {
+          id: string;
+          habit_id: string;
+          log_date: string;
+        };
+        Insert: {
+          id?: string;
+          habit_id: string;
+          log_date?: string;
+        };
+        Update: {
+          id?: string;
+          habit_id?: string;
+          log_date?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "habit_logs_habit_id_fkey";
+            columns: ["habit_id"];
+            referencedRelation: "habits";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      water_intake: {
+        Row: {
+          id: string;
+          intake_date: string;
+          glasses: number;
+          goal: number;
+        };
+        Insert: {
+          id?: string;
+          intake_date?: string;
+          glasses?: number;
+          goal?: number;
+        };
+        Update: {
+          id?: string;
+          intake_date?: string;
+          glasses?: number;
+          goal?: number;
+        };
+        Relationships: [];
+      };
+      meals: {
+        Row: {
+          id: string;
+          meal_date: string;
+          name: string;
+          done: boolean;
+        };
+        Insert: {
+          id?: string;
+          meal_date?: string;
+          name: string;
+          done?: boolean;
+        };
+        Update: {
+          id?: string;
+          meal_date?: string;
+          name?: string;
+          done?: boolean;
+        };
+        Relationships: [];
+      };
+      routines: {
+        Row: {
+          id: string;
+          title: string;
+          location: string | null;
+          start_time: string;
+          travel_minutes: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          location?: string | null;
+          start_time: string;
+          travel_minutes?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          location?: string | null;
+          start_time?: string;
+          travel_minutes?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -190,3 +305,8 @@ export type CommonplaceEntry =
 export type FloatingElement =
   Database["public"]["Tables"]["floating_elements"]["Row"];
 export type Transaction = Database["public"]["Tables"]["transactions"]["Row"];
+export type Habit = Database["public"]["Tables"]["habits"]["Row"];
+export type HabitLog = Database["public"]["Tables"]["habit_logs"]["Row"];
+export type WaterIntake = Database["public"]["Tables"]["water_intake"]["Row"];
+export type Meal = Database["public"]["Tables"]["meals"]["Row"];
+export type Routine = Database["public"]["Tables"]["routines"]["Row"];

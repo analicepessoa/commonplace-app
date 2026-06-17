@@ -10,3 +10,6 @@ export * from "./subcategories";
 export * from "./entries";
 export * from "./floatingElements";
 export * from "./indexData";
+export * from "./habits";
+export * from "./tracker";
+export * from "./routines";
