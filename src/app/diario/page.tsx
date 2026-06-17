@@ -8,6 +8,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import MonthlyView from "@/components/diario/MonthlyView";
+import WeeklyView from "@/components/diario/WeeklyView";
+import DailyView from "@/components/diario/DailyView";
 
 const MONTHS = [
   "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
@@ -79,16 +81,8 @@ export default function DiarioPage() {
 
       <section className="rounded-2xl border border-stone-200 bg-paper p-6 shadow-sm">
         {view === "monthly" && <MonthlyView month={month} />}
-        {view === "weekly" && (
-          <p className="py-10 text-center text-ink-soft">
-            Visão <strong>Semanal</strong> — em construção (próxima etapa).
-          </p>
-        )}
-        {view === "daily" && (
-          <p className="py-10 text-center text-ink-soft">
-            Visão <strong>Diário</strong> — em construção (próxima etapa).
-          </p>
-        )}
+        {view === "weekly" && <WeeklyView month={month} />}
+        {view === "daily" && <DailyView />}
       </section>
     </main>
   );
