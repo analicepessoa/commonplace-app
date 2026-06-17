@@ -605,6 +605,30 @@ export interface Database {
         };
         Relationships: [];
       };
+      budgets: {
+        Row: {
+          id: string;
+          name: string;
+          limit_amount: number;
+          spent_amount: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          limit_amount?: number;
+          spent_amount?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          limit_amount?: number;
+          spent_amount?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -641,3 +665,4 @@ export type Pet = Database["public"]["Tables"]["pets"]["Row"];
 export type PetLog = Database["public"]["Tables"]["pet_logs"]["Row"];
 export type FinancialGoal =
   Database["public"]["Tables"]["financial_goals"]["Row"];
+export type Budget = Database["public"]["Tables"]["budgets"]["Row"];

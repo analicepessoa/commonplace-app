@@ -16,14 +16,20 @@ import {
   createGoal,
   updateGoal,
   deleteGoal,
+  listBudgets,
+  createBudget,
+  updateBudget,
+  deleteBudget,
   monthKey,
 } from "@/lib/api";
 import type {
   Transaction,
   TransactionType,
   FinancialGoal,
+  Budget,
 } from "@/lib/database.types";
 import MediaPanel from "@/components/ui/MediaPanel";
+import ReceiptUploader from "@/components/financas/ReceiptUploader";
 
 const BRL = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -35,7 +41,7 @@ const MONTHS = [
 ];
 const inputCls =
   "rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm outline-none focus:border-stone-400";
-type Tab = "mensal" | "metas" | "futuros";
+type Tab = "mensal" | "metas" | "futuros" | "comprovante" | "orcamentos";
 
 export default function FinancasPage() {
   const [tab, setTab] = useState<Tab>("mensal");
@@ -43,6 +49,8 @@ export default function FinancasPage() {
     { id: "mensal", label: "Controle Mensal" },
     { id: "metas", label: "Metas" },
     { id: "futuros", label: "Gastos Futuros" },
+    { id: "orcamentos", label: "Orçamentos" },
+    { id: "comprovante", label: "Comprovante (OCR)" },
   ];
   return (
     <main className="mx-auto max-w-4xl px-4 py-8">
@@ -63,7 +71,72 @@ export default function FinancasPage() {
       {tab === "mensal" && <MensalTab />}
       {tab === "metas" && <MetasTab />}
       {tab === "futuros" && <FuturosTab />}
+      {tab === "orcamentos" && <OrcamentosTab />}
+      {tab === "comprovante" && (
+        <div className="rounded-2xl border border-stone-200 bg-paper p-6 shadow-sm">
+          <ReceiptUploader />
+        </div>
+      )}
     </main>
+  );
+}
+
+function OrcamentosTab() {
+  const [items, setItems] = useState<Budget[]>([]);
+  const [f, setF] = useState({ name: "", limit: "" });
+
+  useEffect(() => {
+    listBudgets().then(setItems).catch(() => {});
+  }, []);
+
+  async function add() {
+    if (!f.name.trim()) return;
+    const created = await createBudget({
+      name: f.name.trim(),
+      limit_amount: Number(f.limit) || 0,
+    });
+    setItems((p) => [...p, created]);
+    setF({ name: "", limit: "" });
+  }
+  async function setSpent(b: Budget, spent: number) {
+    setItems((p) => p.map((x) => (x.id === b.id ? { ...x, spent_amount: spent } : x)));
+    await updateBudget(b.id, { spent_amount: spent }).catch(() => {});
+  }
+  async function remove(id: string) {
+    setItems((p) => p.filter((x) => x.id !== id));
+    await deleteBudget(id).catch(() => {});
+  }
+
+  return (
+    <div>
+      <div className="mb-5 grid gap-2 sm:grid-cols-[2fr_1fr_auto]">
+        <input className={inputCls} placeholder="Categoria (ex.: Mercado)" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
+        <input className={inputCls} type="number" placeholder="Limite" value={f.limit} onChange={(e) => setF({ ...f, limit: e.target.value })} />
+        <button onClick={add} className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90">+ Orçamento</button>
+      </div>
+      <div className="space-y-3">
+        {items.length === 0 && <p className="text-sm text-stone-400">Nenhum orçamento.</p>}
+        {items.map((b) => {
+          const pct = b.limit_amount > 0 ? Math.min(100, (Number(b.spent_amount) / Number(b.limit_amount)) * 100) : 0;
+          const over = Number(b.spent_amount) > Number(b.limit_amount);
+          return (
+            <div key={b.id} className="rounded-xl border border-stone-200 bg-white p-4">
+              <div className="mb-1 flex items-center justify-between">
+                <span className="font-hand text-xl text-ink">{b.name}</span>
+                <div className="flex items-center gap-2">
+                  <input type="number" defaultValue={Number(b.spent_amount)} onBlur={(e) => setSpent(b, Number(e.target.value))} className={`${inputCls} w-28`} />
+                  <span className="text-sm text-ink-soft">/ {BRL.format(Number(b.limit_amount))}</span>
+                  <button onClick={() => remove(b.id)} className="text-stone-300 hover:text-red-500">×</button>
+                </div>
+              </div>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-stone-200">
+                <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: over ? "#dc2626" : "#16a34a" }} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
