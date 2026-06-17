@@ -16,6 +16,7 @@
 
 export type FloatingElementType = "sticker" | "post-it" | "sketch" | "note";
 export type HabitLogStatus = "done" | "skipped";
+export type AttachmentKind = "image" | "audio" | "video";
 export type TransactionType = "income" | "expense" | "savings";
 export type TransactionStatus = "paid" | "pending";
 
@@ -305,6 +306,39 @@ export interface Database {
         };
         Relationships: [];
       };
+      attachments: {
+        Row: {
+          id: string;
+          owner_type: string;
+          owner_id: string;
+          kind: AttachmentKind;
+          url: string;
+          storage_path: string | null;
+          caption: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_type: string;
+          owner_id: string;
+          kind: AttachmentKind;
+          url: string;
+          storage_path?: string | null;
+          caption?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          owner_type?: string;
+          owner_id?: string;
+          kind?: AttachmentKind;
+          url?: string;
+          storage_path?: string | null;
+          caption?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -326,3 +360,4 @@ export type HabitLog = Database["public"]["Tables"]["habit_logs"]["Row"];
 export type WaterIntake = Database["public"]["Tables"]["water_intake"]["Row"];
 export type Meal = Database["public"]["Tables"]["meals"]["Row"];
 export type Routine = Database["public"]["Tables"]["routines"]["Row"];
+export type Attachment = Database["public"]["Tables"]["attachments"]["Row"];

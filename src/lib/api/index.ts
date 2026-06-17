@@ -13,3 +13,4 @@ export * from "./indexData";
 export * from "./habits";
 export * from "./tracker";
 export * from "./routines";
+export * from "./attachments";

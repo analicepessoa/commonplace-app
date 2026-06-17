@@ -11,6 +11,7 @@ import Link from "next/link";
 import { getEntry } from "@/lib/api";
 import type { CommonplaceEntry } from "@/lib/database.types";
 import CanvasBoard from "@/components/commonplace/CanvasBoard";
+import MediaPanel from "@/components/ui/MediaPanel";
 
 export default function EntryCanvasPage() {
   const params = useParams<{ id: string }>();
@@ -46,6 +47,9 @@ export default function EntryCanvasPage() {
       {entry && (
         <div className="mt-4">
           <CanvasBoard entry={entry} />
+          <div className="mt-6 rounded-2xl border border-stone-200 bg-paper p-5 shadow-sm">
+            <MediaPanel ownerType="entry" ownerId={entry.id} />
+          </div>
         </div>
       )}
     </main>
