@@ -19,6 +19,7 @@ export type HabitLogStatus = "done" | "skipped";
 export type AttachmentKind = "image" | "audio" | "video";
 export type DiaryScope = "monthly" | "weekly" | "daily";
 export type MenstrualFlow = "leve" | "medio" | "intenso";
+export type PetLogKind = "medicine" | "vaccine" | "bath" | "weight" | "note";
 export type TransactionType = "income" | "expense" | "savings";
 export type TransactionStatus = "paid" | "pending";
 
@@ -482,6 +483,70 @@ export interface Database {
         };
         Relationships: [];
       };
+      pets: {
+        Row: {
+          id: string;
+          name: string;
+          breed: string | null;
+          birth_date: string | null;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          breed?: string | null;
+          birth_date?: string | null;
+          notes?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          breed?: string | null;
+          birth_date?: string | null;
+          notes?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      pet_logs: {
+        Row: {
+          id: string;
+          pet_id: string;
+          kind: PetLogKind;
+          log_date: string;
+          detail: string | null;
+          value: number | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          pet_id: string;
+          kind: PetLogKind;
+          log_date?: string;
+          detail?: string | null;
+          value?: number | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          pet_id?: string;
+          kind?: PetLogKind;
+          log_date?: string;
+          detail?: string | null;
+          value?: number | null;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pet_logs_pet_id_fkey";
+            columns: ["pet_id"];
+            referencedRelation: "pets";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -512,3 +577,5 @@ export type HealthMedication =
   Database["public"]["Tables"]["health_medications"]["Row"];
 export type MenstrualCycle =
   Database["public"]["Tables"]["menstrual_cycles"]["Row"];
+export type Pet = Database["public"]["Tables"]["pets"]["Row"];
+export type PetLog = Database["public"]["Tables"]["pet_logs"]["Row"];

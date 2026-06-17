@@ -61,6 +61,12 @@ export default function HomePage() {
             Saúde →
           </Link>
           <Link
+            href="/pets"
+            className="rounded-lg border border-stone-300 bg-paper px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+          >
+            Pets →
+          </Link>
+          <Link
             href="/commonplace"
             className="rounded-lg border border-stone-300 bg-paper px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
           >

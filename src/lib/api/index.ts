@@ -16,3 +16,4 @@ export * from "./routines";
 export * from "./attachments";
 export * from "./diary";
 export * from "./health";
+export * from "./pets";
