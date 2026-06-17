@@ -8,6 +8,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import TodaySummary from "@/components/rotina/TodaySummary";
 import MiniCalendar from "@/components/rotina/MiniCalendar";
 import HabitTracker from "@/components/rotina/HabitTracker";
 import WaterTracker from "@/components/rotina/WaterTracker";
@@ -80,6 +81,8 @@ export default function HomePage() {
           </Link>
         </div>
       </header>
+
+      <TodaySummary date={selected} />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-6">
