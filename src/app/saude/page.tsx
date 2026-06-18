@@ -125,7 +125,7 @@ function ConsultasTab() {
                 {a.appt_date ?? "sem data"}{a.appt_time ? ` · ${a.appt_time.slice(0, 5)}` : ""}
               </p>
             </div>
-            <button onClick={() => remove(a.id)} className="text-stone-300 opacity-0 transition hover:text-red-500 group-hover:opacity-100">×</button>
+            <button onClick={() => remove(a.id)} className="text-stone-400 transition hover:text-red-500">×</button>
           </li>
         ))}
       </ul>
@@ -178,7 +178,7 @@ function MedicacoesTab() {
               <p className="font-hand text-xl text-ink">{m.name} {m.dosage && <span className="text-base text-ink-soft">· {m.dosage}</span>}</p>
               <p className="text-sm text-ink-soft">{[m.purpose, m.schedule].filter(Boolean).join(" · ") || "—"}</p>
             </div>
-            <button onClick={() => remove(m.id)} className="text-stone-300 opacity-0 transition hover:text-red-500 group-hover:opacity-100">×</button>
+            <button onClick={() => remove(m.id)} className="text-stone-400 transition hover:text-red-500">×</button>
           </li>
         ))}
       </ul>
@@ -233,7 +233,7 @@ function MenstrualTab() {
               <p className="font-hand text-xl text-ink">{c.start_date}{c.end_date ? ` → ${c.end_date}` : ""}</p>
               {c.flow && <p className="text-sm capitalize text-ink-soft">fluxo {c.flow}</p>}
             </div>
-            <button onClick={() => remove(c.id)} className="text-stone-300 opacity-0 transition hover:text-red-500 group-hover:opacity-100">×</button>
+            <button onClick={() => remove(c.id)} className="text-stone-400 transition hover:text-red-500">×</button>
           </li>
         ))}
       </ul>

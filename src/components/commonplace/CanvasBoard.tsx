@@ -236,7 +236,7 @@ function ImageElement({ el, onDelete }: { el: FloatingElement; onDelete: () => v
     <div className="group relative h-full w-full">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={el.content_data ?? ""} alt="" className="h-full w-full rounded-lg object-contain shadow-md" draggable={false} />
-      <div className="absolute right-1 top-1 flex gap-1 opacity-0 transition group-hover:opacity-100">
+      <div className="absolute right-1 top-1 flex gap-1 transition">
         <a href={el.content_data ?? "#"} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="rounded bg-black/50 px-1.5 text-xs text-white" title="Abrir/zoom">⛶</a>
         <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="rounded bg-black/50 px-1.5 text-xs text-white" title="Remover">×</button>
       </div>

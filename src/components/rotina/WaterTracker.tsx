@@ -184,14 +184,14 @@ export default function WaterTracker({ date }: { date: string }) {
                 </button>
                 <button
                   onClick={() => handleRenameMeal(meal)}
-                  className="text-stone-300 opacity-0 transition hover:text-ink-soft group-hover:opacity-100"
+                  className="text-stone-400 transition hover:text-ink-soft"
                   title="Renomear refeição"
                 >
                   ✎
                 </button>
                 <button
                   onClick={() => handleDeleteMeal(meal)}
-                  className="text-stone-300 opacity-0 transition hover:text-red-500 group-hover:opacity-100"
+                  className="text-stone-400 transition hover:text-red-500"
                   title="Remover refeição"
                 >
                   ×

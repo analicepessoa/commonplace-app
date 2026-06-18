@@ -173,7 +173,7 @@ function PetDetail({ pet, onDelete }: { pet: Pet; onDelete: () => void }) {
                 {l.log_date}
                 {l.kind === "weight" && l.value != null ? ` · ${l.value} kg` : l.detail ? ` · ${l.detail}` : ""}
               </span>
-              <button onClick={() => removeLog(l.id)} className="text-stone-300 opacity-0 transition hover:text-red-500 group-hover:opacity-100">×</button>
+              <button onClick={() => removeLog(l.id)} className="text-stone-400 transition hover:text-red-500">×</button>
             </li>
           ))}
         </ul>

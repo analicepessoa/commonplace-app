@@ -109,7 +109,7 @@ export default function MediaPanel({
             >
               <button
                 onClick={() => handleDelete(att)}
-                className="absolute right-1 top-1 z-10 rounded-full bg-black/40 px-2 text-white opacity-0 transition group-hover:opacity-100"
+                className="absolute right-1 top-1 z-10 rounded-full bg-black/40 px-2 text-white transition hover:bg-black/70"
                 title="Remover"
               >
                 ×

@@ -116,14 +116,14 @@ export default function TaskChecklist({
             </span>
             <button
               onClick={() => handleEdit(task)}
-              className="text-stone-300 opacity-0 transition hover:text-ink-soft group-hover:opacity-100"
+              className="text-stone-400 transition hover:text-ink-soft"
               title="Editar"
             >
               ✎
             </button>
             <button
               onClick={() => handleDelete(task)}
-              className="text-stone-300 opacity-0 transition hover:text-red-500 group-hover:opacity-100"
+              className="text-stone-400 transition hover:text-red-500"
               title="Remover"
             >
               ×
