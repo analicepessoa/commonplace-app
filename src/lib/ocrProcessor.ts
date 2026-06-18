@@ -66,10 +66,10 @@ export function parseReceipt(text: string): Omit<OcrResult, "rawText"> {
 }
 
 export async function runReceiptOcr(
-  file: File,
+  image: Blob,
   onProgress?: (pct: number) => void,
 ): Promise<OcrResult> {
-  const { data } = await Tesseract.recognize(file, "por", {
+  const { data } = await Tesseract.recognize(image, "por", {
     logger: (m) => {
       if (m.status === "recognizing text" && onProgress) {
         onProgress(Math.round(m.progress * 100));

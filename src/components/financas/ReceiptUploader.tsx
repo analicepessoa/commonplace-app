@@ -8,6 +8,7 @@
 
 import { useRef, useState } from "react";
 import { runReceiptOcr } from "@/lib/ocrProcessor";
+import { pdfFirstPageToImage, isPdf } from "@/lib/pdfToImage";
 import { createTransaction, uploadAttachment } from "@/lib/api";
 import type { TransactionType } from "@/lib/database.types";
 
@@ -32,14 +33,34 @@ export default function ReceiptUploader({
     due_date: string;
   }>({ title: "", amount: "", type: "expense", due_date: "" });
 
-  async function handleFile(file: File | null) {
-    if (!file) return;
-    setFile(file);
-    setPreview(URL.createObjectURL(file));
+  async function handleFile(picked: File | null) {
+    if (!picked) return;
     setProgress(0);
+    let ocrImage: Blob = picked;
+    try {
+      if (isPdf(picked)) {
+        setStatus("Convertendo PDF…");
+        const { blob, dataUrl } = await pdfFirstPageToImage(picked);
+        ocrImage = blob;
+        // anexa a imagem renderizada (exibível como polaroid)
+        setFile(
+          new File([blob], picked.name.replace(/\.pdf$/i, "") + ".png", {
+            type: "image/png",
+          }),
+        );
+        setPreview(dataUrl);
+      } else {
+        setFile(picked);
+        setPreview(URL.createObjectURL(picked));
+      }
+    } catch (e) {
+      setStatus("Erro ao ler o arquivo: " + (e as Error).message);
+      setProgress(null);
+      return;
+    }
     setStatus("Lendo comprovante…");
     try {
-      const r = await runReceiptOcr(file, setProgress);
+      const r = await runReceiptOcr(ocrImage, setProgress);
       setF((prev) => ({
         ...prev,
         title: r.payee ?? prev.title,
@@ -98,12 +119,12 @@ export default function ReceiptUploader({
           onClick={() => inputRef.current?.click()}
           className="rounded-lg bg-sky-200 px-4 py-2 text-sm font-medium text-sky-900 transition hover:bg-sky-300"
         >
-          Anexar print do Pix / boleto
+          Anexar Pix / boleto (imagem ou PDF)
         </button>
         <input
           ref={inputRef}
           type="file"
-          accept="image/*"
+          accept="image/*,application/pdf,.pdf"
           className="hidden"
           onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
         />
