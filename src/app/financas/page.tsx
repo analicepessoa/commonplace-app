@@ -21,6 +21,7 @@ import {
   updateBudget,
   deleteBudget,
   monthKey,
+  toISODate,
 } from "@/lib/api";
 import type {
   Transaction,
@@ -147,7 +148,7 @@ function MensalTab() {
   });
   const [items, setItems] = useState<Transaction[]>([]);
   const [f, setF] = useState<{ title: string; amount: string; type: TransactionType; due_date: string }>(
-    { title: "", amount: "", type: "expense", due_date: "" },
+    { title: "", amount: "", type: "expense", due_date: toISODate(new Date()) },
   );
 
   useEffect(() => { listTransactions().then(setItems).catch(() => {}); }, []);
@@ -174,7 +175,11 @@ function MensalTab() {
       due_date: f.due_date || null,
     });
     setItems((p) => [...p, created]);
-    setF({ title: "", amount: "", type: "expense", due_date: "" });
+    // pula para o mês do lançamento, pra ele aparecer na hora
+    const eff = created.due_date ?? created.created_at.slice(0, 10);
+    const d = new Date(eff + "T00:00:00");
+    setMonth(new Date(d.getFullYear(), d.getMonth(), 1));
+    setF({ title: "", amount: "", type: f.type, due_date: toISODate(new Date()) });
   }
   async function togglePaid(t: Transaction) {
     const status = t.status === "paid" ? "pending" : "paid";
@@ -214,7 +219,12 @@ function MensalTab() {
       </div>
 
       <ul className="space-y-2">
-        {monthItems.length === 0 && <li className="text-sm text-stone-400">Nada neste mês.</li>}
+        {monthItems.length === 0 && (
+          <li className="text-sm text-stone-400">
+            Nada neste mês.
+            {items.length > 0 && " Você tem lançamentos em outros meses — use as setas ‹ › acima."}
+          </li>
+        )}
         {monthItems.map((t) => (
           <li key={t.id} className="group flex items-center justify-between rounded-xl border border-stone-200 bg-white px-4 py-3">
             <div className="flex items-center gap-3">
