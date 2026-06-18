@@ -187,8 +187,30 @@ function MensalTab() {
     await updateTransaction(t.id, { status }).catch(() => {});
   }
   async function remove(id: string) {
+    if (!confirm("Remover este lançamento?")) return;
     setItems((p) => p.filter((x) => x.id !== id));
     await deleteTransaction(id).catch(() => {});
+  }
+
+  // edição inline
+  const [editId, setEditId] = useState<string | null>(null);
+  const [ef, setEf] = useState<{ title: string; amount: string; type: TransactionType; due_date: string }>(
+    { title: "", amount: "", type: "expense", due_date: "" },
+  );
+  function startEdit(t: Transaction) {
+    setEditId(t.id);
+    setEf({ title: t.title, amount: String(t.amount), type: t.type, due_date: t.due_date ?? "" });
+  }
+  async function saveEdit(t: Transaction) {
+    const patch = {
+      title: ef.title.trim() || t.title,
+      amount: Number(ef.amount),
+      type: ef.type,
+      due_date: ef.due_date || null,
+    };
+    setItems((p) => p.map((x) => (x.id === t.id ? { ...x, ...patch } : x)));
+    setEditId(null);
+    await updateTransaction(t.id, patch).catch((e) => console.error("edit tx:", e));
   }
 
   return (
@@ -225,24 +247,44 @@ function MensalTab() {
             {items.length > 0 && " Você tem lançamentos em outros meses — use as setas ‹ › acima."}
           </li>
         )}
-        {monthItems.map((t) => (
-          <li key={t.id} className="group flex items-center justify-between rounded-xl border border-stone-200 bg-white px-4 py-3">
-            <div className="flex items-center gap-3">
-              <button onClick={() => togglePaid(t)} title={t.status === "paid" ? "Pago" : "Pendente"}
-                className={`h-5 w-5 rounded-full border-2 ${t.status === "paid" ? "border-emerald-500 bg-emerald-500" : "border-stone-300"}`} />
-              <div>
-                <p className="text-ink">{t.title}</p>
-                <p className="text-xs text-ink-soft">{t.due_date ?? "sem data"}{t.status === "pending" ? " · pendente" : ""}</p>
+        {monthItems.map((t) =>
+          editId === t.id ? (
+            <li key={t.id} className="rounded-xl border border-stone-300 bg-white px-4 py-3">
+              <div className="grid gap-2 sm:grid-cols-[2fr_1fr_1fr_1fr_auto]">
+                <input className={inputCls} value={ef.title} onChange={(e) => setEf({ ...ef, title: e.target.value })} />
+                <input className={inputCls} type="number" step="0.01" value={ef.amount} onChange={(e) => setEf({ ...ef, amount: e.target.value })} />
+                <select className={inputCls} value={ef.type} onChange={(e) => setEf({ ...ef, type: e.target.value as TransactionType })}>
+                  <option value="income">Entrada</option>
+                  <option value="expense">Saída</option>
+                  <option value="savings">Guardar</option>
+                </select>
+                <input className={inputCls} type="date" value={ef.due_date} onChange={(e) => setEf({ ...ef, due_date: e.target.value })} />
+                <div className="flex gap-1">
+                  <button onClick={() => saveEdit(t)} className="rounded-lg bg-ink px-3 py-2 text-sm font-medium text-paper hover:opacity-90">Salvar</button>
+                  <button onClick={() => setEditId(null)} className="rounded-lg border border-stone-300 px-3 py-2 text-sm text-ink-soft hover:bg-stone-100">Cancelar</button>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <span style={{ color: t.type === "income" ? "#16a34a" : t.type === "expense" ? "#dc2626" : "#2563eb" }} className="font-medium">
-                {t.type === "income" ? "+" : t.type === "expense" ? "−" : ""}{BRL.format(Number(t.amount))}
-              </span>
-              <button onClick={() => remove(t.id)} className="text-stone-300 opacity-0 transition hover:text-red-500 group-hover:opacity-100">×</button>
-            </div>
-          </li>
-        ))}
+            </li>
+          ) : (
+            <li key={t.id} className="flex items-center justify-between rounded-xl border border-stone-200 bg-white px-4 py-3">
+              <div className="flex items-center gap-3">
+                <button onClick={() => togglePaid(t)} title={t.status === "paid" ? "Pago" : "Pendente"}
+                  className={`h-5 w-5 shrink-0 rounded-full border-2 ${t.status === "paid" ? "border-emerald-500 bg-emerald-500" : "border-stone-300"}`} />
+                <div>
+                  <p className="text-ink">{t.title}</p>
+                  <p className="text-xs text-ink-soft">{t.due_date ?? "sem data"}{t.status === "pending" ? " · pendente" : ""}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span style={{ color: t.type === "income" ? "#16a34a" : t.type === "expense" ? "#dc2626" : "#2563eb" }} className="font-medium">
+                  {t.type === "income" ? "+" : t.type === "expense" ? "−" : ""}{BRL.format(Number(t.amount))}
+                </span>
+                <button onClick={() => startEdit(t)} className="text-stone-400 transition hover:text-ink" title="Editar">✎</button>
+                <button onClick={() => remove(t.id)} className="text-stone-400 transition hover:text-red-500" title="Remover">×</button>
+              </div>
+            </li>
+          ),
+        )}
       </ul>
     </div>
   );
