@@ -14,7 +14,12 @@
  *   npx supabase gen types typescript --project-id <ID> > src/lib/database.types.ts
  */
 
-export type FloatingElementType = "sticker" | "post-it" | "sketch" | "note";
+export type FloatingElementType =
+  | "sticker"
+  | "post-it"
+  | "sketch"
+  | "note"
+  | "image";
 export type HabitLogStatus = "done" | "skipped";
 export type AttachmentKind = "image" | "audio" | "video";
 export type DiaryScope = "monthly" | "weekly" | "daily";
@@ -119,6 +124,9 @@ export interface Database {
           z_index: number;
           width: number | null;
           height: number | null;
+          color: string | null;
+          font_size: number | null;
+          font_family: string | null;
         };
         Insert: {
           id?: string;
@@ -132,6 +140,9 @@ export interface Database {
           z_index?: number;
           width?: number | null;
           height?: number | null;
+          color?: string | null;
+          font_size?: number | null;
+          font_family?: string | null;
         };
         Update: {
           id?: string;
@@ -145,6 +156,9 @@ export interface Database {
           z_index?: number;
           width?: number | null;
           height?: number | null;
+          color?: string | null;
+          font_size?: number | null;
+          font_family?: string | null;
         };
         Relationships: [
           {
@@ -267,18 +281,21 @@ export interface Database {
           meal_date: string;
           name: string;
           done: boolean;
+          detail: string | null;
         };
         Insert: {
           id?: string;
           meal_date?: string;
           name: string;
           done?: boolean;
+          detail?: string | null;
         };
         Update: {
           id?: string;
           meal_date?: string;
           name?: string;
           done?: boolean;
+          detail?: string | null;
         };
         Relationships: [];
       };

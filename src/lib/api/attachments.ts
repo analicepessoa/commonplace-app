@@ -69,6 +69,27 @@ export async function uploadAttachment(
   );
 }
 
+/**
+ * Sobe um arquivo pro Storage e devolve a URL pública, SEM criar linha em
+ * attachments. Usado por elementos do canvas (imagem solta).
+ */
+export async function uploadToMedia(
+  folder: string,
+  file: File,
+): Promise<{ url: string; path: string }> {
+  const safeName = file.name.replace(/[^\w.\-]+/g, "_");
+  const path = `${folder}/${Date.now()}-${safeName}`;
+  const { error } = await supabase.storage
+    .from(BUCKET)
+    .upload(path, file, { cacheControl: "3600", upsert: false });
+  if (error) {
+    console.error("Erro no upload para o Storage:", error);
+    throw error;
+  }
+  const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(path);
+  return { url: pub.publicUrl, path };
+}
+
 export async function deleteAttachment(att: Attachment): Promise<void> {
   if (att.storage_path) {
     const { error } = await supabase.storage

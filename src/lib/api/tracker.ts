@@ -102,6 +102,19 @@ export async function renameMeal(id: string, name: string): Promise<Meal> {
   );
 }
 
+/** Atualiza o detalhe (o que foi comido) de uma refeição. */
+export async function setMealDetail(id: string, detail: string): Promise<Meal> {
+  return unwrap(
+    "setMealDetail",
+    await supabase
+      .from("meals")
+      .update({ detail })
+      .eq("id", id)
+      .select()
+      .single(),
+  );
+}
+
 export async function deleteMeal(id: string): Promise<void> {
   const { error } = await supabase.from("meals").delete().eq("id", id);
   if (error) {

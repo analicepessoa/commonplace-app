@@ -13,6 +13,7 @@ import {
   toggleMeal,
   addMeal,
   renameMeal,
+  setMealDetail,
   deleteMeal,
 } from "@/lib/api";
 import type { Meal, WaterIntake } from "@/lib/database.types";
@@ -82,6 +83,17 @@ export default function WaterTracker({ date }: { date: string }) {
     }
   }
 
+  function updateDetailLocal(id: string, detail: string) {
+    setMeals((prev) => prev.map((m) => (m.id === id ? { ...m, detail } : m)));
+  }
+  async function saveDetail(id: string, detail: string) {
+    try {
+      await setMealDetail(id, detail);
+    } catch (e) {
+      console.error("setMealDetail falhou:", e);
+    }
+  }
+
   async function handleDeleteMeal(meal: Meal) {
     setMeals((prev) => prev.filter((m) => m.id !== meal.id));
     try {
@@ -146,43 +158,52 @@ export default function WaterTracker({ date }: { date: string }) {
           {meals.map((meal) => (
             <li
               key={meal.id}
-              className="group flex items-center gap-2 rounded-lg px-2 py-1.5 transition hover:bg-stone-50"
+              className="group rounded-lg px-2 py-1.5 transition hover:bg-stone-50"
             >
-              <button
-                onClick={() => handleToggleMeal(meal)}
-                className="flex flex-1 items-center gap-3 text-left"
-              >
-                <span
-                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${
-                    meal.done
-                      ? "border-emerald-500 bg-emerald-500 text-white"
-                      : "border-stone-300 text-transparent"
-                  }`}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleToggleMeal(meal)}
+                  className="flex flex-1 items-center gap-3 text-left"
                 >
-                  ✓
-                </span>
-                <span
-                  className={`font-hand text-xl ${
-                    meal.done ? "text-ink-soft line-through" : "text-ink"
-                  }`}
+                  <span
+                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${
+                      meal.done
+                        ? "border-emerald-500 bg-emerald-500 text-white"
+                        : "border-stone-300 text-transparent"
+                    }`}
+                  >
+                    ✓
+                  </span>
+                  <span
+                    className={`font-hand text-xl ${
+                      meal.done ? "text-ink-soft line-through" : "text-ink"
+                    }`}
+                  >
+                    {meal.name}
+                  </span>
+                </button>
+                <button
+                  onClick={() => handleRenameMeal(meal)}
+                  className="text-stone-300 opacity-0 transition hover:text-ink-soft group-hover:opacity-100"
+                  title="Renomear refeição"
                 >
-                  {meal.name}
-                </span>
-              </button>
-              <button
-                onClick={() => handleRenameMeal(meal)}
-                className="text-stone-300 opacity-0 transition hover:text-ink-soft group-hover:opacity-100"
-                title="Editar refeição"
-              >
-                ✎
-              </button>
-              <button
-                onClick={() => handleDeleteMeal(meal)}
-                className="text-stone-300 opacity-0 transition hover:text-red-500 group-hover:opacity-100"
-                title="Remover refeição"
-              >
-                ×
-              </button>
+                  ✎
+                </button>
+                <button
+                  onClick={() => handleDeleteMeal(meal)}
+                  className="text-stone-300 opacity-0 transition hover:text-red-500 group-hover:opacity-100"
+                  title="Remover refeição"
+                >
+                  ×
+                </button>
+              </div>
+              <input
+                value={meal.detail ?? ""}
+                onChange={(e) => updateDetailLocal(meal.id, e.target.value)}
+                onBlur={(e) => saveDetail(meal.id, e.target.value)}
+                placeholder="o que comeu…"
+                className="ml-9 mt-1 w-[calc(100%-2.25rem)] rounded-md border border-stone-200 bg-white/70 px-2 py-1 text-sm outline-none focus:border-stone-400"
+              />
             </li>
           ))}
         </ul>
