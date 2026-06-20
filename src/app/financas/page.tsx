@@ -20,6 +20,11 @@ import {
   createBudget,
   updateBudget,
   deleteBudget,
+  listRecurring,
+  createRecurring,
+  updateRecurring,
+  deleteRecurring,
+  ensureRecurringForMonth,
   monthKey,
   toISODate,
 } from "@/lib/api";
@@ -28,6 +33,7 @@ import type {
   TransactionType,
   FinancialGoal,
   Budget,
+  RecurringTransaction,
 } from "@/lib/database.types";
 import MediaPanel from "@/components/ui/MediaPanel";
 import ReceiptUploader from "@/components/financas/ReceiptUploader";
@@ -42,12 +48,13 @@ const MONTHS = [
 ];
 const inputCls =
   "rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm outline-none focus:border-stone-400";
-type Tab = "mensal" | "metas" | "futuros" | "comprovante" | "orcamentos";
+type Tab = "mensal" | "fixos" | "metas" | "futuros" | "comprovante" | "orcamentos";
 
 export default function FinancasPage() {
   const [tab, setTab] = useState<Tab>("mensal");
   const tabs: { id: Tab; label: string }[] = [
     { id: "mensal", label: "Controle Mensal" },
+    { id: "fixos", label: "Fixos" },
     { id: "metas", label: "Metas" },
     { id: "futuros", label: "Gastos Futuros" },
     { id: "orcamentos", label: "Orçamentos" },
@@ -70,6 +77,7 @@ export default function FinancasPage() {
         ))}
       </div>
       {tab === "mensal" && <MensalTab />}
+      {tab === "fixos" && <FixosTab />}
       {tab === "metas" && <MetasTab />}
       {tab === "futuros" && <FuturosTab />}
       {tab === "orcamentos" && <OrcamentosTab />}
@@ -141,6 +149,84 @@ function OrcamentosTab() {
   );
 }
 
+function FixosTab() {
+  const [items, setItems] = useState<RecurringTransaction[]>([]);
+  const [f, setF] = useState<{ title: string; amount: string; type: TransactionType; day: string }>(
+    { title: "", amount: "", type: "expense", day: "5" },
+  );
+
+  useEffect(() => {
+    listRecurring().then(setItems).catch(() => {});
+  }, []);
+
+  async function add() {
+    if (!f.title.trim()) return;
+    const created = await createRecurring({
+      title: f.title.trim(),
+      amount: Number(f.amount) || 0,
+      type: f.type,
+      day_of_month: Math.min(31, Math.max(1, Number(f.day) || 1)),
+    });
+    setItems((p) => [...p, created]);
+    setF({ title: "", amount: "", type: "expense", day: "5" });
+  }
+  async function toggleActive(t: RecurringTransaction) {
+    const active = !t.active;
+    setItems((p) => p.map((x) => (x.id === t.id ? { ...x, active } : x)));
+    await updateRecurring(t.id, { active }).catch(() => {});
+  }
+  async function remove(id: string) {
+    if (!confirm("Remover este fixo? Os lançamentos já gerados nos meses continuam.")) return;
+    setItems((p) => p.filter((x) => x.id !== id));
+    await deleteRecurring(id).catch(() => {});
+  }
+
+  return (
+    <div>
+      <p className="mb-4 text-sm text-ink-soft">
+        Lançamentos que se repetem todo mês (ex.: salário, aluguel). Eles aparecem
+        sozinhos no <strong>Controle Mensal</strong> quando você abre cada mês.
+      </p>
+      <div className="mb-5 grid gap-2 sm:grid-cols-[2fr_1fr_1fr_auto_auto]">
+        <input className={inputCls} placeholder="Descrição (ex.: Salário)" value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
+        <input className={inputCls} type="number" step="0.01" placeholder="Valor" value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
+        <select className={inputCls} value={f.type} onChange={(e) => setF({ ...f, type: e.target.value as TransactionType })}>
+          <option value="income">Entrada</option>
+          <option value="expense">Saída</option>
+          <option value="savings">Guardar</option>
+        </select>
+        <label className="flex items-center gap-1 text-sm text-ink-soft">dia
+          <input className={`${inputCls} w-16`} type="number" min={1} max={31} value={f.day} onChange={(e) => setF({ ...f, day: e.target.value })} />
+        </label>
+        <button onClick={add} className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90">+ Fixo</button>
+      </div>
+
+      <ul className="space-y-2">
+        {items.length === 0 && <li className="text-sm text-stone-400">Nenhum lançamento fixo.</li>}
+        {items.map((t) => (
+          <li key={t.id} className="flex items-center justify-between rounded-xl border border-stone-200 bg-white px-4 py-3">
+            <div>
+              <p className={`text-ink ${t.active ? "" : "line-through opacity-50"}`}>{t.title}</p>
+              <p className="text-xs text-ink-soft">
+                {t.type === "income" ? "Entrada" : t.type === "expense" ? "Saída" : "Guardar"} · todo dia {t.day_of_month}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <span style={{ color: t.type === "income" ? "#16a34a" : t.type === "expense" ? "#dc2626" : "#2563eb" }} className="font-medium">
+                {BRL.format(Number(t.amount))}
+              </span>
+              <button onClick={() => toggleActive(t)} className="text-xs text-ink-soft underline hover:text-ink" title="Ativar/pausar">
+                {t.active ? "pausar" : "ativar"}
+              </button>
+              <button onClick={() => remove(t.id)} className="text-stone-400 transition hover:text-red-500" title="Remover">×</button>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function MensalTab() {
   const [month, setMonth] = useState(() => {
     const n = new Date();
@@ -151,7 +237,21 @@ function MensalTab() {
     { title: "", amount: "", type: "expense", due_date: toISODate(new Date()) },
   );
 
-  useEffect(() => { listTransactions().then(setItems).catch(() => {}); }, []);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        await ensureRecurringForMonth(month.getFullYear(), month.getMonth());
+        const all = await listTransactions();
+        if (!cancelled) setItems(all);
+      } catch {
+        /* ignore */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [month]);
 
   const key = monthKey(month);
   const monthItems = useMemo(

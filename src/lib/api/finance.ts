@@ -8,6 +8,7 @@ import type {
   Transaction,
   FinancialGoal,
   Budget,
+  RecurringTransaction,
 } from "@/lib/database.types";
 import { unwrap, unwrapList } from "./helpers";
 
@@ -19,6 +20,10 @@ type GoalInsert = Database["public"]["Tables"]["financial_goals"]["Insert"];
 type GoalUpdate = Database["public"]["Tables"]["financial_goals"]["Update"];
 type BudgetInsert = Database["public"]["Tables"]["budgets"]["Insert"];
 type BudgetUpdate = Database["public"]["Tables"]["budgets"]["Update"];
+type RecurringInsert =
+  Database["public"]["Tables"]["recurring_transactions"]["Insert"];
+type RecurringUpdate =
+  Database["public"]["Tables"]["recurring_transactions"]["Update"];
 
 // ---------- Transações ----------
 
@@ -129,4 +134,92 @@ export async function updateBudget(
 export async function deleteBudget(id: string): Promise<void> {
   const { error } = await supabase.from("budgets").delete().eq("id", id);
   if (error) throw error;
+}
+
+// ---------- Lançamentos recorrentes (fixos) ----------
+
+export async function listRecurring(): Promise<RecurringTransaction[]> {
+  return unwrapList(
+    "listRecurring",
+    await supabase.from("recurring_transactions").select("*").order("created_at"),
+  );
+}
+
+export async function createRecurring(
+  payload: RecurringInsert,
+): Promise<RecurringTransaction> {
+  return unwrap(
+    "createRecurring",
+    await supabase
+      .from("recurring_transactions")
+      .insert(payload)
+      .select()
+      .single(),
+  );
+}
+
+export async function updateRecurring(
+  id: string,
+  patch: RecurringUpdate,
+): Promise<RecurringTransaction> {
+  return unwrap(
+    "updateRecurring",
+    await supabase
+      .from("recurring_transactions")
+      .update(patch)
+      .eq("id", id)
+      .select()
+      .single(),
+  );
+}
+
+export async function deleteRecurring(id: string): Promise<void> {
+  const { error } = await supabase
+    .from("recurring_transactions")
+    .delete()
+    .eq("id", id);
+  if (error) throw error;
+}
+
+/**
+ * Materializa os lançamentos fixos de um mês: cria a transação real para cada
+ * modelo ativo (se ainda não existir). Idempotente — o índice único
+ * (recurring_id, due_date) + ignoreDuplicates evita duplicar. Não cria em meses
+ * anteriores ao mês de criação do modelo.
+ * Retorna as transações recém-criadas neste mês.
+ */
+export async function ensureRecurringForMonth(
+  year: number,
+  monthIndex0: number,
+): Promise<Transaction[]> {
+  const templates = (await listRecurring()).filter((t) => t.active);
+  const mm = String(monthIndex0 + 1).padStart(2, "0");
+  const monthKeyStr = `${year}-${mm}`;
+  const lastDay = new Date(year, monthIndex0 + 1, 0).getDate();
+  const created: Transaction[] = [];
+
+  for (const t of templates) {
+    if (t.created_at.slice(0, 7) > monthKeyStr) continue; // antes de existir
+    const day = Math.min(t.day_of_month, lastDay);
+    const due = `${monthKeyStr}-${String(day).padStart(2, "0")}`;
+    const { data, error } = await supabase
+      .from("transactions")
+      .upsert(
+        {
+          title: t.title,
+          amount: t.amount,
+          type: t.type,
+          due_date: due,
+          recurring_id: t.id,
+        },
+        { onConflict: "recurring_id,due_date", ignoreDuplicates: true },
+      )
+      .select();
+    if (error) {
+      console.error("ensureRecurringForMonth:", error);
+      continue;
+    }
+    if (data && data.length) created.push(...data);
+  }
+  return created;
 }

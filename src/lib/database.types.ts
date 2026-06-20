@@ -179,6 +179,7 @@ export interface Database {
           status: TransactionStatus;
           receipt_media_url: string | null;
           created_at: string;
+          recurring_id: string | null;
         };
         Insert: {
           id?: string;
@@ -189,6 +190,7 @@ export interface Database {
           status?: TransactionStatus;
           receipt_media_url?: string | null;
           created_at?: string;
+          recurring_id?: string | null;
         };
         Update: {
           id?: string;
@@ -199,6 +201,7 @@ export interface Database {
           status?: TransactionStatus;
           receipt_media_url?: string | null;
           created_at?: string;
+          recurring_id?: string | null;
         };
         Relationships: [];
       };
@@ -646,6 +649,36 @@ export interface Database {
         };
         Relationships: [];
       };
+      recurring_transactions: {
+        Row: {
+          id: string;
+          title: string;
+          amount: number;
+          type: TransactionType;
+          day_of_month: number;
+          active: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          amount?: number;
+          type: TransactionType;
+          day_of_month?: number;
+          active?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          amount?: number;
+          type?: TransactionType;
+          day_of_month?: number;
+          active?: boolean;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -683,3 +716,5 @@ export type PetLog = Database["public"]["Tables"]["pet_logs"]["Row"];
 export type FinancialGoal =
   Database["public"]["Tables"]["financial_goals"]["Row"];
 export type Budget = Database["public"]["Tables"]["budgets"]["Row"];
+export type RecurringTransaction =
+  Database["public"]["Tables"]["recurring_transactions"]["Row"];
