@@ -88,15 +88,15 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
 
   async function addNote() {
     const created = await create({
-      type: "note", content_data: "", width: 260, height: 180,
-      font_size: 18, font_family: "hand", color: "#3a3530",
+      type: "note", content_data: "", width: 340, height: 240,
+      font_size: 18, font_family: "hand", color: "#3b2f23",
     });
     if (created) setEditingId(created.id);
   }
   async function addPostIt() {
     const created = await create({
-      type: "post-it", content_data: "", width: 170, height: 120,
-      font_size: 18, font_family: "hand", color: "#3a3530",
+      type: "post-it", content_data: "", width: 200, height: 150,
+      font_size: 18, font_family: "hand", color: "#3b2f23",
     });
     if (created) setEditingId(created.id);
   }
@@ -109,7 +109,7 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
     setUploading(true);
     try {
       const { url } = await uploadToMedia(`entry/${entry.id}`, file);
-      await create({ type: "image", content_data: url, width: 240, height: 180 });
+      await create({ type: "image", content_data: url, width: 300, height: 220 });
     } catch (e) {
       alert("Erro ao enviar imagem: " + (e as Error).message);
     } finally {
@@ -175,7 +175,7 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
       <div
         ref={canvasRef}
         onClick={(e) => { if (e.target === canvasRef.current) setEditingId(null); }}
-        className="paper-lined relative h-[70vh] w-full overflow-hidden rounded-2xl border border-stone-200 shadow-[inset_0_2px_12px_rgba(0,0,0,0.06)]"
+        className="paper-lined relative h-[85vh] w-full overflow-hidden rounded-2xl border border-stone-200 shadow-[inset_0_2px_12px_rgba(0,0,0,0.06)]"
       >
         <div className="pointer-events-none absolute inset-0 p-6 pl-16">
           <h2 className="font-hand text-4xl font-bold text-ink">{entry.title}</h2>
@@ -202,8 +202,8 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
               onFocus={() => handleFocus(el)}
               onDragEnd={(pos) => handleDragEnd(el, pos)}
               disableDrag={isText && editingId === el.id}
-              width={resizable ? (el.width ?? (el.type === "image" ? 240 : el.type === "note" ? 260 : 170)) : undefined}
-              height={resizable ? (el.height ?? (el.type === "image" ? 180 : el.type === "note" ? 180 : 120)) : undefined}
+              width={resizable ? (el.width ?? (el.type === "image" ? 300 : el.type === "note" ? 340 : 200)) : undefined}
+              height={resizable ? (el.height ?? (el.type === "image" ? 220 : el.type === "note" ? 240 : 150)) : undefined}
               onResizeEnd={resizable ? (size) => handleResize(el, size) : undefined}
             >
               {el.type === "sticker" ? (

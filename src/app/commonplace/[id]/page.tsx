@@ -40,7 +40,7 @@ export default function EntryCanvasPage() {
   }, [params.id]);
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-6">
+    <main className="mx-auto max-w-6xl px-4 py-6">
       <Link
         href="/commonplace"
         className="text-sm text-stone-500 hover:text-stone-700"
