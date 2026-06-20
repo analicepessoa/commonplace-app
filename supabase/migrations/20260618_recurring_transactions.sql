@@ -17,9 +17,12 @@ CREATE TABLE IF NOT EXISTS recurring_transactions (
 ALTER TABLE transactions
   ADD COLUMN IF NOT EXISTS recurring_id UUID REFERENCES recurring_transactions(id) ON DELETE SET NULL;
 
--- Garante um único lançamento por (modelo, data) — evita duplicar no mesmo mês
+-- Garante um único lançamento por (modelo, data) — evita duplicar no mesmo mês.
+-- Índice NÃO parcial (sem WHERE) para o ON CONFLICT do PostgREST funcionar;
+-- linhas com recurring_id NULL não conflitam (NULLs são distintos no Postgres).
+DROP INDEX IF EXISTS uq_tx_recurring_due;
 CREATE UNIQUE INDEX IF NOT EXISTS uq_tx_recurring_due
-  ON transactions (recurring_id, due_date) WHERE recurring_id IS NOT NULL;
+  ON transactions (recurring_id, due_date);
 
 ALTER TABLE recurring_transactions ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "anon_full_access" ON recurring_transactions;
