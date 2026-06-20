@@ -63,7 +63,7 @@ export default function FinancasPage() {
   return (
     <main className="mx-auto max-w-4xl px-4 py-8">
       <header className="mb-6 flex items-end justify-between">
-        <h1 className="font-hand text-5xl font-bold text-ink">Finanças</h1>
+        <h1 className="page-title text-5xl font-bold">Finanças</h1>
         <Link href="/" className="rounded-lg border border-stone-300 bg-paper px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100">
           ← Minha Rotina
         </Link>

@@ -78,7 +78,7 @@ export default function CommonplaceIndexPage() {
     <main className="mx-auto max-w-6xl px-4 py-8">
       <header className="mb-6 flex items-end justify-between">
         <div>
-          <h1 className="font-hand text-5xl font-bold tracking-tight text-ink">
+          <h1 className="page-title text-5xl font-bold tracking-tight">
             Commonplace
           </h1>
           <p className="mt-1 text-ink-soft">Seu fichário de ideias.</p>

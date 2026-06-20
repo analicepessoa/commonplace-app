@@ -30,7 +30,7 @@ export default function HomePage() {
     <main className="mx-auto w-full max-w-5xl px-4 py-8">
       <header className="mb-8 flex items-end justify-between">
         <div>
-          <h1 className="font-hand text-5xl font-bold text-ink">Minha Rotina</h1>
+          <h1 className="page-title text-5xl font-bold">Minha Rotina</h1>
           <p className="mt-1 capitalize text-ink-soft">
             {FMT.format(selectedDate)}
             {isToday && (
