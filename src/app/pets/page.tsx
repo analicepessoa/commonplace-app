@@ -82,7 +82,7 @@ export default function PetsPage() {
         <input className={inputCls} placeholder="Nome" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
         <input className={inputCls} placeholder="Raça" value={form.breed} onChange={(e) => setForm({ ...form, breed: e.target.value })} />
         <input className={inputCls} type="date" value={form.birth_date} onChange={(e) => setForm({ ...form, birth_date: e.target.value })} />
-        <button onClick={addPet} className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90">+ Pet</button>
+        <button onClick={addPet} className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90">+ Pet</button>
       </div>
 
       {/* Cards de pets */}
@@ -148,7 +148,8 @@ function PetDetail({ pet, onDelete }: { pet: Pet; onDelete: () => void }) {
       </div>
 
       {/* Tracks */}
-      <section className="rounded-2xl border border-stone-200 bg-paper p-5 shadow-sm">
+      <section className="relative rounded-2xl border border-stone-200 bg-paper p-5 shadow-sm">
+        <span className="washi-tape" style={{ top: -10, left: 32 }} aria-hidden />
         <h3 className="mb-3 font-hand text-2xl text-ink">Registros</h3>
         <div className="mb-4 grid gap-2 sm:grid-cols-[1fr_1fr_2fr_auto]">
           <select className={inputCls} value={f.kind} onChange={(e) => setF({ ...f, kind: e.target.value as PetLogKind })}>
@@ -162,7 +163,7 @@ function PetDetail({ pet, onDelete }: { pet: Pet; onDelete: () => void }) {
           ) : (
             <input className={inputCls} placeholder="Detalhe (ex.: nome do remédio)" value={f.detail} onChange={(e) => setF({ ...f, detail: e.target.value })} />
           )}
-          <button onClick={addLog} className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90">Adicionar</button>
+          <button onClick={addLog} className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90">Adicionar</button>
         </div>
         <ul className="space-y-1.5">
           {logs.length === 0 && <li className="text-sm text-stone-400">Nenhum registro.</li>}

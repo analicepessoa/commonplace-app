@@ -194,7 +194,8 @@ export default function HabitTracker({ date }: { date: string }) {
   }
 
   return (
-    <section className="rounded-2xl border border-stone-200 bg-paper p-5 shadow-sm">
+    <section className="relative rounded-2xl border border-stone-200 bg-paper p-5 shadow-sm">
+      <span className="pin absolute" style={{ top: -8, right: 18 }} aria-hidden />
       <div className="mb-4 flex items-center justify-between">
         <h2 className="font-hand text-3xl text-ink">Hábitos</h2>
         <CustomButton size="sm" onClick={() => (adding ? closeForm() : openCreate())}>

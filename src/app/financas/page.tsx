@@ -121,7 +121,7 @@ function OrcamentosTab() {
       <div className="mb-5 grid gap-2 sm:grid-cols-[2fr_1fr_auto]">
         <input className={inputCls} placeholder="Categoria (ex.: Mercado)" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
         <input className={inputCls} type="number" placeholder="Limite" value={f.limit} onChange={(e) => setF({ ...f, limit: e.target.value })} />
-        <button onClick={add} className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90">+ Orçamento</button>
+        <button onClick={add} className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-paper hover:opacity-90">+ Orçamento</button>
       </div>
       <div className="space-y-3">
         {items.length === 0 && <p className="text-sm text-stone-400">Nenhum orçamento.</p>}
@@ -198,7 +198,7 @@ function FixosTab() {
         <label className="flex items-center gap-1 text-sm text-ink-soft">dia
           <input className={`${inputCls} w-16`} type="number" min={1} max={31} value={f.day} onChange={(e) => setF({ ...f, day: e.target.value })} />
         </label>
-        <button onClick={add} className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90">+ Fixo</button>
+        <button onClick={add} className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-paper hover:opacity-90">+ Fixo</button>
       </div>
 
       <ul className="space-y-2">
@@ -337,7 +337,7 @@ function MensalTab() {
           <option value="savings">Guardar</option>
         </select>
         <input className={inputCls} type="date" value={f.due_date} onChange={(e) => setF({ ...f, due_date: e.target.value })} />
-        <button onClick={add} className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90">+</button>
+        <button onClick={add} className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-paper hover:opacity-90">+</button>
       </div>
 
       <ul className="space-y-2">
@@ -360,7 +360,7 @@ function MensalTab() {
                 </select>
                 <input className={inputCls} type="date" value={ef.due_date} onChange={(e) => setEf({ ...ef, due_date: e.target.value })} />
                 <div className="flex gap-1">
-                  <button onClick={() => saveEdit(t)} className="rounded-lg bg-ink px-3 py-2 text-sm font-medium text-paper hover:opacity-90">Salvar</button>
+                  <button onClick={() => saveEdit(t)} className="rounded-lg bg-accent px-3 py-2 text-sm font-medium text-paper hover:opacity-90">Salvar</button>
                   <button onClick={() => setEditId(null)} className="rounded-lg border border-stone-300 px-3 py-2 text-sm text-ink-soft hover:bg-stone-100">Cancelar</button>
                 </div>
               </div>
@@ -425,7 +425,7 @@ function MetasTab() {
       <div className="mb-5 grid gap-2 sm:grid-cols-[2fr_1fr_auto]">
         <input className={inputCls} placeholder="Meta (ex.: Viagem)" value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
         <input className={inputCls} type="number" placeholder="Valor que preciso" value={f.target} onChange={(e) => setF({ ...f, target: e.target.value })} />
-        <button onClick={add} className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90">+ Meta</button>
+        <button onClick={add} className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-paper hover:opacity-90">+ Meta</button>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">

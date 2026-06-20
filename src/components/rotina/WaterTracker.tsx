@@ -104,7 +104,8 @@ export default function WaterTracker({ date }: { date: string }) {
   }
 
   return (
-    <section className="rounded-2xl border border-stone-200 bg-paper p-5 shadow-sm">
+    <section className="relative rounded-2xl border border-stone-200 bg-paper p-5 shadow-sm">
+      <span className="pin absolute" style={{ top: -8, right: 18 }} aria-hidden />
       <h2 className="mb-4 font-hand text-3xl text-ink">Água & Refeições</h2>
 
       {error && (

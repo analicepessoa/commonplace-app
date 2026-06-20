@@ -170,7 +170,7 @@ export default function ReceiptUploader({
           </select>
         </label>
         <button onClick={handleSave} disabled={saving}
-          className="mt-2 rounded-lg bg-ink px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90 disabled:opacity-50">
+          className="mt-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90 disabled:opacity-50">
           {saving ? "Salvando…" : "Salvar lançamento"}
         </button>
       </div>

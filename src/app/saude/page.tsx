@@ -66,7 +66,8 @@ export default function SaudePage() {
         ))}
       </div>
 
-      <section className="rounded-2xl border border-stone-200 bg-paper p-6 shadow-sm">
+      <section className="relative rounded-2xl border border-stone-200 bg-paper p-6 shadow-sm">
+        <span className="washi-tape" style={{ top: -10, left: 32 }} aria-hidden />
         {tab === "consultas" && <ConsultasTab />}
         {tab === "medicacoes" && <MedicacoesTab />}
         {tab === "menstrual" && <MenstrualTab />}
@@ -113,7 +114,7 @@ function ConsultasTab() {
         <input className={inputCls} placeholder="Especialidade" value={f.specialty} onChange={(e) => setF({ ...f, specialty: e.target.value })} />
         <input className={inputCls} type="date" value={f.appt_date} onChange={(e) => setF({ ...f, appt_date: e.target.value })} />
         <input className={inputCls} type="time" value={f.appt_time} onChange={(e) => setF({ ...f, appt_time: e.target.value })} />
-        <button onClick={add} className="rounded-lg bg-ink px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90">Adicionar</button>
+        <button onClick={add} className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90">Adicionar</button>
       </div>
       <ul className="space-y-2">
         {items.length === 0 && <li className="text-sm text-stone-400">Nenhuma consulta.</li>}
@@ -169,7 +170,7 @@ function MedicacoesTab() {
         <label className="text-xs text-ink-soft">Início<input className={`${inputCls} mt-1 w-full`} type="date" value={f.start_date} onChange={(e) => setF({ ...f, start_date: e.target.value })} /></label>
         <label className="text-xs text-ink-soft">Fim<input className={`${inputCls} mt-1 w-full`} type="date" value={f.end_date} onChange={(e) => setF({ ...f, end_date: e.target.value })} /></label>
       </div>
-      <button onClick={add} className="mb-4 rounded-lg bg-ink px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90">Adicionar medicação</button>
+      <button onClick={add} className="mb-4 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90">Adicionar medicação</button>
       <ul className="space-y-2">
         {items.length === 0 && <li className="text-sm text-stone-400">Nenhuma medicação.</li>}
         {items.map((m) => (
@@ -223,7 +224,7 @@ function MenstrualTab() {
             <option value="intenso">Intenso</option>
           </select>
         </label>
-        <button onClick={add} className="self-end rounded-lg bg-ink px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90">Registrar</button>
+        <button onClick={add} className="self-end rounded-lg bg-accent px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90">Registrar</button>
       </div>
       <ul className="space-y-2">
         {items.length === 0 && <li className="text-sm text-stone-400">Nenhum ciclo registrado.</li>}
