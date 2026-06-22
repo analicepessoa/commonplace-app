@@ -160,15 +160,8 @@ export default function CommonplaceIndexPage() {
             })}
           </div>
 
-          {/* Página da categoria ativa */}
-          <div
-            className="min-h-[60vh] rounded-2xl rounded-tl-none border border-stone-200 p-6 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.25)]"
-            style={{
-              backgroundColor: category
-                ? pastel(category.color_hex, 0.88)
-                : "var(--paper)",
-            }}
-          >
+          {/* Página da categoria ativa (caderno aberto) */}
+          <div className="notebook-page min-h-[62vh] rounded-2xl rounded-tl-none border border-[#d8c19a] p-6 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.3)]">
             {category && (
               <>
                 <h2 className="mb-1 font-hand text-4xl font-bold text-ink">
@@ -179,14 +172,24 @@ export default function CommonplaceIndexPage() {
                   style={{ backgroundColor: category.color_hex }}
                 />
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {category.subcategories.map((sub) => {
+                <div className="grid gap-x-6 gap-y-7 pt-3 sm:grid-cols-2">
+                  {category.subcategories.map((sub, idx) => {
                     const subEntries = entriesForSub(sub.id);
                     return (
                       <div
                         key={sub.id}
-                        className="rounded-2xl bg-white/70 p-4 shadow-sm ring-1 ring-black/5"
+                        className="relative rounded-sm p-4 pt-5 shadow-md"
+                        style={{
+                          backgroundColor: pastel(category.color_hex, 0.6),
+                          transform: `rotate(${idx % 2 ? 0.8 : -0.8}deg)`,
+                        }}
                       >
+                        {/* fita prendendo o bilhete */}
+                        <span
+                          className="washi-tape"
+                          style={{ top: -9, left: "50%", marginLeft: -43 }}
+                          aria-hidden
+                        />
                         <div className="mb-2 flex items-center justify-between">
                           <Link
                             href={`/commonplace/sub/${sub.id}`}
@@ -195,11 +198,7 @@ export default function CommonplaceIndexPage() {
                             {sub.name}
                           </Link>
                           <span
-                            className="rounded-full px-2 py-0.5 text-xs font-medium"
-                            style={{
-                              backgroundColor: pastel(category.color_hex, 0.6),
-                              color: "#3a3530",
-                            }}
+                            className="rounded-full bg-black/10 px-2 py-0.5 text-xs font-medium text-ink"
                           >
                             {subEntries.length}
                           </span>
