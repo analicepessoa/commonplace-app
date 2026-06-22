@@ -194,7 +194,7 @@ export default function HabitTracker({ date }: { date: string }) {
   }
 
   return (
-    <section className="relative rounded-2xl border border-stone-200 bg-paper p-5 shadow-sm">
+    <section className="relative rounded-2xl border border-stone-200 bg-card p-5 shadow-sm">
       <span className="pin absolute" style={{ top: -8, right: 18 }} aria-hidden />
       <div className="mb-4 flex items-center justify-between">
         <h2 className="font-hand text-3xl text-ink">Hábitos</h2>
@@ -269,7 +269,7 @@ export default function HabitTracker({ date }: { date: string }) {
           return (
             <li
               key={habit.id}
-              className="flex items-center gap-3 rounded-xl px-2 py-2 hover:bg-stone-50"
+              className="flex items-center gap-3 rounded-xl border border-[#e0d2b0] bg-card px-3 py-2 shadow-sm transition hover:border-[#b98f63]"
             >
               <button
                 onClick={() => toggleDone(habit)}

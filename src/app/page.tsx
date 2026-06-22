@@ -44,38 +44,38 @@ export default function HomePage() {
           {!isToday && (
             <button
               onClick={() => setSelected(toISODate(new Date()))}
-              className="rounded-lg border border-stone-300 bg-paper px-3 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+              className="rounded-lg border border-stone-300 bg-card px-3 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
             >
               Hoje
             </button>
           )}
           <Link
             href="/diario"
-            className="rounded-lg border border-stone-300 bg-paper px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+            className="rounded-lg border border-stone-300 bg-card px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
           >
             Diário →
           </Link>
           <Link
             href="/saude"
-            className="rounded-lg border border-stone-300 bg-paper px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+            className="rounded-lg border border-stone-300 bg-card px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
           >
             Saúde →
           </Link>
           <Link
             href="/pets"
-            className="rounded-lg border border-stone-300 bg-paper px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+            className="rounded-lg border border-stone-300 bg-card px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
           >
             Pets →
           </Link>
           <Link
             href="/financas"
-            className="rounded-lg border border-stone-300 bg-paper px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+            className="rounded-lg border border-stone-300 bg-card px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
           >
             Finanças →
           </Link>
           <Link
             href="/commonplace"
-            className="rounded-lg border border-stone-300 bg-paper px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+            className="rounded-lg border border-stone-300 bg-card px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
           >
             Commonplace →
           </Link>

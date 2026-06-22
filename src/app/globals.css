@@ -2,8 +2,9 @@
 
 :root {
   /* Paleta de commonplace antigo (pergaminho envelhecido + tinta sépia) */
-  --paper: #ebe1c8; /* pergaminho */
-  --paper-shade: #ddd0ad;
+  --paper: #e4d8ba; /* pergaminho (fundo da página, um tom mais forte) */
+  --paper-shade: #d6c79f;
+  --card: #fdf8ec; /* superfície dos cards/escrita (mais clara, destaca do papel) */
   --ink: #3b2f23; /* tinta marrom escura */
   --ink-soft: #6e5d45;
   --rule-line: #d6c6a4; /* pauta sépia suave */
@@ -21,6 +22,7 @@
   --color-foreground: var(--foreground);
   --color-paper: var(--paper);
   --color-paper-shade: var(--paper-shade);
+  --color-card: var(--card);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-accent: var(--accent);

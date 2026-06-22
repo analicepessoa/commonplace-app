@@ -104,7 +104,7 @@ export default function WaterTracker({ date }: { date: string }) {
   }
 
   return (
-    <section className="relative rounded-2xl border border-stone-200 bg-paper p-5 shadow-sm">
+    <section className="relative rounded-2xl border border-stone-200 bg-card p-5 shadow-sm">
       <span className="pin absolute" style={{ top: -8, right: 18 }} aria-hidden />
       <h2 className="mb-4 font-hand text-3xl text-ink">Água & Refeições</h2>
 
@@ -159,7 +159,7 @@ export default function WaterTracker({ date }: { date: string }) {
           {meals.map((meal) => (
             <li
               key={meal.id}
-              className="group rounded-lg px-2 py-1.5 transition hover:bg-stone-50"
+              className="group rounded-lg border border-[#e0d2b0] bg-card px-3 py-2 shadow-sm transition"
             >
               <div className="flex items-center gap-2">
                 <button

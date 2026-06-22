@@ -33,10 +33,11 @@ export default function NoteField({
         onBlur={() => onSave(value)}
         placeholder={placeholder}
         rows={rows}
-        className="mt-1 w-full resize-none rounded-xl border border-stone-200 bg-white/70 px-3 py-2 leading-7 text-ink outline-none transition focus:border-stone-400 focus:bg-white"
+        className="mt-1 w-full resize-none rounded-xl border border-[#d8c19a] bg-card px-3 pt-1.5 text-ink outline-none transition focus:border-[#b98f63]"
         style={{
+          lineHeight: "28px",
           backgroundImage:
-            "repeating-linear-gradient(transparent, transparent 27px, #ececec 27px, #ececec 28px)",
+            "repeating-linear-gradient(transparent, transparent 27px, #cdbb96 27px, #cdbb96 28px)",
           backgroundAttachment: "local",
         }}
       />

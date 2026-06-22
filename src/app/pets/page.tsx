@@ -71,7 +71,7 @@ export default function PetsPage() {
         <h1 className="page-title text-5xl font-bold">Pets</h1>
         <Link
           href="/"
-          className="rounded-lg border border-stone-300 bg-paper px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+          className="rounded-lg border border-stone-300 bg-card px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
         >
           ← Minha Rotina
         </Link>
@@ -148,7 +148,7 @@ function PetDetail({ pet, onDelete }: { pet: Pet; onDelete: () => void }) {
       </div>
 
       {/* Tracks */}
-      <section className="relative rounded-2xl border border-stone-200 bg-paper p-5 shadow-sm">
+      <section className="relative rounded-2xl border border-stone-200 bg-card p-5 shadow-sm">
         <span className="washi-tape" style={{ top: -10, left: 32 }} aria-hidden />
         <h3 className="mb-3 font-hand text-2xl text-ink">Registros</h3>
         <div className="mb-4 grid gap-2 sm:grid-cols-[1fr_1fr_2fr_auto]">
@@ -181,7 +181,7 @@ function PetDetail({ pet, onDelete }: { pet: Pet; onDelete: () => void }) {
       </section>
 
       {/* Fotos e momentos */}
-      <section className="rounded-2xl border border-stone-200 bg-paper p-5 shadow-sm">
+      <section className="rounded-2xl border border-stone-200 bg-card p-5 shadow-sm">
         <MediaPanel ownerType="pet" ownerId={pet.id} label="Fotos & momentos" />
       </section>
     </div>

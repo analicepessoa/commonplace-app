@@ -67,7 +67,7 @@ export default function TodaySummary({ date }: { date: string }) {
   }
 
   return (
-    <section className="relative mb-6 rounded-2xl border border-stone-200 bg-paper p-5 shadow-sm">
+    <section className="relative mb-6 rounded-2xl border border-stone-200 bg-card p-5 shadow-sm">
       <span className="washi-tape" style={{ top: -10, left: 28 }} aria-hidden />
       <span
         className="pin absolute"

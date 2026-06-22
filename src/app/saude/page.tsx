@@ -46,7 +46,7 @@ export default function SaudePage() {
         <h1 className="page-title text-5xl font-bold">Saúde</h1>
         <Link
           href="/"
-          className="rounded-lg border border-stone-300 bg-paper px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+          className="rounded-lg border border-stone-300 bg-card px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
         >
           ← Minha Rotina
         </Link>
@@ -66,14 +66,14 @@ export default function SaudePage() {
         ))}
       </div>
 
-      <section className="relative rounded-2xl border border-stone-200 bg-paper p-6 shadow-sm">
+      <section className="relative rounded-2xl border border-stone-200 bg-card p-6 shadow-sm">
         <span className="washi-tape" style={{ top: -10, left: 32 }} aria-hidden />
         {tab === "consultas" && <ConsultasTab />}
         {tab === "medicacoes" && <MedicacoesTab />}
         {tab === "menstrual" && <MenstrualTab />}
       </section>
 
-      <section className="mt-6 rounded-2xl border border-stone-200 bg-paper p-5 shadow-sm">
+      <section className="mt-6 rounded-2xl border border-stone-200 bg-card p-5 shadow-sm">
         <MediaPanel
           ownerType="saude"
           ownerId={SAUDE_MEDIA_ID}

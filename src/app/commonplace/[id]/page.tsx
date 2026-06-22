@@ -66,7 +66,7 @@ export default function EntryCanvasPage() {
 
           {/* Template estruturado da subcategoria */}
           {template && (
-            <section className="rounded-2xl border border-stone-200 bg-paper p-5 shadow-sm">
+            <section className="rounded-2xl border border-stone-200 bg-card p-5 shadow-sm">
               <h2 className="mb-4 font-hand text-2xl text-ink">
                 {template.label}
               </h2>
@@ -86,7 +86,7 @@ export default function EntryCanvasPage() {
 
           {/* Se não há template, a mídia aparece aqui embaixo */}
           {!template && (
-            <div className="rounded-2xl border border-stone-200 bg-paper p-5 shadow-sm">
+            <div className="rounded-2xl border border-stone-200 bg-card p-5 shadow-sm">
               <MediaPanel ownerType="entry" ownerId={entry.id} />
             </div>
           )}

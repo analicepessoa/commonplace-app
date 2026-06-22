@@ -51,7 +51,7 @@ export default function MiniCalendar({ selected, onSelect }: MiniCalendarProps) 
     year === ref.getFullYear();
 
   return (
-    <div className="rounded-2xl border border-stone-200 bg-paper p-4 shadow-sm">
+    <div className="rounded-2xl border border-stone-200 bg-card p-4 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
         <button
           onClick={() => setView(new Date(year, month - 1, 1))}

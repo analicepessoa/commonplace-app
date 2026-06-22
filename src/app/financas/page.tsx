@@ -64,7 +64,7 @@ export default function FinancasPage() {
     <main className="mx-auto max-w-4xl px-4 py-8">
       <header className="mb-6 flex items-end justify-between">
         <h1 className="page-title text-5xl font-bold">Finanças</h1>
-        <Link href="/" className="rounded-lg border border-stone-300 bg-paper px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100">
+        <Link href="/" className="rounded-lg border border-stone-300 bg-card px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100">
           ← Minha Rotina
         </Link>
       </header>
@@ -82,7 +82,7 @@ export default function FinancasPage() {
       {tab === "futuros" && <FuturosTab />}
       {tab === "orcamentos" && <OrcamentosTab />}
       {tab === "comprovante" && (
-        <div className="rounded-2xl border border-stone-200 bg-paper p-6 shadow-sm">
+        <div className="rounded-2xl border border-stone-200 bg-card p-6 shadow-sm">
           <ReceiptUploader />
         </div>
       )}

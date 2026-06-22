@@ -95,7 +95,11 @@ export default function TaskChecklist({
         {tasks.map((task) => (
           <li
             key={task.id}
-            className="group flex items-center gap-2 rounded-lg px-1 py-1 hover:bg-black/5"
+            className={`group flex items-center gap-2 rounded-lg border px-2 py-1.5 shadow-sm transition ${
+              task.done
+                ? "border-emerald-200 bg-emerald-50"
+                : "border-[#e0d2b0] bg-card"
+            }`}
           >
             <button
               onClick={() => handleToggle(task)}
