@@ -54,10 +54,16 @@ body {
 
 /* ---------- Utilitários de textura de folha ---------- */
 
-/* Folha pautada (linhas horizontais + margem) */
+/* Folha pautada (linhas horizontais + margem) — folha marfim sobre a página */
 .paper-lined {
-  background-color: var(--paper);
+  background-color: var(--card);
   background-image:
+    /* leve envelhecimento nas bordas, mas base clara de caderno */
+    radial-gradient(
+      ellipse at center,
+      transparent 60%,
+      rgba(74, 52, 23, 0.08) 100%
+    ),
     linear-gradient(var(--margin-line) 0 0),
     repeating-linear-gradient(
       transparent,
@@ -66,17 +72,19 @@ body {
       var(--rule-line) 32px
     );
   background-size:
+    100% 100%,
     2px 100%,
     100% 100%;
   background-position:
+    0 0,
     44px 0,
     0 0;
-  background-repeat: no-repeat, repeat;
+  background-repeat: no-repeat, no-repeat, repeat;
 }
 
 /* Folha pontilhada (bullet journal) */
 .paper-dotted {
-  background-color: var(--paper);
+  background-color: var(--card);
   background-image: radial-gradient(var(--dot) 1.4px, transparent 1.5px);
   background-size: 22px 22px;
   background-position: 11px 11px;
@@ -178,9 +186,9 @@ body {
     inset 0 -2px 2px rgba(0, 0, 0, 0.15);
 }
 
-/* Página de caderno aberta: pergaminho pautado, margem e leve vinheta */
+/* Página de caderno aberta: folha marfim pautada, margem e leve vinheta */
 .notebook-page {
-  background-color: var(--paper);
+  background-color: var(--card);
   background-image:
     radial-gradient(
       ellipse at center,
