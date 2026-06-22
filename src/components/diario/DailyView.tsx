@@ -99,6 +99,13 @@ export default function DailyView({ initialDay }: { initialDay?: string }) {
             onSave={(v) => save("priorities", v)}
             rows={3}
           />
+          <NoteField
+            label="Sobre o dia"
+            value={fields.about ?? ""}
+            onChange={(v) => update("about", v)}
+            onSave={(v) => save("about", v)}
+            rows={6}
+          />
           <TaskChecklist scope="daily" periodKey={day} label="Tarefas" />
 
           <HabitTracker date={day} />

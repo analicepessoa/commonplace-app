@@ -270,8 +270,12 @@ function MensalTab() {
 
   async function add() {
     if (!f.title.trim() || !f.amount) return;
+    const amount =
+      f.type === "savings" && withdraw
+        ? -Math.abs(Number(f.amount))
+        : Number(f.amount);
     const created = await createTransaction({
-      title: f.title.trim(), amount: Number(f.amount), type: f.type,
+      title: f.title.trim(), amount, type: f.type,
       due_date: f.due_date || null,
     });
     setItems((p) => [...p, created]);
@@ -280,6 +284,7 @@ function MensalTab() {
     const d = new Date(eff + "T00:00:00");
     setMonth(new Date(d.getFullYear(), d.getMonth(), 1));
     setF({ title: "", amount: "", type: f.type, due_date: toISODate(new Date()) });
+    setWithdraw(false);
   }
   async function togglePaid(t: Transaction) {
     const status = t.status === "paid" ? "pending" : "paid";
@@ -297,6 +302,8 @@ function MensalTab() {
   const [ef, setEf] = useState<{ title: string; amount: string; type: TransactionType; due_date: string }>(
     { title: "", amount: "", type: "expense", due_date: "" },
   );
+  // "Retirar guardado" = lançamento savings com valor negativo (resgate)
+  const [withdraw, setWithdraw] = useState(false);
   function startEdit(t: Transaction) {
     setEditId(t.id);
     setEf({ title: t.title, amount: String(t.amount), type: t.type, due_date: t.due_date ?? "" });
@@ -331,10 +338,24 @@ function MensalTab() {
       <div className="mb-4 grid gap-2 sm:grid-cols-[2fr_1fr_1fr_1fr_auto]">
         <input className={inputCls} placeholder="Descrição" value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
         <input className={inputCls} type="number" step="0.01" placeholder="Valor" value={f.amount} onChange={(e) => setF({ ...f, amount: e.target.value })} />
-        <select className={inputCls} value={f.type} onChange={(e) => setF({ ...f, type: e.target.value as TransactionType })}>
+        <select
+          className={inputCls}
+          value={withdraw ? "withdraw" : f.type}
+          onChange={(e) => {
+            const v = e.target.value;
+            if (v === "withdraw") {
+              setF({ ...f, type: "savings" });
+              setWithdraw(true);
+            } else {
+              setF({ ...f, type: v as TransactionType });
+              setWithdraw(false);
+            }
+          }}
+        >
           <option value="income">Entrada</option>
           <option value="expense">Saída</option>
           <option value="savings">Guardar</option>
+          <option value="withdraw">Retirar guardado</option>
         </select>
         <input className={inputCls} type="date" value={f.due_date} onChange={(e) => setF({ ...f, due_date: e.target.value })} />
         <button onClick={add} className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-paper hover:opacity-90">+</button>
@@ -377,7 +398,14 @@ function MensalTab() {
               </div>
               <div className="flex items-center gap-3">
                 <span style={{ color: t.type === "income" ? "#16a34a" : t.type === "expense" ? "#dc2626" : "#2563eb" }} className="font-medium">
-                  {t.type === "income" ? "+" : t.type === "expense" ? "−" : ""}{BRL.format(Number(t.amount))}
+                  {t.type === "income"
+                    ? "+"
+                    : t.type === "expense"
+                      ? "−"
+                      : Number(t.amount) < 0
+                        ? "↓ "
+                        : "↑ "}
+                  {BRL.format(Math.abs(Number(t.amount)))}
                 </span>
                 <button onClick={() => startEdit(t)} className="text-stone-400 transition hover:text-ink" title="Editar">✎</button>
                 <button onClick={() => remove(t.id)} className="text-stone-400 transition hover:text-red-500" title="Remover">×</button>
