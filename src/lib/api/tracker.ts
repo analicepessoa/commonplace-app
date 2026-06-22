@@ -20,13 +20,16 @@ export async function getOrCreateWater(
   );
   if (found.length > 0) return found[0];
 
+  // Cria de forma resistente a corrida: se outra chamada já criou, ignora o
+  // conflito (constraint única em intake_date) e busca de novo.
+  const { error } = await supabase
+    .from("water_intake")
+    .upsert({ intake_date: date }, { onConflict: "intake_date", ignoreDuplicates: true });
+  if (error) console.error("getOrCreateWater.upsert:", error);
+
   return unwrap(
-    "getOrCreateWater.create",
-    await supabase
-      .from("water_intake")
-      .insert({ intake_date: date })
-      .select()
-      .single(),
+    "getOrCreateWater.refetch",
+    await supabase.from("water_intake").select("*").eq("intake_date", date).single(),
   );
 }
 
@@ -58,11 +61,17 @@ export async function getOrCreateMeals(
   }
 
   const rows = DEFAULT_MEALS.map((name) => ({ meal_date: date, name }));
-  const created = await unwrapList<Meal>(
-    "getOrCreateMeals.create",
-    await supabase.from("meals").insert(rows).select(),
+  // Resistente a corrida: ignora conflito (única em meal_date+name) e re-busca.
+  const { error } = await supabase
+    .from("meals")
+    .upsert(rows, { onConflict: "meal_date,name", ignoreDuplicates: true });
+  if (error) console.error("getOrCreateMeals.upsert:", error);
+
+  const all = await unwrapList<Meal>(
+    "getOrCreateMeals.refetch",
+    await supabase.from("meals").select("*").eq("meal_date", date),
   );
-  return sortMeals(created);
+  return sortMeals(all);
 }
 
 export async function toggleMeal(id: string, done: boolean): Promise<Meal> {
