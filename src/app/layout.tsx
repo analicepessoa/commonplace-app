@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Caveat, Cinzel } from "next/font/google";
 import "./globals.css";
+import AuthGate from "@/components/auth/AuthGate";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,7 +55,7 @@ export default function RootLayout({
 
         {/* Wrapper principal do conteúdo */}
         <div className="flex-1 w-full relative z-0 pb-32">
-          {children}
+          <AuthGate>{children}</AuthGate>
         </div>
       </body>
     </html>
