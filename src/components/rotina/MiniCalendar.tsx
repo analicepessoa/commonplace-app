@@ -51,21 +51,21 @@ export default function MiniCalendar({ selected, onSelect }: MiniCalendarProps) 
     year === ref.getFullYear();
 
   return (
-    <div className="rounded-2xl border border-stone-200 bg-card p-4 shadow-sm">
+    <div className="vintage-box">
       <div className="mb-3 flex items-center justify-between">
         <button
           onClick={() => setView(new Date(year, month - 1, 1))}
-          className="rounded-md px-2 py-1 text-ink-soft transition hover:bg-stone-100"
+          className="font-hand text-3xl font-bold text-ink hover:text-accent transition"
           aria-label="Mês anterior"
         >
           ‹
         </button>
-        <span className="font-hand text-2xl text-ink">
+        <span className="font-sans font-bold text-lg uppercase tracking-widest text-ink border-b border-ink/20 px-2 pb-1">
           {MONTHS[month]} {year}
         </span>
         <button
           onClick={() => setView(new Date(year, month + 1, 1))}
-          className="rounded-md px-2 py-1 text-ink-soft transition hover:bg-stone-100"
+          className="font-hand text-3xl font-bold text-ink hover:text-accent transition"
           aria-label="Próximo mês"
         >
           ›
@@ -74,7 +74,7 @@ export default function MiniCalendar({ selected, onSelect }: MiniCalendarProps) 
 
       <div className="grid grid-cols-7 gap-1 text-center">
         {WEEKDAYS.map((w, i) => (
-          <div key={i} className="text-xs font-medium text-ink-soft">
+          <div key={i} className="text-sm font-bold font-sans uppercase text-ink/70">
             {w}
           </div>
         ))}
@@ -86,12 +86,12 @@ export default function MiniCalendar({ selected, onSelect }: MiniCalendarProps) 
             <button
               key={i}
               onClick={() => onSelect(toISODate(new Date(year, month, d)))}
-              className={`mx-auto flex h-8 w-8 items-center justify-center rounded-full text-sm transition ${
+              className={`mx-auto flex h-8 w-8 items-center justify-center font-hand text-xl font-bold transition ${
                 isSel
-                  ? "bg-ink font-medium text-paper"
+                  ? "border-2 border-ink text-ink rounded-full"
                   : isToday
-                    ? "text-ink ring-2 ring-ink/40 hover:bg-stone-100"
-                    : "text-ink hover:bg-stone-100"
+                    ? "text-ink border border-ink/40 rounded-full"
+                    : "text-ink/80 hover:text-ink hover:scale-110"
               }`}
             >
               {d}

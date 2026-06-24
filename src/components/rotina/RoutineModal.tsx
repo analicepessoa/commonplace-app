@@ -86,13 +86,12 @@ export default function RoutineModal({ date }: { date: string }) {
   }
 
   return (
-    <section className="relative rounded-2xl border border-stone-200 bg-card p-5 shadow-sm">
-      <span className="pin absolute" style={{ top: -8, right: 18 }} aria-hidden />
+    <section className="vintage-box">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-hand text-3xl text-ink">Rotinas fixas</h2>
-        <CustomButton size="sm" onClick={() => setOpen(true)}>
-          + Rotina
-        </CustomButton>
+        <h2 className="vintage-header">Rotinas fixas</h2>
+        <button className="text-ink text-sm font-bold border-b border-ink/30 hover:border-ink transition font-sans" onClick={() => setOpen(true)}>
+          + Nova
+        </button>
       </div>
 
       {error && (
@@ -112,31 +111,27 @@ export default function RoutineModal({ date }: { date: string }) {
         {todaysRoutines.map((r) => (
           <li
             key={r.id}
-            className="flex items-center justify-between rounded-xl border border-stone-200 bg-white px-4 py-3"
+            className="flex items-center justify-between border-b border-ink/20 py-2 group"
           >
             <div>
-              <p className="font-hand text-xl text-ink">{r.title}</p>
+              <p className="font-hand text-2xl font-bold text-ink">{r.title}</p>
               {r.location && (
                 <p className="text-sm text-ink-soft">{r.location}</p>
               )}
             </div>
-            <div className="text-right text-sm">
+            <div className="text-right text-sm font-bold font-sans">
               <p className="text-ink">
-                Início <strong>{r.start_time.slice(0, 5)}</strong>
+                Início <strong className="text-lg">{r.start_time.slice(0, 5)}</strong>
               </p>
               {r.travel_minutes > 0 && (
-                <p className="text-ink-soft">
-                  Sair{" "}
-                  <strong className="text-amber-700">
-                    {computeLeaveTime(r.start_time, r.travel_minutes)}
-                  </strong>{" "}
-                  ({r.travel_minutes} min)
+                <p className="text-ink/80 text-xs uppercase tracking-wider">
+                  Sair <strong className="text-accent">{computeLeaveTime(r.start_time, r.travel_minutes)}</strong> ({r.travel_minutes} min)
                 </p>
               )}
             </div>
             <button
               onClick={() => handleDelete(r)}
-              className="ml-3 text-stone-300 transition hover:text-red-500"
+              className="ml-3 text-ink/40 font-bold hover:text-accent transition"
               title="Remover"
             >
               ×
@@ -148,55 +143,55 @@ export default function RoutineModal({ date }: { date: string }) {
       {/* Modal */}
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 backdrop-blur-sm p-4"
           onClick={() => setOpen(false)}
         >
           <div
-            className="paper-dotted w-full max-w-md rounded-2xl border border-stone-200 p-6 shadow-xl"
+            className="vintage-box w-full max-w-md shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="mb-4 font-hand text-3xl text-ink">Nova rotina</h3>
+            <h3 className="vintage-header">Nova rotina</h3>
 
             <div className="space-y-3">
               <label className="block">
-                <span className="text-sm text-ink-soft">Título</span>
+                <span className="text-xs font-sans font-bold uppercase tracking-wider text-ink">Título</span>
                 <input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Ex.: Trabalho"
-                  className="mt-1 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 outline-none focus:border-stone-400"
+                  className="mt-1 w-full bg-transparent border-b-2 border-ink/30 px-2 py-1 outline-none focus:border-ink font-hand text-2xl font-bold text-ink placeholder:text-ink/40"
                 />
               </label>
               <label className="block">
-                <span className="text-sm text-ink-soft">Local (opcional)</span>
+                <span className="text-xs font-sans font-bold uppercase tracking-wider text-ink">Local (opcional)</span>
                 <input
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="Ex.: Centro"
-                  className="mt-1 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 outline-none focus:border-stone-400"
+                  className="mt-1 w-full bg-transparent border-b-2 border-ink/30 px-2 py-1 outline-none focus:border-ink font-hand text-2xl font-bold text-ink placeholder:text-ink/40"
                 />
               </label>
               <div className="flex gap-3">
                 <label className="flex-1">
-                  <span className="text-sm text-ink-soft">Início</span>
+                  <span className="text-xs font-sans font-bold uppercase tracking-wider text-ink">Início</span>
                   <input
                     type="time"
                     value={startTime}
                     onChange={(e) => setStartTime(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 outline-none focus:border-stone-400"
+                    className="mt-1 w-full bg-transparent border-b-2 border-ink/30 px-2 py-1 outline-none focus:border-ink font-sans font-bold text-lg text-ink"
                   />
                 </label>
                 <label className="flex-1">
-                  <span className="text-sm text-ink-soft">Deslocamento</span>
+                  <span className="text-xs font-sans font-bold uppercase tracking-wider text-ink">Deslocamento</span>
                   <div className="mt-1 flex items-center gap-2">
                     <input
                       type="number"
                       min={0}
                       value={travel}
                       onChange={(e) => setTravel(Number(e.target.value))}
-                      className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 outline-none focus:border-stone-400"
+                      className="w-full bg-transparent border-b-2 border-ink/30 px-2 py-1 outline-none focus:border-ink font-sans font-bold text-lg text-ink text-right"
                     />
-                    <span className="text-sm text-ink-soft">min</span>
+                    <span className="text-sm text-ink font-bold">min</span>
                   </div>
                 </label>
               </div>
@@ -230,25 +225,24 @@ export default function RoutineModal({ date }: { date: string }) {
                 </div>
               </div>
 
-              <div className="rounded-xl bg-amber-100 px-4 py-3 text-center">
-                <span className="text-sm text-amber-900">
+              <div className="border border-ink/20 bg-ink/5 p-3 text-center rounded-sm">
+                <span className="text-sm text-ink font-bold font-sans">
                   Você deve sair às{" "}
-                  <strong className="text-lg">{previewLeave}</strong> para
-                  chegar às {startTime}.
+                  <strong className="text-accent text-lg">{previewLeave}</strong> para chegar às {startTime}.
                 </span>
               </div>
             </div>
 
-            <div className="mt-5 flex justify-end gap-2">
+            <div className="mt-6 flex justify-end gap-4">
               <button
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-4 py-2 text-ink-soft transition hover:bg-stone-100"
+                className="text-ink/60 font-bold font-sans uppercase text-sm border-b-2 border-transparent hover:border-ink/60 transition"
               >
                 Cancelar
               </button>
-              <CustomButton size="sm" onClick={handleSave} disabled={saving}>
+              <button className="text-ink font-bold font-sans uppercase text-sm border-b-2 border-ink hover:text-accent transition" onClick={handleSave} disabled={saving}>
                 {saving ? "Salvando…" : "Salvar"}
-              </CustomButton>
+              </button>
             </div>
           </div>
         </div>

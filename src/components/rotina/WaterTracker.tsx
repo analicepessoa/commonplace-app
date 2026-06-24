@@ -104,9 +104,8 @@ export default function WaterTracker({ date }: { date: string }) {
   }
 
   return (
-    <section className="relative rounded-2xl border border-stone-200 bg-card p-5 shadow-sm">
-      <span className="pin absolute" style={{ top: -8, right: 18 }} aria-hidden />
-      <h2 className="mb-4 font-hand text-3xl text-ink">Água & Refeições</h2>
+    <section className="vintage-box">
+      <h2 className="vintage-header">Água & Refeições</h2>
 
       {error && (
         <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
@@ -117,19 +116,19 @@ export default function WaterTracker({ date }: { date: string }) {
       {water && (
         <div className="mb-5">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-ink-soft">
-              Água: {water.glasses}/{water.goal} copos
+            <span className="text-ink font-bold font-sans uppercase text-sm border-b border-ink/20 pb-1 inline-block mb-2">
+              Copos de Água: {water.glasses}/{water.goal}
             </span>
-            <div className="flex gap-1">
+            <div className="flex gap-2">
               <button
                 onClick={() => changeGlasses(water.glasses - 1)}
-                className="h-7 w-7 rounded-md border border-stone-300 text-ink-soft transition hover:bg-stone-100"
+                className="font-hand text-xl text-ink opacity-60 hover:opacity-100 transition"
               >
                 −
               </button>
               <button
                 onClick={() => changeGlasses(water.glasses + 1)}
-                className="h-7 w-7 rounded-md border border-stone-300 text-ink-soft transition hover:bg-stone-100"
+                className="font-hand text-xl text-ink hover:text-accent transition"
               >
                 +
               </button>
@@ -154,12 +153,12 @@ export default function WaterTracker({ date }: { date: string }) {
       )}
 
       <div>
-        <h3 className="mb-2 font-hand text-2xl text-ink">Refeições</h3>
+        <h3 className="mb-2 font-hand font-bold text-3xl text-ink">Refeições</h3>
         <ul className="space-y-1.5">
           {meals.map((meal) => (
             <li
               key={meal.id}
-              className="group rounded-lg border border-[#e0d2b0] bg-card px-3 py-2 shadow-sm transition"
+              className="group py-2 border-b border-ink/20 transition"
             >
               <div className="flex items-center gap-2">
                 <button
@@ -167,17 +166,15 @@ export default function WaterTracker({ date }: { date: string }) {
                   className="flex flex-1 items-center gap-3 text-left"
                 >
                   <span
-                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 ${
-                      meal.done
-                        ? "border-emerald-500 bg-emerald-500 text-white"
-                        : "border-stone-300 text-transparent"
-                    }`}
+                    className="flex h-5 w-5 shrink-0 items-center justify-center border-2 border-ink transition relative"
                   >
-                    ✓
+                    {meal.done ? (
+                      <span className="absolute inset-0 bg-ink" style={{ clipPath: 'polygon(10% 0, 100% 20%, 90% 100%, 0 80%)' }}></span>
+                    ) : ""}
                   </span>
                   <span
-                    className={`font-hand text-xl ${
-                      meal.done ? "text-ink-soft line-through" : "text-ink"
+                    className={`font-hand text-2xl font-bold ${
+                      meal.done ? "text-ink opacity-50 line-through" : "text-ink"
                     }`}
                   >
                     {meal.name}
@@ -202,28 +199,28 @@ export default function WaterTracker({ date }: { date: string }) {
                 value={meal.detail ?? ""}
                 onChange={(e) => updateDetailLocal(meal.id, e.target.value)}
                 onBlur={(e) => saveDetail(meal.id, e.target.value)}
-                placeholder="o que comeu…"
-                className="ml-9 mt-1 w-[calc(100%-2.25rem)] rounded-md border border-stone-200 bg-white/70 px-2 py-1 text-sm outline-none focus:border-stone-400"
+                placeholder="Detalhes (ex: o que comeu)..."
+                className="ml-8 mt-1 w-[calc(100%-2rem)] bg-transparent border-b border-ink/30 px-1 py-1 text-lg font-hand text-ink outline-none placeholder:text-ink/40"
               />
             </li>
           ))}
         </ul>
 
-        <div className="mt-3 flex gap-2">
+        <div className="mt-4 flex gap-2">
           <input
             value={newMeal}
             onChange={(e) => setNewMeal(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") handleAddMeal();
             }}
-            placeholder="Adicionar refeição…"
-            className="flex-1 rounded-lg border border-stone-300 bg-white px-3 py-1.5 text-sm outline-none focus:border-stone-400"
+            placeholder="Nova refeição..."
+            className="flex-1 bg-transparent border-b-2 border-ink/30 px-2 py-1 outline-none focus:border-ink font-hand text-2xl font-bold text-ink placeholder:text-ink/40"
           />
           <button
             onClick={handleAddMeal}
-            className="rounded-lg bg-emerald-200 px-3 py-1.5 text-sm font-medium text-emerald-900 transition hover:bg-emerald-300"
+            className="text-ink font-bold font-sans uppercase text-sm border-b-2 border-ink hover:text-accent transition"
           >
-            +
+            Adicionar
           </button>
         </div>
       </div>

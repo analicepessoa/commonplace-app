@@ -67,26 +67,20 @@ export default function TodaySummary({ date }: { date: string }) {
   }
 
   return (
-    <section className="relative mb-6 rounded-2xl border border-stone-200 bg-card p-5 shadow-sm">
-      <span className="washi-tape" style={{ top: -10, left: 28 }} aria-hidden />
-      <span
-        className="pin absolute"
-        style={{ top: -8, right: 18 }}
-        aria-hidden
-      />
+    <section className="vintage-box mb-6">
       <div className="grid gap-5 md:grid-cols-2">
         <div className="space-y-3">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-wide text-ink-soft">
-              Como estou me sentindo hoje?
+            <span className="text-sm font-bold uppercase tracking-widest text-ink font-sans border-b border-ink/20 pb-1 mb-2 inline-block">
+              Humor & Inspiração
             </span>
             <div className="mt-1 flex gap-2">
               {MOODS.map((m) => (
                 <button
                   key={m}
                   onClick={() => pickMood(m)}
-                  className={`rounded-full p-1 text-2xl transition ${
-                    fields.mood === m ? "scale-110 bg-amber-100" : "opacity-50 hover:opacity-100"
+                  className={`rounded-full p-1 text-3xl transition ${
+                    fields.mood === m ? "scale-110 drop-shadow-md" : "opacity-40 hover:opacity-100 grayscale hover:grayscale-0"
                   }`}
                 >
                   {m}
@@ -104,7 +98,7 @@ export default function TodaySummary({ date }: { date: string }) {
         </div>
 
         <div className="space-y-3">
-          <div className="grid grid-cols-3 gap-2">
+          <div className="flex gap-6 mb-4">
             <Mini label="Hábitos" value={`${habits.done}/${habits.total}`} />
             <Mini label="Água" value={`${water.glasses}/${water.goal}`} />
             <Mini label="Tarefas" value={`${tasks.done}/${tasks.total}`} />
@@ -124,9 +118,9 @@ export default function TodaySummary({ date }: { date: string }) {
 
 function Mini({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-stone-200 bg-white p-3 text-center">
-      <p className="text-lg font-semibold text-ink">{value}</p>
-      <p className="text-xs uppercase tracking-wide text-ink-soft">{label}</p>
+    <div className="flex-1 border-b border-ink/20 pb-2">
+      <p className="text-3xl font-hand font-bold text-ink">{value}</p>
+      <p className="text-xs uppercase tracking-widest font-sans font-bold text-ink opacity-70">{label}</p>
     </div>
   );
 }

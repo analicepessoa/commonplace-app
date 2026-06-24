@@ -33,12 +33,10 @@ export default function NoteField({
         onBlur={() => onSave(value)}
         placeholder={placeholder}
         rows={rows}
-        className="mt-1 w-full resize-none rounded-xl border border-[#d8c19a] bg-card px-3 pt-1.5 text-ink outline-none transition focus:border-[#b98f63]"
+        className="mt-1 w-full resize-none bg-transparent px-1 pt-1.5 font-hand text-2xl font-bold text-ink outline-none"
         style={{
-          lineHeight: "28px",
-          backgroundImage:
-            "repeating-linear-gradient(transparent, transparent 27px, #cdbb96 27px, #cdbb96 28px)",
-          backgroundAttachment: "local",
+          lineHeight: "34px",
+          /* Retiramos as pautas locais para deixar as pautas do body aparecerem pelo fundo transparente */
         }}
       />
     </label>

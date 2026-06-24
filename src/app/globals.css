@@ -1,18 +1,16 @@
 @import "tailwindcss";
 
 :root {
-  /* Paleta de commonplace antigo (pergaminho envelhecido + tinta sépia) */
-  --paper: #e4d8ba; /* pergaminho (fundo da página, um tom mais forte) */
-  --paper-shade: #d6c79f;
-  --card: #fdf8ec; /* superfície dos cards/escrita (mais clara, destaca do papel) */
-  --ink: #3b2f23; /* tinta marrom escura */
-  --ink-soft: #6e5d45;
-  --rule-line: #d6c6a4; /* pauta sépia suave */
-  --margin-line: #bb7a63; /* margem vermelho-tijolo desbotado */
-  --dot: #cdbb96;
-  --accent: #8f3a2e; /* vinho/terracota vintage */
-  --accent-soft: #d8b89c;
-
+  /* Paleta Dark Academia / Vintage Journal */
+  --paper: #eeddbf; /* fundo base muito mais claro e suave */
+  --paper-shade: #d8c29d; /* sombras do papel */
+  --card: transparent; /* Removemos o fundo do card para mesclar com a página */
+  --ink: #3b2b1f; /* Tinta sépia escurecida (mais suave que preto) */
+  --ink-soft: #634b36; /* Tinta sépia intermediária */
+  --rule-line: #c48a73; /* Pauta terracotta/vermelha como na imagem */
+  --margin-line: #8b4a3b;
+  --accent: #a34832;
+  
   --background: var(--paper);
   --foreground: var(--ink);
 }
@@ -26,8 +24,7 @@
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-accent: var(--accent);
-  --color-accent-soft: var(--accent-soft);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-cinzel), var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-hand: var(--font-hand);
 }
@@ -35,192 +32,152 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), serif;
 }
 
-/* Fundo geral com textura de pergaminho envelhecido (manchas + vinheta) */
+/* Fundo Academia suave e claro com linhas vermelhas */
 .paper-bg {
   background-color: var(--paper);
   background-image:
-    radial-gradient(
-      ellipse at center,
-      transparent 52%,
-      rgba(74, 52, 23, 0.13) 100%
-    ),
-    radial-gradient(circle at 22% 18%, rgba(120, 85, 40, 0.08) 0, transparent 45%),
-    radial-gradient(circle at 82% 72%, rgba(120, 85, 40, 0.09) 0, transparent 45%),
-    radial-gradient(circle at 65% 30%, rgba(90, 60, 25, 0.05) 0, transparent 35%);
+    repeating-linear-gradient(transparent, transparent 33px, rgba(196, 138, 115, 0.4) 33px, rgba(196, 138, 115, 0.4) 34px),
+    linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
+    url("/grimoire/academia_bg.png");
+  background-blend-mode: normal, normal, multiply;
+  background-attachment: local, fixed, fixed;
+  background-size: 100% 34px, 100% 100%, cover;
 }
 
-/* ---------- Utilitários de textura de folha ---------- */
-
-/* Folha pautada (linhas horizontais + margem) — folha marfim sobre a página */
-.paper-lined {
-  background-color: var(--card);
-  background-image:
-    /* leve envelhecimento nas bordas, mas base clara de caderno */
-    radial-gradient(
-      ellipse at center,
-      transparent 60%,
-      rgba(74, 52, 23, 0.08) 100%
-    ),
-    linear-gradient(var(--margin-line) 0 0),
-    repeating-linear-gradient(
-      transparent,
-      transparent 31px,
-      var(--rule-line) 31px,
-      var(--rule-line) 32px
-    );
-  background-size:
-    100% 100%,
-    2px 100%,
-    100% 100%;
-  background-position:
-    0 0,
-    44px 0,
-    0 0;
-  background-repeat: no-repeat, no-repeat, repeat;
-}
-
-/* Folha pontilhada (bullet journal) */
-.paper-dotted {
-  background-color: var(--card);
-  background-image: radial-gradient(var(--dot) 1.4px, transparent 1.5px);
-  background-size: 22px 22px;
-  background-position: 11px 11px;
-}
-
-/* ---------- Fonte manuscrita ---------- */
+/* Fonte manuscrita */
 .font-hand {
-  font-family: var(--font-hand), "Comic Sans MS", cursive;
-  letter-spacing: 0.3px;
-}
-
-/* ---------- Marca-texto (Highlighter) ---------- */
-/* Pinta a seleção como um marcador real: traço levemente torto,
-   bordas irregulares e opacidade que deixa o texto legível. */
-.highlighter {
-  --hl: 250, 204, 21; /* amarelo padrão (RGB) */
-  background-image: linear-gradient(
-    104deg,
-    rgba(var(--hl), 0) 0.1%,
-    rgba(var(--hl), 0.7) 1.8%,
-    rgba(var(--hl), 0.45) 5%,
-    rgba(var(--hl), 0.55) 95%,
-    rgba(var(--hl), 0.7) 98.2%,
-    rgba(var(--hl), 0) 99.9%
-  );
-  border-radius: 0.6em 0.3em 0.5em 0.4em;
-  padding: 0.05em 0.18em;
-  margin: 0 -0.1em;
-  /* preserva o efeito quando o texto quebra em várias linhas */
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-  mix-blend-mode: multiply;
-}
-
-/* ---------- Botão estilo carimbo/desenho ---------- */
-.btn-stamp {
   font-family: var(--font-hand), cursive;
-  border: 2px solid var(--ink);
-  border-radius: 14px 10px 16px 8px / 10px 16px 8px 14px;
-  background: var(--paper);
-  color: var(--ink);
-  box-shadow: 2px 2px 0 rgba(58, 53, 48, 0.25);
-  transition:
-    transform 0.06s ease,
-    box-shadow 0.06s ease;
-}
-.btn-stamp:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0 rgba(58, 53, 48, 0.3);
-}
-.btn-stamp:active {
-  transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0 rgba(58, 53, 48, 0.25);
+  letter-spacing: 0.5px;
 }
 
-/* ---------- Estilo Classmate: títulos, fita washi, alfinete ---------- */
+/* =========================================
+   ESTILOS VINTAGE / DARK ACADEMIA
+   ========================================= */
 
-/* Título de página: manuscrito, rosa, com sublinhado rabiscado à mão */
-.page-title {
-  font-family: var(--font-hand), cursive;
-  color: var(--accent);
+/* Caixa estilo pedaço de papel rasgado/envelhecido (Referência: Daily Rituals box) */
+.vintage-box {
   position: relative;
-  display: inline-block;
-  line-height: 1.1;
-  padding-bottom: 0.12em;
+  /* Fundo ligeiramente mais escuro e texturizado para diferenciar da página principal */
+  background-color: rgba(220, 204, 178, 0.85); 
+  background-blend-mode: multiply;
+  background-image: url("/grimoire/academia_bg.png");
+  background-size: cover;
+  
+  /* Borda sutil escurecida para dar profundidade */
+  border: 1px solid rgba(59, 43, 31, 0.15);
+  border-radius: 4px;
+  
+  /* Sombra para parecer "colado" sobre a folha */
+  box-shadow: 
+    2px 3px 8px rgba(0, 0, 0, 0.08),
+    inset 0 0 20px rgba(99, 75, 54, 0.05);
+    
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
 }
-.page-title::after {
+
+/* Efeito de borda desenhada / rasgada irregular (SVG mask via CSS ou bordas orgânicas) */
+.vintage-box::before {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -0.12em;
-  height: 0.32em;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6 Q 20 1 40 6 T 80 6 T 118 5' stroke='%238f3a2e' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-}
-
-/* Fita adesiva (washi tape) — posicione no elemento pai (relative) */
-.washi-tape {
-  position: absolute;
-  width: 86px;
-  height: 22px;
-  background: rgba(150, 120, 78, 0.3);
-  border-left: 2px dashed rgba(110, 88, 55, 0.4);
-  border-right: 2px dashed rgba(110, 88, 55, 0.4);
-  transform: rotate(-4deg);
+  top: -2px; left: -2px; right: -2px; bottom: -2px;
+  border: 1px solid rgba(59, 43, 31, 0.2);
+  border-radius: 6px 4px 8px 3px / 3px 8px 4px 6px;
   pointer-events: none;
 }
 
-/* Alfinete (pushpin) */
-.pin {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #c47a5a, var(--accent));
-  box-shadow:
-    0 2px 3px rgba(0, 0, 0, 0.3),
-    inset 0 -2px 2px rgba(0, 0, 0, 0.15);
-}
-
-/* Página de caderno aberta: folha marfim pautada, margem e leve vinheta */
-.notebook-page {
-  background-color: var(--card);
-  background-image:
-    radial-gradient(
-      ellipse at center,
-      transparent 58%,
-      rgba(74, 52, 23, 0.13) 100%
-    ),
-    linear-gradient(var(--margin-line) 0 0),
-    repeating-linear-gradient(
-      transparent,
-      transparent 33px,
-      var(--rule-line) 33px,
-      var(--rule-line) 34px
-    );
-  background-size:
-    100% 100%,
-    2px 100%,
-    100% 100%;
-  background-position:
-    0 0,
-    48px 0,
-    0 0;
-  background-repeat: no-repeat, no-repeat, repeat;
-}
-
-/* Bilhete de papel rasgado preso (estilo commonplace) */
-.note-card {
+/* Header elegante para as caixas */
+.vintage-header {
+  font-family: var(--font-sans), serif;
+  font-weight: 700;
+  color: var(--ink);
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
   position: relative;
-  border-radius: 2px;
-  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.18);
-  /* borda irregular tipo papel rasgado */
-  clip-path: polygon(
-    0% 4%, 3% 0%, 30% 2%, 55% 0%, 80% 2%, 100% 0%,
-    98% 35%, 100% 70%, 99% 100%, 70% 98%, 45% 100%, 20% 98%, 2% 100%, 0% 60%
-  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
+
+/* Tabelas estilo traçado a tinta (Referência: Grid de hábitos) */
+.vintage-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-hand), cursive;
+  font-size: 1.25rem;
+  color: var(--ink);
+}
+
+.vintage-table th, .vintage-table td {
+  border: 1px solid rgba(59, 43, 31, 0.3); /* Linha sépia */
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.vintage-table th {
+  font-family: var(--font-sans), serif;
+  font-weight: 600;
+  font-size: 1rem;
+  background-color: rgba(59, 43, 31, 0.05);
+}
+
+.vintage-table td:first-child {
+  text-align: left;
+  font-weight: bold;
+}
+
+/* Checkbox no estilo manuscrito escuro */
+.grimoire-checkbox {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--ink);
+  background-color: transparent;
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+  top: 3px;
+  box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.grimoire-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  top: 2px; left: 2px; right: 2px; bottom: 2px;
+  background-color: var(--ink);
+  clip-path: polygon(10% 0, 100% 20%, 90% 100%, 0 80%);
+}
+
+/* Regras de caderno antigas */
+.grimoire-lines {
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 31px,
+    rgba(26, 17, 11, 0.15) 31px,
+    rgba(26, 17, 11, 0.15) 32px
+  );
+  background-size: 100% 32px;
+  background-attachment: local;
+}
+
+/* Separador de estrelas */
+.grimoire-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  gap: 0.5rem;
+  opacity: 0.6;
+}
+.grimoire-divider::before, .grimoire-divider::after {
+  content: "";
+  height: 1px;
+  width: 2rem;
+  background-color: var(--ink);
+}
+

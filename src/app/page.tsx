@@ -13,6 +13,7 @@ import MiniCalendar from "@/components/rotina/MiniCalendar";
 import HabitTracker from "@/components/rotina/HabitTracker";
 import WaterTracker from "@/components/rotina/WaterTracker";
 import RoutineModal from "@/components/rotina/RoutineModal";
+import Doodle from "@/components/ui/Doodle";
 import { toISODate } from "@/lib/api";
 
 const FMT = new Intl.DateTimeFormat("pt-BR", {
@@ -30,52 +31,52 @@ export default function HomePage() {
     <main className="mx-auto w-full max-w-5xl px-4 py-8">
       <header className="mb-8 flex items-end justify-between">
         <div>
-          <h1 className="page-title text-5xl font-bold">Minha Rotina</h1>
-          <p className="mt-1 capitalize text-ink-soft">
+          <h1 className="font-hand text-6xl font-bold text-ink mb-2">Minha Rotina</h1>
+          <p className="mt-1 font-sans text-sm font-bold uppercase tracking-widest text-ink/70">
             {FMT.format(selectedDate)}
             {isToday && (
-              <span className="ml-2 rounded-full bg-ink/10 px-2 py-0.5 text-xs font-medium normal-case text-ink">
-                hoje
+              <span className="ml-2 border-b border-accent text-accent">
+                Hoje
               </span>
             )}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-4">
           {!isToday && (
             <button
               onClick={() => setSelected(toISODate(new Date()))}
-              className="rounded-lg border border-stone-300 bg-card px-3 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+              className="text-ink font-bold font-sans uppercase text-sm border-b-2 border-ink hover:text-accent transition"
             >
-              Hoje
+              Ir para Hoje
             </button>
           )}
           <Link
             href="/diario"
-            className="rounded-lg border border-stone-300 bg-card px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+            className="text-ink font-bold font-sans uppercase text-sm hover:text-accent transition"
           >
             Diário →
           </Link>
           <Link
             href="/saude"
-            className="rounded-lg border border-stone-300 bg-card px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+            className="text-ink font-bold font-sans uppercase text-sm hover:text-accent transition"
           >
             Saúde →
           </Link>
           <Link
             href="/pets"
-            className="rounded-lg border border-stone-300 bg-card px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+            className="text-ink font-bold font-sans uppercase text-sm hover:text-accent transition"
           >
             Pets →
           </Link>
           <Link
             href="/financas"
-            className="rounded-lg border border-stone-300 bg-card px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+            className="text-ink font-bold font-sans uppercase text-sm hover:text-accent transition"
           >
             Finanças →
           </Link>
           <Link
             href="/commonplace"
-            className="rounded-lg border border-stone-300 bg-card px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+            className="text-ink font-bold font-sans uppercase text-sm hover:text-accent transition"
           >
             Commonplace →
           </Link>

@@ -194,25 +194,24 @@ export default function HabitTracker({ date }: { date: string }) {
   }
 
   return (
-    <section className="relative rounded-2xl border border-stone-200 bg-card p-5 shadow-sm">
-      <span className="pin absolute" style={{ top: -8, right: 18 }} aria-hidden />
+    <section className="vintage-box">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-hand text-3xl text-ink">Hábitos</h2>
-        <CustomButton size="sm" onClick={() => (adding ? closeForm() : openCreate())}>
-          {adding ? "Fechar" : "+ Hábito"}
-        </CustomButton>
+        <h2 className="vintage-header">Hábitos Diários</h2>
+        <button className="text-ink text-sm font-bold border-b border-ink/30 hover:border-ink transition font-sans" onClick={() => (adding ? closeForm() : openCreate())}>
+          {adding ? "Fechar" : "+ Novo"}
+        </button>
       </div>
 
       {adding && (
-        <div className="mb-4 rounded-xl border border-stone-200 bg-white p-3">
-          <p className="mb-2 text-sm font-medium text-ink-soft">
-            {editingId ? "Editar hábito" : "Novo hábito"}
+        <div className="mb-6 border border-ink/20 p-4 relative" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
+          <p className="mb-2 text-sm font-bold font-sans text-ink uppercase tracking-wider">
+            {editingId ? "Editar Hábito" : "Criar Hábito"}
           </p>
           <input
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            placeholder="Nome do hábito (ex.: Treinar)"
-            className="w-full rounded-lg border border-stone-300 px-3 py-2 outline-none focus:border-stone-400"
+            placeholder="Nome (ex.: Treinar)"
+            className="w-full bg-transparent border-b-2 border-ink/30 px-1 py-2 outline-none focus:border-ink font-hand text-2xl text-ink font-bold placeholder:text-ink/40 mb-2"
           />
           <p className="mt-3 text-sm text-ink-soft">
             Repete em (vazio = todo dia):
@@ -240,9 +239,9 @@ export default function HabitTracker({ date }: { date: string }) {
             })}
           </div>
           <div className="mt-3 flex justify-end">
-            <CustomButton size="sm" onClick={handleSave}>
+            <button className="text-ink font-bold font-sans uppercase text-sm border-b-2 border-ink hover:text-accent transition" onClick={handleSave}>
               Salvar
-            </CustomButton>
+            </button>
           </div>
         </div>
       )}
@@ -269,35 +268,28 @@ export default function HabitTracker({ date }: { date: string }) {
           return (
             <li
               key={habit.id}
-              className="flex items-center gap-3 rounded-xl border border-[#e0d2b0] bg-card px-3 py-2 shadow-sm transition hover:border-[#b98f63]"
+              className="flex items-center gap-3 border-b border-ink/20 py-2 group"
             >
               <button
                 onClick={() => toggleDone(habit)}
-                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border-2 transition"
-                style={{
-                  borderColor: habit.color_hex,
-                  backgroundColor: doneToday ? habit.color_hex : "transparent",
-                  color: doneToday ? "#fff" : habit.color_hex,
-                }}
+                className="flex h-5 w-5 shrink-0 items-center justify-center border-2 border-ink bg-transparent transition relative"
                 title={doneToday ? "Cumprido" : "Marcar"}
               >
-                {doneToday ? "✓" : ""}
+                {doneToday ? (
+                  <span className="absolute inset-0 bg-ink" style={{ clipPath: 'polygon(10% 0, 100% 20%, 90% 100%, 0 80%)' }}></span>
+                ) : ""}
               </button>
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between">
-                  <span className="font-hand text-xl text-ink">
+                  <span className="font-hand text-2xl text-ink font-bold">
                     {habit.name}
                   </span>
                   <span
-                    className="ml-2 shrink-0 rounded-full px-2 py-0.5 text-xs font-medium"
-                    style={{
-                      backgroundColor: `${habit.color_hex}1a`,
-                      color: habit.color_hex,
-                    }}
+                    className="ml-2 shrink-0 px-2 font-sans font-bold text-xs opacity-70"
                     title="Sequência de dias"
                   >
-                    🔥 {streak}
+                    {streak} d
                   </span>
                 </div>
                 <div className="mt-1.5 flex gap-1">
