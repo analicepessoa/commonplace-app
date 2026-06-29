@@ -51,6 +51,12 @@ export default function HomePage() {
             </button>
           )}
           <Link
+            href="/agenda"
+            className="text-ink font-bold font-sans uppercase text-sm hover:text-accent transition"
+          >
+            Agenda →
+          </Link>
+          <Link
             href="/diario"
             className="text-ink font-bold font-sans uppercase text-sm hover:text-accent transition"
           >

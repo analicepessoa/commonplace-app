@@ -19,3 +19,4 @@ export * from "./health";
 export * from "./pets";
 export * from "./entryFields";
 export * from "./finance";
+export * from "./events";

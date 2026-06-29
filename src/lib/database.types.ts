@@ -679,6 +679,36 @@ export interface Database {
         };
         Relationships: [];
       };
+      events: {
+        Row: {
+          id: string;
+          title: string;
+          event_date: string;
+          event_time: string | null;
+          notes: string | null;
+          done: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          event_date: string;
+          event_time?: string | null;
+          notes?: string | null;
+          done?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          event_date?: string;
+          event_time?: string | null;
+          notes?: string | null;
+          done?: boolean;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -718,3 +748,4 @@ export type FinancialGoal =
 export type Budget = Database["public"]["Tables"]["budgets"]["Row"];
 export type RecurringTransaction =
   Database["public"]["Tables"]["recurring_transactions"]["Row"];
+export type EventItem = Database["public"]["Tables"]["events"]["Row"];
