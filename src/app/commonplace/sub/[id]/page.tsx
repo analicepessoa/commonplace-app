@@ -12,6 +12,7 @@ import {
   getSubcategory,
   listEntriesBySubcategory,
   createEntry,
+  deleteEntry,
   updateSubcategory,
 } from "@/lib/api";
 import type { CommonplaceEntry, Subcategory } from "@/lib/database.types";
@@ -50,6 +51,16 @@ export default function SubcategoryPage() {
     }
   }
 
+  async function handleDeleteEntry(entry: CommonplaceEntry) {
+    if (!confirm(`Excluir a nota "${entry.title}"? Isso remove o texto e os elementos dela.`)) return;
+    setEntries((prev) => prev.filter((x) => x.id !== entry.id));
+    try {
+      await deleteEntry(entry.id);
+    } catch (err) {
+      console.error("deleteEntry falhou:", err);
+    }
+  }
+
   async function handleNewEntry() {
     const title = window.prompt("Título da nova nota:", "");
     if (!title) return;
@@ -69,7 +80,7 @@ export default function SubcategoryPage() {
     <main className="mx-auto max-w-3xl px-4 py-8">
       <Link
         href="/commonplace"
-        className="text-sm text-stone-500 hover:text-stone-700"
+        className="text-sm text-ink-soft hover:text-ink"
       >
         ← Voltar ao índice
       </Link>
@@ -89,7 +100,7 @@ export default function SubcategoryPage() {
           <select
             value={sub.template ?? ""}
             onChange={(e) => handleTemplateChange(e.target.value)}
-            className="rounded-lg border border-stone-300 bg-white px-3 py-1.5 text-sm outline-none focus:border-stone-400"
+            className="grimoire-input text-sm"
           >
             {TEMPLATE_OPTIONS.map((o) => (
               <option key={o.id} value={o.id}>
@@ -105,28 +116,35 @@ export default function SubcategoryPage() {
           {error}
         </p>
       )}
-      {loading && <p className="mt-6 text-stone-500">Carregando…</p>}
+      {loading && <p className="mt-6 text-ink-soft">Carregando…</p>}
 
       {!loading && entries.length === 0 && !error && (
-        <p className="mt-6 text-stone-400">
+        <p className="mt-6 text-ink-soft/60">
           Nenhuma nota ainda. Crie a primeira em “+ Nova nota”.
         </p>
       )}
 
       <ul className="mt-6 space-y-2">
         {entries.map((e) => (
-          <li key={e.id}>
+          <li key={e.id} className="group relative">
             <Link
               href={`/commonplace/${e.id}`}
-              className="block rounded-lg border border-stone-200 bg-white px-4 py-3 transition hover:border-stone-300 hover:shadow-sm"
+              className="block grimoire-row py-3 pl-4 pr-12 transition hover:border-accent/60 hover:shadow-sm"
             >
-              <p className="font-medium text-stone-800">{e.title}</p>
+              <p className="font-medium text-ink">{e.title}</p>
               {e.body_content && (
-                <p className="mt-0.5 line-clamp-1 text-sm text-stone-500">
+                <p className="mt-0.5 line-clamp-1 text-sm text-ink-soft">
                   {e.body_content}
                 </p>
               )}
             </Link>
+            <button
+              onClick={() => handleDeleteEntry(e)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full px-2 py-0.5 text-lg text-ink-soft/50 transition hover:bg-accent/10 hover:text-accent"
+              title="Excluir nota"
+            >
+              ×
+            </button>
           </li>
         ))}
       </ul>

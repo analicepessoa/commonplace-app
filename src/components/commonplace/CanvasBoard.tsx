@@ -153,18 +153,18 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
     <div>
       {/* Barra de ferramentas */}
       <div className="mb-3 flex flex-wrap items-center gap-2">
-        <button onClick={addNote} className="rounded-lg bg-sky-200 px-3 py-1.5 text-sm font-medium text-sky-900 transition hover:bg-sky-300">+ Nota</button>
+        <button onClick={addNote} className="rounded-lg border border-[var(--rule-line)] bg-paper-shade/40 px-3 py-1.5 text-sm font-medium text-ink transition hover:bg-paper-shade/60">+ Nota</button>
         <button onClick={addPostIt} className="rounded-lg bg-amber-200 px-3 py-1.5 text-sm font-medium text-amber-900 transition hover:bg-amber-300">+ Post-it</button>
-        <button onClick={() => imgInputRef.current?.click()} disabled={uploading} className="rounded-lg bg-emerald-200 px-3 py-1.5 text-sm font-medium text-emerald-900 transition hover:bg-emerald-300 disabled:opacity-50">
+        <button onClick={() => imgInputRef.current?.click()} disabled={uploading} className="rounded-lg border border-[var(--rule-line)] bg-paper-shade/40 px-3 py-1.5 text-sm font-medium text-ink transition hover:bg-paper-shade/60 disabled:opacity-50">
           {uploading ? "Enviando…" : "+ Imagem"}
         </button>
         <input ref={imgInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleImageFile(e.target.files?.[0] ?? null)} />
         <div className="relative">
-          <button onClick={() => setStickerOpen((v) => !v)} className="rounded-lg bg-stone-200 px-3 py-1.5 text-sm font-medium text-ink transition hover:bg-stone-300">+ Sticker</button>
+          <button onClick={() => setStickerOpen((v) => !v)} className="rounded-lg border border-[var(--rule-line)] bg-paper-shade/40 px-3 py-1.5 text-sm font-medium text-ink transition hover:bg-paper-shade/60">+ Sticker</button>
           {stickerOpen && (
-            <div className="absolute z-30 mt-1 grid w-64 grid-cols-8 gap-1 rounded-xl border border-stone-200 bg-white p-2 shadow-lg">
+            <div className="absolute z-30 mt-1 grid w-64 grid-cols-8 gap-1 rounded-xl border border-[var(--rule-line)]/50 bg-paper p-2 shadow-lg">
               {STICKERS.map((s) => (
-                <button key={s} onClick={() => addSticker(s)} className="rounded p-1 text-xl transition hover:bg-stone-100">{s}</button>
+                <button key={s} onClick={() => addSticker(s)} className="rounded p-1 text-xl transition hover:bg-paper-shade/40">{s}</button>
               ))}
             </div>
           )}
@@ -175,7 +175,7 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
       <div
         ref={canvasRef}
         onClick={(e) => { if (e.target === canvasRef.current) setEditingId(null); }}
-        className="paper-lined relative h-[85vh] w-full overflow-hidden rounded-2xl border border-stone-200 shadow-[inset_0_2px_12px_rgba(0,0,0,0.06)]"
+        className="paper-lined relative h-[85vh] w-full overflow-hidden rounded-2xl border border-[var(--rule-line)]/40 shadow-[inset_0_2px_12px_rgba(0,0,0,0.06)]"
       >
         <div className="pointer-events-none absolute inset-0 p-6 pl-16">
           <h2 className="font-hand text-4xl font-bold text-ink">{entry.title}</h2>
@@ -184,7 +184,7 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
           )}
         </div>
 
-        {loading && <p className="absolute bottom-3 right-4 text-xs text-stone-400">carregando…</p>}
+        {loading && <p className="absolute bottom-3 right-4 text-xs text-ink-soft/50">carregando…</p>}
         {error && <p className="absolute bottom-3 right-4 text-xs text-red-500">{error}</p>}
 
         {elements.map((el) => {
@@ -224,7 +224,7 @@ export default function CanvasBoard({ entry }: { entry: CommonplaceEntry }) {
           );
         })}
       </div>
-      <p className="mt-2 text-xs text-stone-400">
+      <p className="mt-2 text-xs text-ink-soft/50">
         Arraste qualquer item. Notas/post-its: duplo-clique para escrever e usar a barra de estilo (cor, tamanho, fonte). Imagens: arraste o canto para ampliar.
       </p>
     </div>
@@ -264,7 +264,7 @@ function TextElement({
 
   return (
     <div
-      className={`relative flex h-full w-full flex-col rounded-lg p-3 shadow-md ${isPostit ? "bg-amber-200" : "border border-stone-200 bg-white/95"}`}
+      className={`relative flex h-full w-full flex-col rounded-lg p-3 shadow-md ${isPostit ? "bg-amber-200" : "border border-[var(--rule-line)]/40 bg-white/95"}`}
       style={isPostit ? { boxShadow: "2px 4px 8px rgba(0,0,0,0.15)" } : undefined}
     >
       {/* Barra de estilo (em edição) */}
@@ -272,7 +272,7 @@ function TextElement({
         <div
           onPointerDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
-          className="absolute -top-11 left-0 z-20 flex items-center gap-1.5 rounded-lg border border-stone-200 bg-white px-2 py-1 shadow-lg"
+          className="absolute -top-11 left-0 z-20 flex items-center gap-1.5 rounded-lg border border-[var(--rule-line)]/50 bg-paper px-2 py-1 shadow-lg"
         >
           <div className="flex gap-0.5">
             {COLORS.map((c) => (
@@ -281,14 +281,14 @@ function TextElement({
           </div>
           <button onClick={() => onStyle({ font_size: Math.max(12, fontSize - 2) })} className="px-1 text-sm text-ink-soft hover:text-ink" title="Menor">A−</button>
           <button onClick={() => onStyle({ font_size: Math.min(48, fontSize + 2) })} className="px-1 text-base font-semibold text-ink-soft hover:text-ink" title="Maior">A+</button>
-          <select value={el.font_family ?? "hand"} onChange={(e) => onStyle({ font_family: e.target.value })} className="rounded border border-stone-200 px-1 text-xs outline-none">
+          <select value={el.font_family ?? "hand"} onChange={(e) => onStyle({ font_family: e.target.value })} className="rounded border border-[var(--rule-line)]/50 px-1 text-xs outline-none">
             {Object.keys(FONTS).map((k) => <option key={k} value={k}>{FONT_LABEL[k]}</option>)}
           </select>
           <button onClick={() => onSaveText(draft)} className="ml-1 rounded bg-ink px-2 text-xs text-paper" title="Pronto">✓</button>
         </div>
       )}
 
-      <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="absolute right-1 top-1 z-10 text-stone-400 transition hover:text-red-500" title="Remover">×</button>
+      <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="absolute right-1 top-1 z-10 text-ink-soft/50 transition hover:text-accent" title="Remover">×</button>
 
       {editing ? (
         <textarea
@@ -303,7 +303,7 @@ function TextElement({
         />
       ) : (
         <div onDoubleClick={onStartEdit} className="h-full w-full overflow-auto whitespace-pre-wrap break-words" style={textStyle} title="Duplo-clique para editar">
-          {el.content_data || <span className="text-stone-400">duplo-clique para escrever…</span>}
+          {el.content_data || <span className="text-ink-soft/50">duplo-clique para escrever…</span>}
         </div>
       )}
     </div>

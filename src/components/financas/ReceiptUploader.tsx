@@ -12,8 +12,7 @@ import { pdfFirstPageToImage, isPdf } from "@/lib/pdfToImage";
 import { createTransaction, uploadAttachment } from "@/lib/api";
 import type { TransactionType } from "@/lib/database.types";
 
-const inputCls =
-  "rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm outline-none focus:border-stone-400";
+const inputCls = "grimoire-input text-sm";
 
 export default function ReceiptUploader({
   onSaved,
@@ -140,8 +139,8 @@ export default function ReceiptUploader({
 
         {progress !== null && (
           <div className="mt-3">
-            <div className="h-2 w-full overflow-hidden rounded-full bg-stone-200">
-              <div className="h-full bg-sky-500 transition-all" style={{ width: `${progress}%` }} />
+            <div className="h-2 w-full overflow-hidden rounded-full bg-paper-shade/60">
+              <div className="h-full bg-accent transition-all" style={{ width: `${progress}%` }} />
             </div>
             <p className="mt-1 text-xs text-ink-soft">Reconhecendo… {progress}%</p>
           </div>
@@ -150,7 +149,7 @@ export default function ReceiptUploader({
 
       {/* Formulário */}
       <div className="space-y-2">
-        {status && <p className="rounded-lg bg-stone-100 px-3 py-2 text-sm text-ink-soft">{status}</p>}
+        {status && <p className="rounded-lg bg-paper-shade/40 px-3 py-2 text-sm text-ink-soft">{status}</p>}
         <label className="block text-xs text-ink-soft">Favorecido / descrição
           <input className={`${inputCls} mt-1 w-full`} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
         </label>

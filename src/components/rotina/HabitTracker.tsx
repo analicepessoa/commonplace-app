@@ -230,7 +230,7 @@ export default function HabitTracker({ date }: { date: string }) {
                   className={`rounded-full px-3 py-1 text-sm transition ${
                     on
                       ? "bg-ink text-paper"
-                      : "border border-stone-300 text-ink-soft hover:bg-stone-100"
+                      : "border border-[var(--rule-line)] text-ink-soft hover:bg-paper-shade/40"
                   }`}
                 >
                   {label}
@@ -315,7 +315,7 @@ export default function HabitTracker({ date }: { date: string }) {
               <div className="flex shrink-0 flex-col items-center gap-1">
                 <button
                   onClick={() => skipToday(habit)}
-                  className="text-xs text-stone-400 transition hover:text-amber-600"
+                  className="text-xs text-ink-soft/50 transition hover:text-accent"
                   title="Pular só neste dia"
                 >
                   pular
@@ -323,14 +323,14 @@ export default function HabitTracker({ date }: { date: string }) {
                 <div className="flex gap-1.5">
                   <button
                     onClick={() => openEdit(habit)}
-                    className="text-stone-300 transition hover:text-ink-soft"
+                    className="text-ink-soft/40 transition hover:text-ink-soft"
                     title="Editar hábito"
                   >
                     ✎
                   </button>
                   <button
                     onClick={() => handleDelete(habit)}
-                    className="text-stone-300 transition hover:text-red-500"
+                    className="text-ink-soft/40 transition hover:text-accent"
                     title="Excluir hábito"
                   >
                     ×

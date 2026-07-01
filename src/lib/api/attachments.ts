@@ -9,6 +9,39 @@ import { unwrap, unwrapList } from "./helpers";
 
 const BUCKET = "media";
 
+/**
+ * Sentinela gravada em `attachments.caption` para marcar a foto usada como
+ * "capa/crachá" do dono (ex.: foto do pet no crachá). Não é uma legenda de
+ * verdade — é filtrada na exibição.
+ */
+export const COVER_CAPTION = "__cover__";
+
+/**
+ * Define (ou remove, com `attachmentId = null`) a foto de capa de um dono.
+ * Garante capa única: limpa a marca das demais fotos do mesmo dono antes.
+ */
+export async function setCoverAttachment(
+  ownerType: string,
+  ownerId: string,
+  attachmentId: string | null,
+): Promise<void> {
+  const { error: clearErr } = await supabase
+    .from("attachments")
+    .update({ caption: null })
+    .eq("owner_type", ownerType)
+    .eq("owner_id", ownerId)
+    .eq("caption", COVER_CAPTION);
+  if (clearErr) throw clearErr;
+
+  if (attachmentId) {
+    const { error } = await supabase
+      .from("attachments")
+      .update({ caption: COVER_CAPTION })
+      .eq("id", attachmentId);
+    if (error) throw error;
+  }
+}
+
 /** Deduz o tipo de mídia a partir do MIME do arquivo. */
 export function kindFromFile(file: File): AttachmentKind {
   if (file.type.startsWith("video/")) return "video";

@@ -56,7 +56,7 @@ export default function WeeklyView({ month }: { month: Date }) {
             className={`h-8 w-8 rounded-full text-sm font-medium transition ${
               week === n
                 ? "bg-ink text-paper"
-                : "border border-stone-300 text-ink-soft hover:bg-stone-100"
+                : "border border-[var(--rule-line)] text-ink-soft hover:bg-paper-shade/40"
             }`}
           >
             S{n}
@@ -64,9 +64,10 @@ export default function WeeklyView({ month }: { month: Date }) {
         ))}
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2">
         {/* Dias da semana */}
-        <div className="space-y-3">
+        <section className="grimoire-card space-y-3">
+          <h2 className="grimoire-header mb-1 text-base">Semana</h2>
           {DAYS.map((d) => (
             <NoteField
               key={d.field}
@@ -77,10 +78,10 @@ export default function WeeklyView({ month }: { month: Date }) {
               rows={2}
             />
           ))}
-        </div>
+        </section>
 
         {/* Prioridades, Tarefas, Anotações */}
-        <div className="space-y-4">
+        <section className="grimoire-card space-y-4">
           <NoteField
             label="Prioridades"
             value={fields.priorities ?? ""}
@@ -96,7 +97,7 @@ export default function WeeklyView({ month }: { month: Date }) {
             onSave={(v) => save("anotacoes", v)}
             rows={4}
           />
-        </div>
+        </section>
       </div>
     </div>
   );

@@ -15,8 +15,7 @@ const MONTHS = [
   "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
   "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
 ];
-const inputCls =
-  "rounded-lg border border-[#d8c19a] bg-card px-3 py-2 text-sm outline-none focus:border-[#b98f63]";
+const inputCls = "grimoire-input text-sm";
 
 function monthLabel(key: string) {
   const [y, m] = key.split("-");
@@ -95,14 +94,14 @@ export default function AgendaPage() {
         <h1 className="page-title text-5xl font-bold">Agenda</h1>
         <Link
           href="/"
-          className="rounded-lg border border-stone-300 bg-card px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+          className="rounded-lg border border-[var(--rule-line)] px-4 py-2 text-sm font-medium text-ink transition hover:bg-paper-shade/40"
         >
           ← Minha Rotina
         </Link>
       </header>
 
       {/* Novo compromisso */}
-      <div className="mb-6 rounded-2xl border border-stone-200 bg-card p-4 shadow-sm">
+      <div className="grimoire-card mb-6">
         <div className="grid gap-2 sm:grid-cols-[2fr_1fr_auto_auto]">
           <input className={inputCls} placeholder="Compromisso (ex.: Dentista)" value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
           <input className={inputCls} type="date" value={f.date} onChange={(e) => setF({ ...f, date: e.target.value })} />
@@ -130,28 +129,28 @@ export default function AgendaPage() {
             <ul className="space-y-2">
               {evs.map((e) =>
                 editId === e.id ? (
-                  <li key={e.id} className="rounded-xl border border-stone-300 bg-card px-4 py-3">
+                  <li key={e.id} className="grimoire-row px-4 py-3">
                     <div className="grid gap-2 sm:grid-cols-[2fr_1fr_auto_auto]">
                       <input className={inputCls} value={ef.title} onChange={(ev) => setEf({ ...ef, title: ev.target.value })} />
                       <input className={inputCls} type="date" value={ef.date} onChange={(ev) => setEf({ ...ef, date: ev.target.value })} />
                       <input className={inputCls} type="time" value={ef.time} onChange={(ev) => setEf({ ...ef, time: ev.target.value })} />
                       <div className="flex gap-1">
                         <button onClick={() => saveEdit(e)} className="rounded-lg bg-accent px-3 py-2 text-sm font-medium text-paper hover:opacity-90">Salvar</button>
-                        <button onClick={() => setEditId(null)} className="rounded-lg border border-stone-300 px-3 py-2 text-sm text-ink-soft hover:bg-stone-100">Cancelar</button>
+                        <button onClick={() => setEditId(null)} className="rounded-lg border border-[var(--rule-line)] px-3 py-2 text-sm text-ink-soft hover:bg-paper-shade/40">Cancelar</button>
                       </div>
                     </div>
                   </li>
                 ) : (
                   <li
                     key={e.id}
-                    className={`flex items-center gap-3 rounded-xl border bg-card px-4 py-3 shadow-sm ${
-                      e.done ? "border-emerald-200 opacity-60" : e.event_date < todayISO ? "border-stone-200 opacity-70" : "border-[#e0d2b0]"
+                    className={`flex items-center gap-3 rounded-xl border bg-paper/50 px-4 py-3 shadow-sm ${
+                      e.done ? "border-[var(--rule-line)]/40 opacity-60" : e.event_date < todayISO ? "border-[var(--rule-line)]/30 opacity-70" : "border-[var(--rule-line)]/60"
                     }`}
                   >
                     <button
                       onClick={() => toggleDone(e)}
                       className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-xs ${
-                        e.done ? "border-emerald-500 bg-emerald-500 text-white" : "border-stone-300 text-transparent"
+                        e.done ? "border-ink bg-ink text-paper" : "border-ink/50 text-transparent"
                       }`}
                       title={e.done ? "Feito" : "Marcar como feito"}
                     >
@@ -165,8 +164,8 @@ export default function AgendaPage() {
                       <p className={`text-ink ${e.done ? "line-through" : ""}`}>{e.title}</p>
                       {e.notes && <p className="truncate text-xs text-ink-soft">{e.notes}</p>}
                     </div>
-                    <button onClick={() => startEdit(e)} className="text-stone-400 transition hover:text-ink" title="Editar">✎</button>
-                    <button onClick={() => remove(e.id)} className="text-stone-400 transition hover:text-red-500" title="Remover">×</button>
+                    <button onClick={() => startEdit(e)} className="text-ink-soft/50 transition hover:text-ink" title="Editar">✎</button>
+                    <button onClick={() => remove(e.id)} className="text-ink-soft/50 transition hover:text-accent" title="Remover">×</button>
                   </li>
                 ),
               )}

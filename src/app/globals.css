@@ -53,54 +53,107 @@ body {
   letter-spacing: 0.5px;
 }
 
+/* Título de página (Cinzel sépia com leve relevo de tinta) */
+.page-title {
+  font-family: var(--font-cinzel), serif;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+  text-shadow: 1px 1px 0 rgba(59, 43, 31, 0.08);
+}
+
+/* Caixinha de seção: cartão de pergaminho claro, borda terracotta nítida.
+   Fundo quase opaco para o texto ficar legível por cima das pautas do body. */
+.grimoire-card {
+  background-color: rgba(248, 240, 222, 0.96);
+  border: 1.5px solid rgba(139, 74, 59, 0.55);
+  border-radius: 10px;
+  box-shadow:
+    0 3px 10px rgba(59, 43, 31, 0.14),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  padding: 1.25rem 1.5rem;
+}
+
+/* Campo de entrada (input/select/textarea) no tema pergaminho */
+.grimoire-input {
+  border-radius: 8px;
+  border: 1px solid rgba(139, 74, 59, 0.4);
+  background-color: rgba(248, 240, 222, 0.7);
+  color: var(--ink);
+  padding: 0.5rem 0.75rem;
+  outline: none;
+}
+.grimoire-input::placeholder {
+  color: rgba(99, 75, 54, 0.45);
+}
+.grimoire-input:focus {
+  border-color: var(--accent);
+}
+
+/* Linha de lista (item) sobre cartão claro */
+.grimoire-row {
+  border-radius: 8px;
+  border: 1px solid rgba(139, 74, 59, 0.35);
+  background-color: rgba(248, 240, 222, 0.7);
+}
+
+/* Barra de abas (pills) */
+.grimoire-tabbar {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(139, 74, 59, 0.4);
+  background-color: rgba(248, 240, 222, 0.6);
+  padding: 0.25rem;
+}
+
+/* Cabeçalho de seção do diário: ícone + texto, com filete terracotta embaixo */
+.grimoire-header {
+  font-family: var(--font-cinzel), serif;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid rgba(196, 138, 115, 0.6);
+  padding-bottom: 0.35rem;
+}
+.grimoire-header svg {
+  color: var(--accent);
+}
+
 /* =========================================
    ESTILOS VINTAGE / DARK ACADEMIA
    ========================================= */
 
-/* Caixa estilo pedaço de papel rasgado/envelhecido (Referência: Daily Rituals box) */
+/* Caixa de seção — unificada com .grimoire-card (cartão de pergaminho claro,
+   borda terracotta nítida, cantos arredondados). Antes era papel "rasgado". */
 .vintage-box {
   position: relative;
-  /* Fundo ligeiramente mais escuro e texturizado para diferenciar da página principal */
-  background-color: rgba(220, 204, 178, 0.85); 
-  background-blend-mode: multiply;
-  background-image: url("/grimoire/academia_bg.png");
-  background-size: cover;
-  
-  /* Borda sutil escurecida para dar profundidade */
-  border: 1px solid rgba(59, 43, 31, 0.15);
-  border-radius: 4px;
-  
-  /* Sombra para parecer "colado" sobre a folha */
-  box-shadow: 
-    2px 3px 8px rgba(0, 0, 0, 0.08),
-    inset 0 0 20px rgba(99, 75, 54, 0.05);
-    
-  padding: 1.5rem;
+  background-color: rgba(248, 240, 222, 0.96);
+  border: 1.5px solid rgba(139, 74, 59, 0.55);
+  border-radius: 10px;
+  box-shadow:
+    0 3px 10px rgba(59, 43, 31, 0.14),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  padding: 1.25rem 1.5rem;
   margin-bottom: 1.5rem;
 }
 
-/* Efeito de borda desenhada / rasgada irregular (SVG mask via CSS ou bordas orgânicas) */
-.vintage-box::before {
-  content: "";
-  position: absolute;
-  top: -2px; left: -2px; right: -2px; bottom: -2px;
-  border: 1px solid rgba(59, 43, 31, 0.2);
-  border-radius: 6px 4px 8px 3px / 3px 8px 4px 6px;
-  pointer-events: none;
-}
-
-/* Header elegante para as caixas */
+/* Header das caixas: Cinzel, alinhado à esquerda, com filete terracotta */
 .vintage-header {
-  font-family: var(--font-sans), serif;
-  font-weight: 700;
+  font-family: var(--font-cinzel), serif;
+  font-weight: 600;
   color: var(--ink);
-  text-align: center;
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  position: relative;
+  text-align: left;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.25rem;
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 0.5rem;
 }
 

@@ -215,7 +215,7 @@ export default function RoutineModal({ date }: { date: string }) {
                         className={`rounded-full px-3 py-1 text-sm transition ${
                           on
                             ? "bg-ink text-paper"
-                            : "border border-stone-300 text-ink-soft hover:bg-stone-100"
+                            : "border border-[var(--rule-line)] text-ink-soft hover:bg-paper-shade/40"
                         }`}
                       >
                         {label}

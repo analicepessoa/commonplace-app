@@ -83,36 +83,33 @@ export default function TaskChecklist({
 
   return (
     <div>
-      <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-soft">
-        {label}
-      </h3>
+      {label && (
+        <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-soft">
+          {label}
+        </h3>
+      )}
       {error && (
         <p className="mb-2 rounded bg-red-50 px-2 py-1 text-sm text-red-700">
           {error}
         </p>
       )}
-      <ul className="space-y-1">
+      <ul>
         {tasks.map((task) => (
           <li
             key={task.id}
-            className={`group flex items-center gap-2 rounded-lg border px-2 py-1.5 shadow-sm transition ${
-              task.done
-                ? "border-emerald-200 bg-emerald-50"
-                : "border-[#e0d2b0] bg-card"
-            }`}
+            className="group flex items-center gap-3 border-b border-[var(--rule-line)]/40 px-1 py-1.5"
           >
             <button
               onClick={() => handleToggle(task)}
-              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 text-xs ${
-                task.done
-                  ? "border-emerald-500 bg-emerald-500 text-white"
-                  : "border-stone-300 text-transparent"
+              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-[3px] border-2 border-ink text-xs transition ${
+                task.done ? "bg-ink text-paper" : "bg-transparent text-transparent"
               }`}
+              title={task.done ? "Concluída" : "Marcar como feita"}
             >
               ✓
             </button>
             <span
-              className={`flex-1 text-sm ${
+              className={`flex-1 font-hand text-xl ${
                 task.done ? "text-ink-soft line-through" : "text-ink"
               }`}
             >
@@ -120,14 +117,14 @@ export default function TaskChecklist({
             </span>
             <button
               onClick={() => handleEdit(task)}
-              className="text-stone-400 transition hover:text-ink-soft"
+              className="text-ink-soft/40 transition hover:text-ink-soft"
               title="Editar"
             >
               ✎
             </button>
             <button
               onClick={() => handleDelete(task)}
-              className="text-stone-400 transition hover:text-red-500"
+              className="text-ink-soft/40 transition hover:text-accent"
               title="Remover"
             >
               ×
@@ -135,7 +132,7 @@ export default function TaskChecklist({
           </li>
         ))}
       </ul>
-      <div className="mt-2 flex gap-2">
+      <div className="mt-3 flex gap-2">
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -143,11 +140,11 @@ export default function TaskChecklist({
             if (e.key === "Enter") handleAdd();
           }}
           placeholder="Adicionar tarefa…"
-          className="flex-1 rounded-lg border border-stone-200 bg-white/70 px-3 py-1.5 text-sm outline-none focus:border-stone-400"
+          className="flex-1 border-b border-[var(--rule-line)] bg-transparent px-1 py-1.5 font-hand text-xl text-ink outline-none placeholder:text-ink-soft/40 focus:border-accent"
         />
         <button
           onClick={handleAdd}
-          className="rounded-lg bg-stone-200 px-3 py-1.5 text-sm font-medium text-ink transition hover:bg-stone-300"
+          className="rounded-lg border border-ink-soft/50 px-3 py-1 font-hand text-xl text-ink-soft transition hover:bg-paper-shade/40 hover:text-ink"
         >
           +
         </button>

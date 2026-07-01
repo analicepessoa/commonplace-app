@@ -85,7 +85,7 @@ export default function CommonplaceIndexPage() {
         </div>
         <Link
           href="/"
-          className="rounded-lg border border-stone-300 bg-card px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+          className="rounded-lg border border-[var(--rule-line)] px-4 py-2 text-sm font-medium text-ink transition hover:bg-paper-shade/40"
         >
           ← Minha Rotina
         </Link>
@@ -97,7 +97,7 @@ export default function CommonplaceIndexPage() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Buscar notas em todas as categorias…"
-          className="w-full rounded-xl border border-stone-300 bg-white/70 px-4 py-3 text-ink shadow-sm outline-none transition focus:border-stone-400 focus:ring-2 focus:ring-stone-200"
+          className="grimoire-input w-full px-4 py-3 shadow-sm"
         />
       </div>
 
@@ -113,14 +113,14 @@ export default function CommonplaceIndexPage() {
             Notas encontradas ({noteResults.length})
           </h2>
           {noteResults.length === 0 ? (
-            <p className="text-sm text-stone-400">Nenhuma nota corresponde.</p>
+            <p className="text-sm text-ink-soft/60">Nenhuma nota corresponde.</p>
           ) : (
             <ul className="space-y-2">
               {noteResults.map((n) => (
                 <li key={n.id}>
                   <Link
                     href={`/commonplace/${n.id}`}
-                    className="block rounded-lg border border-stone-200 bg-white px-4 py-3 transition hover:border-stone-300 hover:shadow-sm"
+                    className="block grimoire-row px-4 py-3 transition hover:border-accent/60 hover:shadow-sm"
                   >
                     <p className="font-medium text-ink">{n.title}</p>
                     {n.body_content && (
@@ -204,7 +204,7 @@ export default function CommonplaceIndexPage() {
                           </span>
                         </div>
                         {subEntries.length === 0 ? (
-                          <p className="text-sm text-stone-400">
+                          <p className="text-sm text-ink-soft/60">
                             Sem notas ainda.
                           </p>
                         ) : (

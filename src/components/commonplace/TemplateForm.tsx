@@ -57,7 +57,7 @@ export default function TemplateForm({
                 value={v}
                 onChange={(e) => set(f.key, e.target.value)}
                 onBlur={(e) => save(f.key, e.target.value)}
-                className="mt-1 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm outline-none focus:border-stone-400"
+                className="grimoire-input mt-1 w-full text-sm"
               />
             )}
             {f.type === "date" && (
@@ -65,7 +65,7 @@ export default function TemplateForm({
                 type="date"
                 value={v}
                 onChange={(e) => setAndSave(f.key, e.target.value)}
-                className="mt-1 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm outline-none focus:border-stone-400"
+                className="grimoire-input mt-1 w-full text-sm"
               />
             )}
             {f.type === "textarea" && (
@@ -74,7 +74,7 @@ export default function TemplateForm({
                 onChange={(e) => set(f.key, e.target.value)}
                 onBlur={(e) => save(f.key, e.target.value)}
                 rows={3}
-                className="mt-1 w-full resize-none rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm leading-6 outline-none focus:border-stone-400"
+                className="grimoire-input mt-1 w-full resize-none text-sm leading-6"
               />
             )}
             {f.type === "rating" && (
@@ -84,7 +84,7 @@ export default function TemplateForm({
                     key={n}
                     onClick={() => setAndSave(f.key, String(n))}
                     className="text-2xl leading-none transition"
-                    style={{ color: Number(v) >= n ? "#f59e0b" : "#d6d3d1" }}
+                    style={{ color: Number(v) >= n ? "#f59e0b" : "#cbb894" }}
                     title={`${n} estrela${n > 1 ? "s" : ""}`}
                   >
                     ★
@@ -93,7 +93,7 @@ export default function TemplateForm({
                 {v && (
                   <button
                     onClick={() => setAndSave(f.key, "")}
-                    className="ml-2 self-center text-xs text-stone-400 hover:text-ink-soft"
+                    className="ml-2 self-center text-xs text-ink-soft/50 hover:text-ink-soft"
                   >
                     limpar
                   </button>
@@ -112,7 +112,7 @@ export default function TemplateForm({
                     className={`rounded-full px-4 py-1 text-sm transition ${
                       v === opt.val
                         ? "bg-ink text-paper"
-                        : "border border-stone-300 text-ink-soft hover:bg-stone-100"
+                        : "border border-[var(--rule-line)] text-ink-soft hover:bg-paper-shade/40"
                     }`}
                   >
                     {opt.label}

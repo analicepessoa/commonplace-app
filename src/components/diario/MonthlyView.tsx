@@ -47,9 +47,10 @@ export default function MonthlyView({ month }: { month: Date }) {
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
   return (
-    <div className="grid gap-5 lg:grid-cols-3">
+    <div className="grid gap-6 lg:grid-cols-3">
       {/* Calendário */}
-      <div className="lg:col-span-2">
+      <section className="grimoire-card lg:col-span-2">
+        <h2 className="grimoire-header mb-3 text-base">Calendário</h2>
         <div className="grid grid-cols-7 gap-1 text-center">
           {WEEKDAYS.map((w) => (
             <div
@@ -65,17 +66,17 @@ export default function MonthlyView({ month }: { month: Date }) {
               className={
                 d === null
                   ? ""
-                  : "flex h-16 items-start justify-end rounded-lg border border-stone-200 bg-white/60 p-1 text-sm text-ink"
+                  : "flex h-16 items-start justify-end rounded-lg border border-[var(--rule-line)]/40 bg-paper/40 p-1 text-sm text-ink"
               }
             >
               {d ?? ""}
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* Notas, Metas, Tarefas */}
-      <div className="space-y-4">
+      <section className="grimoire-card space-y-4">
         <NoteField
           label="Notas"
           value={fields.notes}
@@ -89,7 +90,7 @@ export default function MonthlyView({ month }: { month: Date }) {
           onSave={(v) => save("goals", v)}
         />
         <TaskChecklist scope="monthly" periodKey={key} label="Tarefas do mês" />
-      </div>
+      </section>
     </div>
   );
 }

@@ -37,6 +37,7 @@ import type {
 } from "@/lib/database.types";
 import MediaPanel from "@/components/ui/MediaPanel";
 import ReceiptUploader from "@/components/financas/ReceiptUploader";
+import CalculatorLayer from "@/components/ui/CalculatorLayer";
 
 const BRL = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -46,8 +47,12 @@ const MONTHS = [
   "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
   "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
 ];
-const inputCls =
-  "rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm outline-none focus:border-stone-400";
+const TYPE_META: Record<TransactionType, { label: string; color: string }> = {
+  income: { label: "Entrada", color: "#16a34a" },
+  expense: { label: "Saída", color: "#dc2626" },
+  savings: { label: "Guardar", color: "#2563eb" },
+};
+const inputCls = "grimoire-input text-sm";
 type Tab = "mensal" | "fixos" | "metas" | "futuros" | "comprovante" | "orcamentos";
 
 export default function FinancasPage() {
@@ -64,14 +69,14 @@ export default function FinancasPage() {
     <main className="mx-auto max-w-4xl px-4 py-8">
       <header className="mb-6 flex items-end justify-between">
         <h1 className="page-title text-5xl font-bold">Finanças</h1>
-        <Link href="/" className="rounded-lg border border-stone-300 bg-card px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100">
+        <Link href="/" className="rounded-lg border border-[var(--rule-line)] px-4 py-2 text-sm font-medium text-ink transition hover:bg-paper-shade/40">
           ← Minha Rotina
         </Link>
       </header>
-      <div className="mb-5 inline-flex flex-wrap gap-1 rounded-full border border-stone-200 bg-white/70 p-1">
+      <div className="grimoire-tabbar mb-5">
         {tabs.map((t) => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${tab === t.id ? "bg-ink text-paper" : "text-ink-soft hover:bg-stone-100"}`}>
+            className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${tab === t.id ? "bg-ink text-paper" : "text-ink-soft hover:bg-paper-shade/40"}`}>
             {t.label}
           </button>
         ))}
@@ -82,10 +87,11 @@ export default function FinancasPage() {
       {tab === "futuros" && <FuturosTab />}
       {tab === "orcamentos" && <OrcamentosTab />}
       {tab === "comprovante" && (
-        <div className="rounded-2xl border border-stone-200 bg-card p-6 shadow-sm">
+        <div className="grimoire-card">
           <ReceiptUploader />
         </div>
       )}
+      <CalculatorLayer />
     </main>
   );
 }
@@ -124,21 +130,21 @@ function OrcamentosTab() {
         <button onClick={add} className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-paper hover:opacity-90">+ Orçamento</button>
       </div>
       <div className="space-y-3">
-        {items.length === 0 && <p className="text-sm text-stone-400">Nenhum orçamento.</p>}
+        {items.length === 0 && <p className="text-sm text-ink-soft/60">Nenhum orçamento.</p>}
         {items.map((b) => {
           const pct = b.limit_amount > 0 ? Math.min(100, (Number(b.spent_amount) / Number(b.limit_amount)) * 100) : 0;
           const over = Number(b.spent_amount) > Number(b.limit_amount);
           return (
-            <div key={b.id} className="rounded-xl border border-stone-200 bg-white p-4">
+            <div key={b.id} className="grimoire-row p-4">
               <div className="mb-1 flex items-center justify-between">
                 <span className="font-hand text-xl text-ink">{b.name}</span>
                 <div className="flex items-center gap-2">
                   <input type="number" defaultValue={Number(b.spent_amount)} onBlur={(e) => setSpent(b, Number(e.target.value))} className={`${inputCls} w-28`} />
                   <span className="text-sm text-ink-soft">/ {BRL.format(Number(b.limit_amount))}</span>
-                  <button onClick={() => remove(b.id)} className="text-stone-300 hover:text-red-500">×</button>
+                  <button onClick={() => remove(b.id)} className="text-ink-soft/50 hover:text-accent">×</button>
                 </div>
               </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-stone-200">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-paper-shade/60">
                 <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: over ? "#dc2626" : "#16a34a" }} />
               </div>
             </div>
@@ -202,9 +208,9 @@ function FixosTab() {
       </div>
 
       <ul className="space-y-2">
-        {items.length === 0 && <li className="text-sm text-stone-400">Nenhum lançamento fixo.</li>}
+        {items.length === 0 && <li className="text-sm text-ink-soft/60">Nenhum lançamento fixo.</li>}
         {items.map((t) => (
-          <li key={t.id} className="flex items-center justify-between rounded-xl border border-stone-200 bg-white px-4 py-3">
+          <li key={t.id} className="flex items-center justify-between grimoire-row px-4 py-3">
             <div>
               <p className={`text-ink ${t.active ? "" : "line-through opacity-50"}`}>{t.title}</p>
               <p className="text-xs text-ink-soft">
@@ -218,7 +224,7 @@ function FixosTab() {
               <button onClick={() => toggleActive(t)} className="text-xs text-ink-soft underline hover:text-ink" title="Ativar/pausar">
                 {t.active ? "pausar" : "ativar"}
               </button>
-              <button onClick={() => remove(t.id)} className="text-stone-400 transition hover:text-red-500" title="Remover">×</button>
+              <button onClick={() => remove(t.id)} className="text-ink-soft/50 transition hover:text-accent" title="Remover">×</button>
             </div>
           </li>
         ))}
@@ -323,9 +329,9 @@ function MensalTab() {
   return (
     <div>
       <div className="mb-4 flex items-center gap-3">
-        <button onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))} className="rounded-md px-2 py-1 text-ink-soft hover:bg-stone-100">‹</button>
+        <button onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))} className="rounded-md px-2 py-1 text-ink-soft hover:bg-paper-shade/40">‹</button>
         <h2 className="font-hand text-2xl text-ink">{MONTHS[month.getMonth()]} {month.getFullYear()}</h2>
-        <button onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))} className="rounded-md px-2 py-1 text-ink-soft hover:bg-stone-100">›</button>
+        <button onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))} className="rounded-md px-2 py-1 text-ink-soft hover:bg-paper-shade/40">›</button>
       </div>
 
       <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -363,14 +369,14 @@ function MensalTab() {
 
       <ul className="space-y-2">
         {monthItems.length === 0 && (
-          <li className="text-sm text-stone-400">
+          <li className="text-sm text-ink-soft/60">
             Nada neste mês.
             {items.length > 0 && " Você tem lançamentos em outros meses — use as setas ‹ › acima."}
           </li>
         )}
         {monthItems.map((t) =>
           editId === t.id ? (
-            <li key={t.id} className="rounded-xl border border-stone-300 bg-white px-4 py-3">
+            <li key={t.id} className="grimoire-row px-4 py-3">
               <div className="grid gap-2 sm:grid-cols-[2fr_1fr_1fr_1fr_auto]">
                 <input className={inputCls} value={ef.title} onChange={(e) => setEf({ ...ef, title: e.target.value })} />
                 <input className={inputCls} type="number" step="0.01" value={ef.amount} onChange={(e) => setEf({ ...ef, amount: e.target.value })} />
@@ -382,34 +388,58 @@ function MensalTab() {
                 <input className={inputCls} type="date" value={ef.due_date} onChange={(e) => setEf({ ...ef, due_date: e.target.value })} />
                 <div className="flex gap-1">
                   <button onClick={() => saveEdit(t)} className="rounded-lg bg-accent px-3 py-2 text-sm font-medium text-paper hover:opacity-90">Salvar</button>
-                  <button onClick={() => setEditId(null)} className="rounded-lg border border-stone-300 px-3 py-2 text-sm text-ink-soft hover:bg-stone-100">Cancelar</button>
+                  <button onClick={() => setEditId(null)} className="rounded-lg border border-[var(--rule-line)] px-3 py-2 text-sm text-ink-soft hover:bg-paper-shade/40">Cancelar</button>
                 </div>
               </div>
             </li>
           ) : (
-            <li key={t.id} className="flex items-center justify-between rounded-xl border border-stone-200 bg-white px-4 py-3">
-              <div className="flex items-center gap-3">
-                <button onClick={() => togglePaid(t)} title={t.status === "paid" ? "Pago" : "Pendente"}
-                  className={`h-5 w-5 shrink-0 rounded-full border-2 ${t.status === "paid" ? "border-emerald-500 bg-emerald-500" : "border-stone-300"}`} />
-                <div>
-                  <p className="text-ink">{t.title}</p>
-                  <p className="text-xs text-ink-soft">{t.due_date ?? "sem data"}{t.status === "pending" ? " · pendente" : ""}</p>
+            <li
+              key={t.id}
+              className="flex items-center gap-3 grimoire-row border-l-[5px] px-4 py-3"
+              style={{ borderLeftColor: TYPE_META[t.type].color }}
+            >
+              <button
+                onClick={() => togglePaid(t)}
+                title={t.status === "paid" ? "Pago — clique p/ marcar pendente" : "Pendente — clique p/ marcar pago"}
+                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 text-sm transition ${
+                  t.status === "paid"
+                    ? "border-emerald-600 bg-emerald-600 text-white"
+                    : "border-ink/40 text-transparent hover:border-accent"
+                }`}
+              >
+                ✓
+              </button>
+              <div className="min-w-0 flex-1">
+                <p className={`font-hand text-2xl leading-tight text-ink ${t.status === "paid" ? "opacity-55" : ""}`}>
+                  {t.title}
+                </p>
+                <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs">
+                  <span
+                    className="rounded-full px-2 py-0.5 font-semibold"
+                    style={{ backgroundColor: TYPE_META[t.type].color + "22", color: TYPE_META[t.type].color }}
+                  >
+                    {TYPE_META[t.type].label}
+                  </span>
+                  <span className="text-ink-soft">{t.due_date ?? "sem data"}</span>
+                  {t.status === "pending" && (
+                    <span className="rounded-full bg-accent/15 px-2 py-0.5 font-semibold text-accent">
+                      pendente
+                    </span>
+                  )}
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span style={{ color: t.type === "income" ? "#16a34a" : t.type === "expense" ? "#dc2626" : "#2563eb" }} className="font-medium">
-                  {t.type === "income"
-                    ? "+"
-                    : t.type === "expense"
-                      ? "−"
-                      : Number(t.amount) < 0
-                        ? "↓ "
-                        : "↑ "}
-                  {BRL.format(Math.abs(Number(t.amount)))}
-                </span>
-                <button onClick={() => startEdit(t)} className="text-stone-400 transition hover:text-ink" title="Editar">✎</button>
-                <button onClick={() => remove(t.id)} className="text-stone-400 transition hover:text-red-500" title="Remover">×</button>
-              </div>
+              <span className="shrink-0 text-xl font-bold tabular-nums" style={{ color: TYPE_META[t.type].color }}>
+                {t.type === "income"
+                  ? "+"
+                  : t.type === "expense"
+                    ? "−"
+                    : Number(t.amount) < 0
+                      ? "↓ "
+                      : "↑ "}
+                {BRL.format(Math.abs(Number(t.amount)))}
+              </span>
+              <button onClick={() => startEdit(t)} className="shrink-0 text-ink-soft/50 transition hover:text-ink" title="Editar">✎</button>
+              <button onClick={() => remove(t.id)} className="shrink-0 text-ink-soft/50 transition hover:text-accent" title="Remover">×</button>
             </li>
           ),
         )}
@@ -420,9 +450,9 @@ function MensalTab() {
 
 function Stat({ label, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div className="rounded-xl border border-stone-200 bg-white p-3">
-      <p className="text-xs uppercase tracking-wide text-ink-soft">{label}</p>
-      <p className="mt-0.5 text-lg font-semibold" style={{ color }}>{value}</p>
+    <div className="grimoire-row border-l-[5px] p-3" style={{ borderLeftColor: color }}>
+      <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft">{label}</p>
+      <p className="mt-0.5 text-xl font-bold tabular-nums" style={{ color }}>{value}</p>
     </div>
   );
 }
@@ -457,21 +487,21 @@ function MetasTab() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        {goals.length === 0 && <p className="text-sm text-stone-400">Nenhuma meta ainda.</p>}
+        {goals.length === 0 && <p className="text-sm text-ink-soft/60">Nenhuma meta ainda.</p>}
         {goals.map((g) => {
           const pct = g.target_amount > 0 ? Math.min(100, (Number(g.saved_amount) / Number(g.target_amount)) * 100) : 0;
           return (
-            <div key={g.id} className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
+            <div key={g.id} className="grimoire-card p-4">
               <div className="mb-2 flex items-start justify-between">
                 <h3 className="font-hand text-2xl text-ink">{g.title}</h3>
-                <button onClick={() => remove(g.id)} className="text-stone-300 hover:text-red-500">×</button>
+                <button onClick={() => remove(g.id)} className="text-ink-soft/50 hover:text-accent">×</button>
               </div>
               <MediaPanel ownerType="goal" ownerId={g.id} label="Foto" className="mb-3" />
               <div className="mb-1 flex justify-between text-sm text-ink-soft">
                 <span>{BRL.format(Number(g.saved_amount))}</span>
                 <span>de {BRL.format(Number(g.target_amount))}</span>
               </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-stone-200">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-paper-shade/60">
                 <div className="h-full rounded-full bg-emerald-500" style={{ width: `${pct}%` }} />
               </div>
               <div className="mt-3 flex items-center gap-2">
@@ -496,9 +526,9 @@ function FuturosTab() {
     <div>
       <p className="mb-4 text-sm text-ink-soft">Contas e gastos pendentes com vencimento futuro.</p>
       <ul className="space-y-2">
-        {future.length === 0 && <li className="text-sm text-stone-400">Nenhum gasto futuro pendente.</li>}
+        {future.length === 0 && <li className="text-sm text-ink-soft/60">Nenhum gasto futuro pendente.</li>}
         {future.map((t) => (
-          <li key={t.id} className="flex items-center justify-between rounded-xl border border-stone-200 bg-white px-4 py-3">
+          <li key={t.id} className="flex items-center justify-between grimoire-row px-4 py-3">
             <div>
               <p className="text-ink">{t.title}</p>
               <p className="text-xs text-ink-soft">vence {t.due_date}</p>

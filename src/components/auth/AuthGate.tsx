@@ -68,7 +68,7 @@ function LoginForm() {
     <main className="flex min-h-screen items-center justify-center px-4">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm rounded-2xl border border-ink/20 bg-card p-8 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.35)]"
+        className="grimoire-card w-full max-w-sm p-8"
       >
         <h1 className="page-title mb-1 text-4xl font-bold">Commonplace</h1>
         <p className="mb-6 text-sm text-ink-soft">
@@ -84,7 +84,7 @@ function LoginForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-[#d8c19a] bg-card px-3 py-2 text-ink outline-none focus:border-[#b98f63]"
+            className="grimoire-input mt-1 w-full"
           />
         </label>
         <label className="mb-4 block">
@@ -96,7 +96,7 @@ function LoginForm() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-[#d8c19a] bg-card px-3 py-2 text-ink outline-none focus:border-[#b98f63]"
+            className="grimoire-input mt-1 w-full"
           />
         </label>
 

@@ -15,8 +15,11 @@ import {
   listAttachments,
   uploadAttachment,
   deleteAttachment,
+  setCoverAttachment,
+  COVER_CAPTION,
 } from "@/lib/api";
 import type { Attachment } from "@/lib/database.types";
+import Lightbox from "./Lightbox";
 
 interface MediaPanelProps {
   ownerType: string;
@@ -24,6 +27,10 @@ interface MediaPanelProps {
   /** Título exibido acima da galeria. */
   label?: string;
   className?: string;
+  /** Quando true, cada imagem ganha uma estrela para escolher a foto de capa. */
+  coverMode?: boolean;
+  /** Chamado ao trocar a capa, com o anexo que deve virar avatar (ou null). */
+  onCoverChange?: (att: Attachment | null) => void;
 }
 
 export default function MediaPanel({
@@ -31,10 +38,13 @@ export default function MediaPanel({
   ownerId,
   label = "Mídia",
   className = "",
+  coverMode = false,
+  onCoverChange,
 }: MediaPanelProps) {
   const [items, setItems] = useState<Attachment[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [zoom, setZoom] = useState<Attachment | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -71,6 +81,31 @@ export default function MediaPanel({
     }
   }
 
+  const coverId = items.find((a) => a.caption === COVER_CAPTION)?.id ?? null;
+
+  async function handleSetCover(att: Attachment) {
+    const turningOff = att.id === coverId;
+    const nextId = turningOff ? null : att.id;
+    // otimista: marca só a escolhida (ou nenhuma)
+    setItems((prev) =>
+      prev.map((a) => ({
+        ...a,
+        caption: a.id === nextId ? COVER_CAPTION : a.caption === COVER_CAPTION ? null : a.caption,
+      })),
+    );
+    const avatar = turningOff
+      ? items.find((a) => a.kind === "image") ?? null
+      : att;
+    onCoverChange?.(avatar);
+    try {
+      await setCoverAttachment(ownerType, ownerId, nextId);
+    } catch (e) {
+      console.error("setCoverAttachment falhou:", e);
+    }
+  }
+
+  const display = (c: string | null) => (c === COVER_CAPTION ? null : c);
+
   return (
     <div className={className}>
       <div className="mb-2 flex items-center justify-between">
@@ -78,7 +113,7 @@ export default function MediaPanel({
         <button
           onClick={() => inputRef.current?.click()}
           disabled={busy}
-          className="rounded-lg bg-sky-200 px-3 py-1.5 text-sm font-medium text-sky-900 transition hover:bg-sky-300 disabled:opacity-50"
+          className="rounded-lg bg-accent px-3 py-1.5 text-sm font-medium text-paper transition hover:opacity-90 disabled:opacity-50"
         >
           {busy ? "Enviando…" : "+ Foto / Áudio / Vídeo"}
         </button>
@@ -99,13 +134,13 @@ export default function MediaPanel({
       )}
 
       {items.length === 0 ? (
-        <p className="text-sm text-stone-400">Nenhuma mídia ainda.</p>
+        <p className="text-sm text-ink-soft/60">Nenhuma mídia ainda.</p>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {items.map((att) => (
             <div
               key={att.id}
-              className="group relative overflow-hidden rounded-xl border border-stone-200 bg-white"
+              className="group relative overflow-hidden rounded-xl border border-[var(--rule-line)]/40 bg-paper/40"
             >
               <button
                 onClick={() => handleDelete(att)}
@@ -114,15 +149,42 @@ export default function MediaPanel({
               >
                 ×
               </button>
+              {coverMode && att.kind === "image" && (
+                <button
+                  onClick={() => handleSetCover(att)}
+                  className={`absolute left-1 top-1 z-10 rounded-full px-1.5 text-sm leading-6 transition ${
+                    att.id === coverId
+                      ? "bg-accent text-paper"
+                      : "bg-black/40 text-white hover:bg-black/70"
+                  }`}
+                  title={att.id === coverId ? "Foto do crachá (clique p/ tirar)" : "Usar no crachá"}
+                >
+                  {att.id === coverId ? "★" : "☆"}
+                </button>
+              )}
               {att.kind === "image" ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={att.url}
-                  alt={att.caption ?? ""}
-                  className="h-32 w-full object-cover"
-                />
+                <button
+                  type="button"
+                  onClick={() => setZoom(att)}
+                  className="block h-32 w-full cursor-zoom-in"
+                  title="Ampliar"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={att.url}
+                    alt={display(att.caption) ?? ""}
+                    className="h-32 w-full object-cover transition group-hover:opacity-90"
+                  />
+                </button>
               ) : att.kind === "video" ? (
-                <video src={att.url} controls className="h-32 w-full bg-black" />
+                <button
+                  type="button"
+                  onClick={() => setZoom(att)}
+                  className="block h-32 w-full cursor-zoom-in bg-black"
+                  title="Ampliar"
+                >
+                  <video src={att.url} className="h-32 w-full object-cover" />
+                </button>
               ) : (
                 <div className="flex h-32 w-full flex-col items-center justify-center gap-2 p-2">
                   <span className="text-3xl">🎵</span>
@@ -132,6 +194,15 @@ export default function MediaPanel({
             </div>
           ))}
         </div>
+      )}
+
+      {zoom && (
+        <Lightbox
+          url={zoom.url}
+          kind={zoom.kind}
+          caption={display(zoom.caption)}
+          onClose={() => setZoom(null)}
+        />
       )}
     </div>
   );

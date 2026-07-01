@@ -37,14 +37,14 @@ export default function DiarioPage() {
         <h1 className="page-title text-5xl font-bold">Diário</h1>
         <Link
           href="/"
-          className="rounded-lg border border-stone-300 bg-card px-4 py-2 text-sm font-medium text-ink transition hover:bg-stone-100"
+          className="rounded-lg border border-[var(--rule-line)] px-4 py-2 text-sm font-medium text-ink transition hover:bg-paper-shade/40"
         >
           ← Minha Rotina
         </Link>
       </header>
 
       {/* Toggle de visão */}
-      <div className="mb-5 inline-flex rounded-full border border-stone-200 bg-white/70 p-1">
+      <div className="grimoire-tabbar mb-5">
         {tabs.map((t) => (
           <button
             key={t.id}
@@ -52,7 +52,7 @@ export default function DiarioPage() {
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
               view === t.id
                 ? "bg-ink text-paper"
-                : "text-ink-soft hover:bg-stone-100"
+                : "text-ink-soft hover:bg-paper-shade/40"
             }`}
           >
             {t.label}
@@ -79,7 +79,7 @@ export default function DiarioPage() {
         </button>
       </div>
 
-      <section className="rounded-2xl border border-stone-200 bg-card p-6 shadow-sm">
+      <section>
         {view === "monthly" && <MonthlyView month={month} />}
         {view === "weekly" && <WeeklyView month={month} />}
         {view === "daily" && <DailyView />}

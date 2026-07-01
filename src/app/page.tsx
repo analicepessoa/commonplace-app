@@ -81,6 +81,12 @@ export default function HomePage() {
             Finanças →
           </Link>
           <Link
+            href="/compras"
+            className="text-ink font-bold font-sans uppercase text-sm hover:text-accent transition"
+          >
+            Compras →
+          </Link>
+          <Link
             href="/commonplace"
             className="text-ink font-bold font-sans uppercase text-sm hover:text-accent transition"
           >
