@@ -56,6 +56,11 @@ Commonplace antigo / "diário de explorador": `--paper #ebe1c8` (pergaminho), `-
 - **Calculadoras flutuantes** (`src/components/ui/CalculatorLayer.tsx`): botão flutuante abre N calculadoras arrastáveis e independentes (drag manual por pointer events). Colocadas em `/compras` e `/financas`.
 - **Caderno no Commonplace** (`src/components/commonplace/Notebook.tsx`): folha pautada escrevível (classe `.grimoire-lines`, line-height 32px) salvando em `commonplace_entries.body_content` (onBlur). Fica na página da nota (`[id]`), acima do canvas de post-its/notas. *Obs.:* o canvas ainda mostra o `body_content` como marca-d'água ao fundo — só atualiza no reload.
 
+## 🏠 Home redesenhada + ícone de app (2026-07-01)
+- **Home**: fileira de links virou **grid de cartões com ícones** por seção (SVG de linha em accent; array `SECTIONS` em `page.tsx`). Finanças = cifrão+moedas; Commonplace = pilha de livros.
+- **Fundo limpo** (`layout.tsx`): removido o texto "Date Due"; decorações de canto bem mais discretas (opacity ~0.18, menores).
+- **Ícone do app / PWA instalável**: `src/app/icon.svg` (favicon) + `src/app/apple-icon.png` + `public/icon-{192,512,512-maskable}.png` (gerados de um SVG por `scripts/gen-icons.mjs` via sharp — livro aberto + estrela, fundo terracota #8f3a2e). Manifest em `src/app/manifest.ts`; `viewport.themeColor` e `appleWebApp` no layout. Regerar ícones: `node scripts/gen-icons.mjs`.
+
 ## 🗑️ Excluir notas do Commonplace (2026-06-30)
 - As notas ("posts") não tinham como ser apagadas. Adicionado **excluir** em dois lugares, usando o `deleteEntry` já existente:
   - Lista da subcategoria (`sub/[id]`): botão × em cada nota (com confirm + remoção otimista).

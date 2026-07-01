@@ -1,0 +1,44 @@
+import sharp from "sharp";
+import { writeFileSync, mkdirSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
+
+const ROOT = "C:/Users/anali/Downloads/commonplace-app";
+const PUB = path.join(ROOT, "public");
+const APP = path.join(ROOT, "src/app");
+mkdirSync(PUB, { recursive: true });
+
+// Ícone do app: livro aberto + estrela mágica, fundo terracota (paleta grimoire).
+const svg = `<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="104" fill="#8f3a2e"/>
+  <rect x="26" y="26" width="460" height="460" rx="82" fill="none" stroke="#f3e9cf" stroke-opacity="0.28" stroke-width="6"/>
+  <!-- estrela / sparkle -->
+  <path d="M256 82 C261 110 266 116 294 121 C266 126 261 132 256 160 C251 132 246 126 218 121 C246 116 251 110 256 82 Z" fill="#f3d79a"/>
+  <circle cx="330" cy="104" r="6" fill="#f3d79a" opacity="0.85"/>
+  <circle cx="188" cy="112" r="4.5" fill="#f3d79a" opacity="0.7"/>
+  <!-- livro aberto -->
+  <path d="M256 214 C224 194 182 189 146 197 L146 336 C182 328 224 333 256 352 Z" fill="#efe0bf"/>
+  <path d="M256 214 C288 194 330 189 366 197 L366 336 C330 328 288 333 256 352 Z" fill="#f6ecd3"/>
+  <path d="M256 214 V352" fill="none" stroke="#b98f63" stroke-width="7" stroke-linecap="round"/>
+  <g stroke="#c98f73" stroke-width="5" stroke-linecap="round" opacity="0.55" fill="none">
+    <path d="M170 226 C196 221 220 224 240 236"/>
+    <path d="M168 258 C196 252 222 256 242 268"/>
+    <path d="M170 290 C196 285 220 288 240 300"/>
+    <path d="M342 226 C316 221 292 224 272 236"/>
+    <path d="M344 258 C316 252 290 256 270 268"/>
+    <path d="M342 290 C316 285 292 288 272 300"/>
+  </g>
+</svg>`;
+
+writeFileSync(path.join(APP, "icon.svg"), svg);
+
+async function png(size, out) {
+  await sharp(Buffer.from(svg)).resize(size, size).png().toFile(out);
+  console.log("gerado:", out, `${size}x${size}`);
+}
+
+await png(192, path.join(PUB, "icon-192.png"));
+await png(512, path.join(PUB, "icon-512.png"));
+await png(512, path.join(PUB, "icon-512-maskable.png"));
+await png(180, path.join(APP, "apple-icon.png"));
+console.log("icon.svg escrito em src/app/icon.svg");
