@@ -78,9 +78,12 @@ const IconCompras = svg(
 );
 const IconCommonplace = svg(
   <>
-    <rect x="4" y="15.3" width="16" height="4.2" rx="1" />
-    <rect x="5.4" y="11.1" width="13.2" height="4.2" rx="1" />
-    <rect x="4.6" y="6.9" width="14.8" height="4.2" rx="1" />
+    {/* lâmpada (ideia) acima */}
+    <path d="M12 2.6a3 3 0 0 0-1.8 5.4c.5.4.8.9.8 1.6h2c0-.7.3-1.2.8-1.6A3 3 0 0 0 12 2.6Z" />
+    <path d="M10.8 11.1h2.4M11.3 12.5h1.4" />
+    {/* livro aberto abaixo */}
+    <path d="M12 15.4c-1.9-1.2-4.3-1.6-6.7-1.3v6c2.4-.3 4.8.1 6.7 1.3 1.9-1.2 4.3-1.6 6.7-1.3v-6c-2.4-.3-4.8.1-6.7 1.3Z" />
+    <path d="M12 15.4v6" />
   </>,
 );
 
