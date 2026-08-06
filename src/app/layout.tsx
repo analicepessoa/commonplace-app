@@ -29,7 +29,7 @@ const caveat = Caveat({
 
 export const metadata: Metadata = {
   title: "Commonplace & Rotinas",
-  description: "Caderno digital, rotinas, diário, saúde, pets, compras e finanças.",
+  description: "Caderno digital, rotinas, academia, diário, saúde, pets, compras e finanças.",
   applicationName: "Commonplace",
   appleWebApp: {
     capable: true,

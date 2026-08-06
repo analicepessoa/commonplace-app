@@ -1,7 +1,17 @@
 # Onde paramos — Commonplace & Rotinas
 
+## 🏋️ Academia integrada (2026-08-06)
+- Nova rota `/academia`, reconstruída a partir do projeto estático `academia-main` e integrada ao visual grimoire.
+- Quatro fichas originais (terça a sexta), progresso por séries, concluir exercício, registrar carga, histórico recente, vídeos, troca por biblioteca e exercícios manuais.
+- Calendário de treinos, receitas, diário de conquistas e temporizador fixo de descanso.
+- Scanner nutricional seguro em `/api/nutrition/analyze`: a chave Gemini fica somente no servidor como `GEMINI_API_KEY`. É necessário gerar uma chave nova e configurá-la no Netlify; a chave do projeto antigo foi exposta no JavaScript e não foi copiada.
+- Migration `supabase/migrations/20260806_fitness.sql` executada pela usuária no Supabase em 2026-08-06.
+- Home ganhou cartão Academia e metadados/PWA agora citam a nova área.
+- `netlify/functions/supabase-keepalive.mjs` consulta o Supabase a cada 8 horas para gerar atividade mínima no plano gratuito.
+- Verificação: `tsc --noEmit`, lint dos arquivos novos e `next build` passaram. A tela interna não pôde ser inspecionada visualmente no navegador automatizado porque o `AuthGate` exige a sessão pessoal da usuária.
+
 > Handoff entre sessões. Leia isto + o `CLAUDE.md` para continuar sem reler o código todo.
-> Atualize ao fim de cada sessão. Última atualização: **2026-06-30**.
+> Atualize ao fim de cada sessão. Última atualização: **2026-08-06**.
 
 ## 🟢 Status geral
 App **publicado e funcionando** em https://commonplace-grimoire.netlify.app, com login obrigatório (AuthGate + RLS authenticated). Todas as grandes fases foram construídas. Faltam principalmente **rodar migrations pendentes** e **aplicar a estética grimoire nas telas reais**.

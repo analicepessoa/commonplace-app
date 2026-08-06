@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# prévia local do Codex
+.codex-dev-*.log
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

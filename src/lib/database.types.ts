@@ -27,6 +27,13 @@ export type MenstrualFlow = "leve" | "medio" | "intenso";
 export type PetLogKind = "medicine" | "vaccine" | "bath" | "weight" | "note";
 export type TransactionType = "income" | "expense" | "savings";
 export type TransactionStatus = "paid" | "pending";
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
 
 export interface Database {
   public: {
@@ -709,6 +716,110 @@ export interface Database {
         };
         Relationships: [];
       };
+      fitness_exercise_preferences: {
+        Row: {
+          id: string;
+          slot_key: string;
+          workout_key: string;
+          name: string;
+          sets: number;
+          reps: string;
+          video_query: string | null;
+          category: string;
+          is_custom: boolean;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          slot_key: string;
+          workout_key: string;
+          name: string;
+          sets?: number;
+          reps: string;
+          video_query?: string | null;
+          category?: string;
+          is_custom?: boolean;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["fitness_exercise_preferences"]["Insert"]>;
+        Relationships: [];
+      };
+      fitness_workout_sessions: {
+        Row: {
+          id: string;
+          workout_date: string;
+          workout_key: string;
+          completed_exercises: Json;
+          duration_seconds: number;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          workout_date: string;
+          workout_key: string;
+          completed_exercises?: Json;
+          duration_seconds?: number;
+          notes?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["fitness_workout_sessions"]["Insert"]>;
+        Relationships: [];
+      };
+      fitness_weight_logs: {
+        Row: {
+          id: string;
+          exercise_key: string;
+          exercise_name: string;
+          weight: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          exercise_key: string;
+          exercise_name: string;
+          weight: number;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["fitness_weight_logs"]["Insert"]>;
+        Relationships: [];
+      };
+      fitness_recipes: {
+        Row: {
+          id: string;
+          title: string;
+          url: string | null;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          url?: string | null;
+          notes?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["fitness_recipes"]["Insert"]>;
+        Relationships: [];
+      };
+      fitness_achievements: {
+        Row: {
+          id: string;
+          content: string;
+          achieved_at: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          content: string;
+          achieved_at?: string;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["fitness_achievements"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -749,3 +860,8 @@ export type Budget = Database["public"]["Tables"]["budgets"]["Row"];
 export type RecurringTransaction =
   Database["public"]["Tables"]["recurring_transactions"]["Row"];
 export type EventItem = Database["public"]["Tables"]["events"]["Row"];
+export type FitnessExercisePreference = Database["public"]["Tables"]["fitness_exercise_preferences"]["Row"];
+export type FitnessWorkoutSession = Database["public"]["Tables"]["fitness_workout_sessions"]["Row"];
+export type FitnessWeightLog = Database["public"]["Tables"]["fitness_weight_logs"]["Row"];
+export type FitnessRecipe = Database["public"]["Tables"]["fitness_recipes"]["Row"];
+export type FitnessAchievement = Database["public"]["Tables"]["fitness_achievements"]["Row"];
