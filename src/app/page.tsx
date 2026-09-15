@@ -82,6 +82,13 @@ const IconAcademia = svg(
     <path d="M8.5 8v8M15.5 8v8" />
   </>,
 );
+const IconEstudos = svg(
+  <>
+    <path d="M4 5.5h6.2c1 0 1.8.8 1.8 1.8v12.2c0-1-.8-1.8-1.8-1.8H4Z" />
+    <path d="M20 5.5h-6.2c-1 0-1.8.8-1.8 1.8v12.2c0-1 .8-1.8 1.8-1.8H20Z" />
+    <path d="m9.2 3 2.8-1 2.8 1L12 4Z" />
+  </>,
+);
 const IconCommonplace = svg(
   <>
     {/* lâmpada (ideia) acima */}
@@ -101,6 +108,7 @@ const SECTIONS: { href: string; label: string; icon: ReactNode }[] = [
   { href: "/financas", label: "Finanças", icon: IconFinancas },
   { href: "/compras", label: "Compras", icon: IconCompras },
   { href: "/academia", label: "Academia", icon: IconAcademia },
+  { href: "/estudos", label: "Estudos", icon: IconEstudos },
   { href: "/commonplace", label: "Commonplace", icon: IconCommonplace },
 ];
 
@@ -134,7 +142,7 @@ export default function HomePage() {
       </header>
 
       {/* Navegação por seção — cartões com ícone */}
-      <nav className="mb-8 grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+      <nav className="mb-8 grid grid-cols-3 gap-3 sm:grid-cols-5 lg:grid-cols-9">
         {SECTIONS.map((s) => (
           <Link
             key={s.href}

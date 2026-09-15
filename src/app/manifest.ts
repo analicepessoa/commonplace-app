@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Commonplace & Rotinas",
     short_name: "Commonplace",
     description:
-      "Caderno digital, rotinas, academia, diário, saúde, pets, compras e finanças.",
+      "Caderno digital, rotinas, estudos, academia, diário, saúde, pets, compras e finanças.",
     start_url: "/",
     display: "standalone",
     background_color: "#eeddbf",

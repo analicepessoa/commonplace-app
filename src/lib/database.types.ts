@@ -27,6 +27,17 @@ export type MenstrualFlow = "leve" | "medio" | "intenso";
 export type PetLogKind = "medicine" | "vaccine" | "bath" | "weight" | "note";
 export type TransactionType = "income" | "expense" | "savings";
 export type TransactionStatus = "paid" | "pending";
+export type StudyPriority = "essential" | "important" | "optional";
+export type StudyTaskStatus =
+  | "planned"
+  | "in_progress"
+  | "completed"
+  | "postponed"
+  | "cancelled";
+export type StudyRecurrence = "none" | "weekly" | "monthly";
+export type StudyContentStatus = "active" | "mastered" | "archived";
+export type StudyDifficulty = "easy" | "normal" | "hard";
+export type StudyInboxBucket = "inbox" | "someday";
 export type Json =
   | string
   | number
@@ -820,6 +831,158 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["fitness_achievements"]["Insert"]>;
         Relationships: [];
       };
+      study_areas: {
+        Row: {
+          id: string;
+          owner_id: string;
+          name: string;
+          icon: string;
+          category: string | null;
+          objective: string | null;
+          priority: StudyPriority;
+          active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id?: string;
+          name: string;
+          icon?: string;
+          category?: string | null;
+          objective?: string | null;
+          priority?: StudyPriority;
+          active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["study_areas"]["Insert"]>;
+        Relationships: [];
+      };
+      study_contents: {
+        Row: {
+          id: string;
+          owner_id: string;
+          area_id: string;
+          title: string;
+          description: string | null;
+          status: StudyContentStatus;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id?: string;
+          area_id: string;
+          title: string;
+          description?: string | null;
+          status?: StudyContentStatus;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["study_contents"]["Insert"]>;
+        Relationships: [];
+      };
+      study_tasks: {
+        Row: {
+          id: string;
+          owner_id: string;
+          area_id: string;
+          content_id: string | null;
+          title: string;
+          description: string | null;
+          scheduled_date: string;
+          estimated_minutes: number;
+          priority: StudyPriority;
+          material_url: string | null;
+          recurrence: StudyRecurrence;
+          status: StudyTaskStatus;
+          completed_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id?: string;
+          area_id: string;
+          content_id?: string | null;
+          title: string;
+          description?: string | null;
+          scheduled_date: string;
+          estimated_minutes?: number;
+          priority?: StudyPriority;
+          material_url?: string | null;
+          recurrence?: StudyRecurrence;
+          status?: StudyTaskStatus;
+          completed_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["study_tasks"]["Insert"]>;
+        Relationships: [];
+      };
+      study_sessions: {
+        Row: {
+          id: string;
+          owner_id: string;
+          area_id: string;
+          content_id: string | null;
+          task_id: string | null;
+          started_at: string;
+          ended_at: string | null;
+          paused_seconds: number;
+          duration_seconds: number;
+          difficulty: StudyDifficulty | null;
+          needs_review: boolean;
+          review_resolved_at: string | null;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id?: string;
+          area_id: string;
+          content_id?: string | null;
+          task_id?: string | null;
+          started_at?: string;
+          ended_at?: string | null;
+          paused_seconds?: number;
+          duration_seconds?: number;
+          difficulty?: StudyDifficulty | null;
+          needs_review?: boolean;
+          review_resolved_at?: string | null;
+          notes?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["study_sessions"]["Insert"]>;
+        Relationships: [];
+      };
+      study_inbox: {
+        Row: {
+          id: string;
+          owner_id: string;
+          text: string;
+          bucket: StudyInboxBucket;
+          area_id: string | null;
+          converted_to_task_id: string | null;
+          converted_to_content_id: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id?: string;
+          text: string;
+          bucket?: StudyInboxBucket;
+          area_id?: string | null;
+          converted_to_task_id?: string | null;
+          converted_to_content_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["study_inbox"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -865,3 +1028,8 @@ export type FitnessWorkoutSession = Database["public"]["Tables"]["fitness_workou
 export type FitnessWeightLog = Database["public"]["Tables"]["fitness_weight_logs"]["Row"];
 export type FitnessRecipe = Database["public"]["Tables"]["fitness_recipes"]["Row"];
 export type FitnessAchievement = Database["public"]["Tables"]["fitness_achievements"]["Row"];
+export type StudyArea = Database["public"]["Tables"]["study_areas"]["Row"];
+export type StudyContent = Database["public"]["Tables"]["study_contents"]["Row"];
+export type StudyTask = Database["public"]["Tables"]["study_tasks"]["Row"];
+export type StudySession = Database["public"]["Tables"]["study_sessions"]["Row"];
+export type StudyInboxItem = Database["public"]["Tables"]["study_inbox"]["Row"];

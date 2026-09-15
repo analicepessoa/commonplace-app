@@ -1,5 +1,13 @@
 # Onde paramos — Commonplace & Rotinas
 
+## 📚 Central de Estudos — Fase 1 (2026-09-15)
+- Nova rota `/estudos` e novo cartão Estudos na Home.
+- Planejamento semanal de segunda a domingo, navegação entre semanas, filtro por área, total de tempo e alerta visual acima de 4 horas no dia.
+- Estudos podem ser criados, editados, iniciados, concluídos, movidos, cancelados, reabertos e excluídos; cadastro inclui área, conteúdo, data, duração, prioridade, material e recorrência.
+- Áreas com emoji, categoria, objetivo, prioridade e estado ativo/inativo; visão detalhada com resumo da semana, próxima ação e conteúdos separados das tarefas.
+- Migration `supabase/migrations/20260915_studies.sql` cria `study_areas`, `study_contents`, `study_tasks`, `study_sessions` e `study_inbox`, todas protegidas por usuário via RLS. **Ainda precisa ser executada no Supabase.**
+- Próximas fases do plano: Hoje/prioridades, modo Foco, sessões/progresso e Caixa de Entrada/Algum Dia/revisões.
+
 ## 🏋️ Academia integrada (2026-08-06)
 - Nova rota `/academia`, reconstruída a partir do projeto estático `academia-main` e integrada ao visual grimoire.
 - Quatro fichas originais (terça a sexta), progresso por séries, concluir exercício, registrar carga, histórico recente, vídeos, troca por biblioteca e exercícios manuais.
@@ -11,7 +19,7 @@
 - Verificação: `tsc --noEmit`, lint dos arquivos novos e `next build` passaram. A tela interna não pôde ser inspecionada visualmente no navegador automatizado porque o `AuthGate` exige a sessão pessoal da usuária.
 
 > Handoff entre sessões. Leia isto + o `CLAUDE.md` para continuar sem reler o código todo.
-> Atualize ao fim de cada sessão. Última atualização: **2026-08-06**.
+> Atualize ao fim de cada sessão. Última atualização: **2026-09-15**.
 
 ## 🟢 Status geral
 App **publicado e funcionando** em https://commonplace-grimoire.netlify.app, com login obrigatório (AuthGate + RLS authenticated). Todas as grandes fases foram construídas. Faltam principalmente **rodar migrations pendentes** e **aplicar a estética grimoire nas telas reais**.
@@ -24,6 +32,7 @@ App **publicado e funcionando** em https://commonplace-grimoire.netlify.app, com
 - **Pets** (`/pets`): cadastro + logs (remédio/vacina/banho/peso) + fotos.
 - **Finanças** (`/financas`): Controle Mensal, Metas (com foto+progresso), Gastos Futuros, Orçamentos, **OCR de comprovantes** (Tesseract.js).
 - **Agenda** (`/agenda`): compromissos com data/hora, agrupados por mês.
+- **Estudos** (`/estudos`): Fase 1 com áreas, conteúdos, cadastro e planejamento semanal.
 - **Mídia**: bucket `media` + tabela `attachments` polimórfica + `MediaPanel`, plugado em várias abas.
 - **Auth**: AuthGate (login e-mail/senha Supabase), RLS exigindo usuário autenticado.
 
